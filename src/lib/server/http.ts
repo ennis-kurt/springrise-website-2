@@ -99,7 +99,7 @@ export async function readFormOrJsonBody(request: Request, maxBytes = 32_768): P
       form = await new Request(request.url, {
         method: "POST",
         headers: { "Content-Type": request.headers.get("Content-Type") || "" },
-        body: bytes,
+        body: bytes as BodyInit,
       }).formData();
     } catch {
       fail(400, "Invalid form submission.");

@@ -15,7 +15,6 @@ const season = await getSeason(env.DB, app.seasonId);
 const saved = Astro.url.searchParams.get("saved");
 const error = Astro.url.searchParams.get("error");
 
-const docLabels: Record<string, string> = Object.fromEntries(DOCUMENTS.map((d) => [d.key, d.label]));
 const docsByKind = new Map(app.documents.map((d) => [d.kind, d]));
 
 const mailSubject = encodeURIComponent(`Springrise scholarship application ${app.reference}`);

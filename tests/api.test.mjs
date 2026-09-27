@@ -14,7 +14,16 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const BASE = process.env.BASE_URL || "http://localhost:4400";
+const ORIGIN = new URL(BASE).origin;
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+
+// Astro's built-in CSRF check (security.checkOrigin) requires the Origin header to
+// match the request URL for any non-GET request with a form-like (or missing)
+// Content-Type. A real browser sends this automatically for same-origin form
+// posts; this plain Node script has to set it explicitly.
+function postHeaders(extra = {}) {
+  return { Origin: ORIGIN, ...extra };
+}
 
 let passed = 0;
 let failed = 0;
@@ -120,7 +129,7 @@ async function main() {
   });
   const submitRes = await fetch(`${BASE}/api/applications`, {
     method: "POST",
-    headers: { "Idempotency-Key": idempotencyKey },
+    headers: postHeaders({ "Idempotency-Key": idempotencyKey }),
     body: form1,
   });
   const submitBody = await submitRes.json();
@@ -137,7 +146,7 @@ async function main() {
   });
   const dupRes = await fetch(`${BASE}/api/applications`, {
     method: "POST",
-    headers: { "Idempotency-Key": crypto.randomUUID() },
+    headers: postHeaders({ "Idempotency-Key": crypto.randomUUID() }),
     body: dupForm,
   });
   ok("duplicate email for season -> 409", dupRes.status === 409, dupRes.status);
@@ -151,7 +160,7 @@ async function main() {
   });
   const replayRes = await fetch(`${BASE}/api/applications`, {
     method: "POST",
-    headers: { "Idempotency-Key": idempotencyKey },
+    headers: postHeaders({ "Idempotency-Key": idempotencyKey }),
     body: replayForm,
   });
   const replayBody = await replayRes.json();
@@ -168,7 +177,7 @@ async function main() {
   });
   const badRes = await fetch(`${BASE}/api/applications`, {
     method: "POST",
-    headers: { "Idempotency-Key": crypto.randomUUID() },
+    headers: postHeaders({ "Idempotency-Key": crypto.randomUUID() }),
     body: badForm,
   });
   ok("invalid PDF content -> 400", badRes.status === 400, badRes.status);
@@ -176,7 +185,7 @@ async function main() {
   // --- POST /api/applications/status ---------------------------------------
   const statusRes = await fetch(`${BASE}/api/applications/status`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: postHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({ reference, email: applicantEmail }),
   });
   const statusBody = await statusRes.json();
@@ -185,7 +194,7 @@ async function main() {
 
   const badStatusRes = await fetch(`${BASE}/api/applications/status`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: postHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({ reference: "SR-XXX-000000", email: applicantEmail }),
   });
   ok("status lookup with wrong reference -> 404", badStatusRes.status === 404, badStatusRes.status);
@@ -193,7 +202,7 @@ async function main() {
   // --- POST /api/contact ----------------------------------------------------
   const contactRes = await fetch(`${BASE}/api/contact`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: postHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({
       name: "Test Contact",
       email: uniqueEmail("contact"),
@@ -206,7 +215,7 @@ async function main() {
 
   const honeypotRes = await fetch(`${BASE}/api/contact`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: postHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({ name: "Bot", website: "http://spam.example" }),
   });
   const honeypotBody = await honeypotRes.json();
@@ -216,7 +225,7 @@ async function main() {
   const subscribeEmail = uniqueEmail("subscribe");
   const subscribeRes = await fetch(`${BASE}/api/subscribe`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: postHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({ email: subscribeEmail, source: "test" }),
   });
   const subscribeBody = await subscribeRes.json();
@@ -224,7 +233,7 @@ async function main() {
 
   const subscribeAgainRes = await fetch(`${BASE}/api/subscribe`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: postHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({ email: subscribeEmail }),
   });
   ok("duplicate subscribe is idempotent -> 200", subscribeAgainRes.status === 200, subscribeAgainRes.status);
@@ -245,7 +254,7 @@ async function main() {
   const loginRes = await fetch(`${BASE}/api/admin/login`, {
     method: "POST",
     redirect: "manual",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers: postHeaders({ "Content-Type": "application/x-www-form-urlencoded" }),
     body: new URLSearchParams({ password: adminPassword, next: "/admin" }),
   });
   const cookie = extractCookie(loginRes);
@@ -254,7 +263,7 @@ async function main() {
   const badLoginRes = await fetch(`${BASE}/api/admin/login`, {
     method: "POST",
     redirect: "manual",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers: postHeaders({ "Content-Type": "application/x-www-form-urlencoded" }),
     body: new URLSearchParams({ password: "definitely-wrong-password", next: "/admin" }),
   });
   ok(
@@ -300,7 +309,7 @@ async function main() {
   }
 
   // --- Logout --------------------------------------------------------------------
-  const logoutRes = await fetch(`${BASE}/api/admin/logout`, { method: "POST", redirect: "manual", headers: { Cookie: cookie } });
+  const logoutRes = await fetch(`${BASE}/api/admin/logout`, { method: "POST", redirect: "manual", headers: postHeaders({ Cookie: cookie }) });
   ok("POST /api/admin/logout -> 303 to /admin/login", logoutRes.status === 303 && (logoutRes.headers.get("location") || "") === "/admin/login", logoutRes.status);
 
   printSummary();

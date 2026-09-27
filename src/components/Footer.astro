@@ -79,12 +79,12 @@ const year = new Date().getFullYear();
   .signup__input:focus { outline: none; border-color: var(--saffron); background: rgb(255 255 255 / 0.1); }
   .signup__msg { flex-basis: 100%; font-size: 0.92rem; min-height: 1.4em; color: var(--turquoise-soft); }
   .signup__msg.is-error { color: #ffb4a6; }
-  .footer-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; align-content: start; padding-top: 0.5rem; }
+  .footer-cols { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 1.25fr); gap: 2rem; align-content: start; padding-top: 0.5rem; }
   .footer-cols .label { color: rgb(247 242 233 / 0.55); margin-bottom: 1.1rem; }
   .footer-cols ul { display: grid; gap: 0.6rem; }
   .footer-cols a { text-decoration: none; opacity: 0.92; transition: color 0.2s; }
   .footer-cols a:hover { color: var(--saffron); }
-  address { font-style: normal; line-height: 1.9; font-size: 0.95rem; }
+  address { font-style: normal; line-height: 1.9; font-size: 0.95rem; overflow-wrap: anywhere; }
   .footer-muted { color: rgb(247 242 233 / 0.6); display: inline-block; margin-top: 0.4rem; line-height: 1.5; }
   .footer-bottom {
     display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; margin-top: clamp(3.5rem, 6vw, 6rem);

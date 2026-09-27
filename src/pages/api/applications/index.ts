@@ -32,7 +32,7 @@ export const POST: APIRoute = apiRoute(async ({ request }) => {
   const bytes = await readLimitedBytes(request, MAX_REQUEST_BYTES);
   let form: FormData;
   try {
-    form = await new Request(request.url, { method: "POST", headers: { "Content-Type": contentType }, body: bytes }).formData();
+    form = await new Request(request.url, { method: "POST", headers: { "Content-Type": contentType }, body: bytes as BodyInit }).formData();
   } catch {
     fail(400, "Invalid form submission.");
   }

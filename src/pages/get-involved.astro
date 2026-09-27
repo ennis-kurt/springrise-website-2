@@ -14,7 +14,7 @@ const ways = [
   {
     icon: "clock" as const,
     title: "Volunteer",
-    body: "Lend an evening a month to application review, events or outreach in your community.",
+    body: "Help with events, outreach in your community or behind-the-scenes work. Tell us what you're good at.",
     action: { kind: "link" as const, href: "mailto:info@springrise.org?subject=Volunteering", label: "Email us about volunteering" },
   },
   {
@@ -42,7 +42,7 @@ const ways = [
     eyebrow="Get involved"
     title="Take part."
     accent="You can make a difference."
-    lead="Springrise runs on people who show up — to review an application, mentor a student, or simply spread the word. Here's where to start."
+    lead="Springrise runs on people who show up — to mentor a student, open a door, or simply spread the word. Here's where to start."
     art="arch"
   >
     <a class="btn btn--cobalt" href="#interest">Tell us how you'd like to help <Icon name="arrow" size={18} /></a>
@@ -74,13 +74,13 @@ const ways = [
       <div class="mentor-grid">
         <div class="mentor-art reveal" aria-hidden="true">
           <div class="frame-arch">
-            <img class="photo" src="/images/mentoring.jpg" alt="A mentor helping a student in a lecture hall" loading="lazy" width="720" height="900" />
+            <img class="photo" src="/images/mentoring-1000.webp" srcset="/images/mentoring-640.webp 640w, /images/mentoring-1000.webp 1000w" sizes="(max-width: 900px) 90vw, 40vw" alt="A mentor helping a student in a lecture hall" loading="lazy" width="720" height="900" />
           </div>
         </div>
         <div class="reveal" style="--d:.1s">
           <p class="eyebrow">Become a mentor</p>
           <h2 class="h2" style="margin-top:1rem; max-width:14em;">Be the person <em>who believed in you.</em></h2>
-          <p class="lead" style="margin-top:1.25rem;">Our mentorship program pairs scholarship recipients with people who can offer guidance, encouragement and a little perspective on what comes next. No special credentials required — just time and attention.</p>
+          <p class="lead" style="margin-top:1.25rem;">Our mentorship program pairs scholarship recipients with people who can offer guidance, encouragement and a little perspective on what comes next. If you've walked the path — through college, a career or community leadership — you have something to share.</p>
           <a class="btn btn--cobalt" style="margin-top:1.75rem;" href="#interest">Tell us you're interested <Icon name="arrow" size={18} /></a>
         </div>
       </div>
@@ -140,7 +140,11 @@ const ways = [
 </BaseLayout>
 
 <style>
-  .ways-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr)); gap: 1.5rem; }
+  .ways-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1.5rem; }
+  .ways-grid > * { grid-column: span 2; }
+  .ways-grid > :nth-child(n + 4) { grid-column: span 3; }
+  @media (max-width: 1000px) { .ways-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ways-grid > *, .ways-grid > :nth-child(n + 4) { grid-column: auto; } .ways-grid > :last-child { grid-column: 1 / -1; } }
+  @media (max-width: 600px) { .ways-grid { grid-template-columns: 1fr; } }
   .way-card { display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.6rem, 3vw, 2.1rem); transition: border-color 0.25s, transform 0.35s var(--ease); }
   .way-card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
   .way-card__icon { display: inline-flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: 50%; background: var(--paper-2); color: var(--cobalt); margin-bottom: 1.1rem; }

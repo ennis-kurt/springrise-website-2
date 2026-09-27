@@ -14,7 +14,13 @@ export async function timingSafeEqual(a: string, b: string): Promise<boolean> {
     crypto.subtle.digest("SHA-256", encoder.encode(a)),
     crypto.subtle.digest("SHA-256", encoder.encode(b)),
   ]);
-  return crypto.subtle.timingSafeEqual(da, db);
+  const va = new Uint8Array(da);
+  const vb = new Uint8Array(db);
+  // Both are fixed-length (32-byte) SHA-256 digests, so this loop's timing never
+  // depends on where `a` and `b` first differ.
+  let diff = va.length ^ vb.length;
+  for (let i = 0; i < va.length && i < vb.length; i++) diff |= va[i] ^ vb[i];
+  return diff === 0;
 }
 
 export function clientIp(request: Request): string {

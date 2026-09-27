@@ -3,13 +3,15 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Icon from "../../../components/Icon.astro";
 import Mark from "../../../components/Mark.astro";
 import Requirements from "../../../components/scholarship/Requirements.astro";
-import { getSiteState } from "../../../lib/site";
+import { getSeasonForStaffPreview, getSiteState } from "../../../lib/site";
 import { daysUntil, fmtDate, fmtDateTime, paragraphs } from "../../../lib/seasons";
 import { ORG } from "../../../lib/content";
 
 const site = await getSiteState();
-const season = site.seasons.find((s) => s.slug === Astro.params.slug);
+const publicSeason = site.seasons.find((s) => s.slug === Astro.params.slug);
+const season = publicSeason ?? (await getSeasonForStaffPreview(Astro.request, Astro.params.slug!));
 if (!season) return Astro.rewrite("/404");
+const staffPreview = !publicSeason;
 
 const now = Date.now();
 const opens = season.opens_at ? Date.parse(season.opens_at) : null;
@@ -19,7 +21,10 @@ const stateLabel = season.state === "open" ? "Applications open" : season.state 
 const days = season.state === "open" ? daysUntil(season.closes_at) : season.state === "upcoming" ? daysUntil(season.opens_at) : 0;
 const archived = season.status === "archived";
 ---
-<BaseLayout title={season.title} description={season.summary || `${season.title} — Springrise Foundation`} site={site}>
+<BaseLayout title={season.title} description={season.summary || `${season.title} — Springrise Foundation`} site={site} noindex={staffPreview}>
+  {staffPreview && (
+    <div class="staff-preview"><div class="container"><strong>Staff preview</strong> · This season is a <b>{season.status}</b> and is not visible to the public. <a href={`/admin/seasons/${season.id}`}>Edit season</a></div></div>
+  )}
   <section class="season-hero">
     <div class="container">
       <nav class="crumbs reveal" aria-label="Breadcrumb"><a href="/scholarships">Scholarships</a><span aria-hidden="true">/</span><span aria-current="page">{season.term} {season.year}</span></nav>
@@ -109,6 +114,8 @@ const archived = season.status === "archived";
 </BaseLayout>
 
 <style>
+  .staff-preview { background: var(--saffron); color: var(--ink); font-size: 0.92rem; padding: 0.7rem 0; }
+  .staff-preview a { margin-left: 0.5rem; font-weight: 600; }
   .season-hero { padding-top: clamp(2rem, 4vw, 3.5rem); padding-bottom: clamp(2.5rem, 5vw, 4.5rem); border-bottom: 1px solid var(--line); }
   .crumbs { display: flex; gap: 0.6rem; font-size: 0.9rem; color: var(--text-muted); }
   .crumbs a { text-decoration: none; }

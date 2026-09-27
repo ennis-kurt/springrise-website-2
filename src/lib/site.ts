@@ -32,3 +32,14 @@ export async function getSiteState() {
   const current = featured ? (seasons.find((s) => s.id === featured.id) ?? null) : null;
   return { seasons, current };
 }
+
+/**
+ * Staff-only preview of a season that isn't public yet (drafts).
+ * Returns null unless the request carries a valid staff session.
+ */
+export async function getSeasonForStaffPreview(request: Request, slug: string): Promise<PublicSeason | null> {
+  const { isValidSession, readSessionCookie } = await import("./server/auth");
+  if (!(await isValidSession(env.DB, readSessionCookie(request)))) return null;
+  const row = await env.DB.prepare("SELECT * FROM seasons WHERE slug = ?").bind(slug).first<Season>();
+  return row ? { ...row, state: seasonState(row) } : null;
+}

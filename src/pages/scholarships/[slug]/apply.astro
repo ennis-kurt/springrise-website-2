@@ -2,17 +2,18 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ApplicationForm from "../../../components/apply/ApplicationForm.tsx";
 import Icon from "../../../components/Icon.astro";
-import { getSiteState } from "../../../lib/site";
+import { getSeasonForStaffPreview, getSiteState } from "../../../lib/site";
 import { fmtDateTime } from "../../../lib/seasons";
 import { DOCUMENTS, MAX_FILE_BYTES, MAX_TOTAL_BYTES, ORG } from "../../../lib/content";
 import "../../../styles/apply.css";
 
 const site = await getSiteState();
-const season = site.seasons.find((s) => s.slug === Astro.params.slug);
+const publicSeason = site.seasons.find((s) => s.slug === Astro.params.slug);
+const season = publicSeason ?? (await getSeasonForStaffPreview(Astro.request, Astro.params.slug!));
 if (!season) return Astro.rewrite("/404");
 
 const wantsPreview = Astro.url.searchParams.has("preview");
-const isOpen = season.state === "open";
+const isOpen = season.state === "open" && season.status === "published";
 const showForm = isOpen || wantsPreview;
 ---
 <BaseLayout title={`Apply — ${season.title}`} description={`Apply for the ${season.title}.`} site={site} noindex>

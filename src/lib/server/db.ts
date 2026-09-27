@@ -553,6 +553,7 @@ export interface MessageRow {
   message: string;
   status: string;
   created_at: string;
+  [column: string]: unknown;
 }
 
 export interface InsertMessageInput {
@@ -598,6 +599,7 @@ export interface SubscriberRow {
   email: string;
   source: string;
   created_at: string;
+  [column: string]: unknown;
 }
 
 export async function insertSubscriber(db: D1Database, email: string, source: string): Promise<void> {

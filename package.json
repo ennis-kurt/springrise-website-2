@@ -10,7 +10,10 @@
     "db:migrate": "wrangler d1 migrations apply springrise --local",
     "db:migrate:remote": "wrangler d1 migrations apply springrise --remote",
     "deploy": "astro build && wrangler deploy",
-    "check": "astro check"
+    "check": "astro check",
+    "db:seed-demo": "wrangler d1 execute springrise --local --file scripts/seed-demo.sql",
+    "test:api": "node tests/api.test.mjs",
+    "test:e2e": "node tests/e2e-apply.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.3",
