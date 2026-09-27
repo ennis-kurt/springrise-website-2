@@ -85,7 +85,7 @@ const baseUrl = `/admin/applications?${baseParams.toString()}`;
             <td>{app.first_name} {app.last_name}</td>
             <td>{app.email}</td>
             <td><StatusBadge status={app.status} /></td>
-            <td>${(app.tuition_cents / 100).toFixed(2)}</td>
+            <td>{(app.tuition_cents / 100).toLocaleString("en-US", { style: "currency", currency: "USD" })}</td>
             <td>{fmtDateTime(app.created_at)}</td>
           </tr>
         ))}

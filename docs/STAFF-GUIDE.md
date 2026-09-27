@@ -25,7 +25,11 @@ foundation's staff password. Sessions last 8 hours. Use **Log out** on shared co
      Before the opening time, visitors see *"Opening soon"* with a countdown and a *"Remind me"* sign-up. Between the
      opening and closing times, the **Apply** buttons appear. After the closing time the season shows as closed.
    - **Archived**: kept as history, with applications closed.
-4. **Save**. Use **View public page** to check it.
+4. **Save**. Use **View public page** to check it. While a season is still a draft, only signed-in staff can open that
+   page. A yellow *Staff preview* bar confirms that it isn't public yet.
+5. **Email subscribers** (at the bottom of a published season) sends the announcement to everyone on the season-alert
+   list. Each message has its own unsubscribe link. The panel shows when the season was last announced, to avoid
+   double-sending. This requires email to be configured (see README → *Email*).
 
 > Tip: to get more applicants, publish the season a few weeks *before* it opens. People can then sign up for
 > reminders and prepare their documents.
@@ -59,7 +63,9 @@ Set the **status** as you go:
 Applicants can check their own status at `/scholarships/status` with their reference number and email. They see
 only the status label, never notes, award amounts or documents.
 
-**Email applicant** opens your email program with the reference already in the subject line.
+**Email applicant** opens your email program with the reference already in the subject line. When email is
+configured, you can instead tick **Email the applicant about this update** while changing the status. This sends a
+short, branded message with the new status and an optional note. The timeline records that the email was sent.
 
 ## 3. Export
 
@@ -76,7 +82,7 @@ Treat exports as confidential. They contain personal information.
   donation information requests, and volunteer or partnership interest. Mark each one *read* or *archived*, and
   reply by email.
 - **Subscribers** are people who asked to hear when applications open, from the footer or a season's *Remind me*
-  box.
+  box. Announce a season to all of them with **Email subscribers** on the season page, or export the list.
 
 ## 5. Good practice
 

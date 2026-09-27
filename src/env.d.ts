@@ -9,6 +9,13 @@ declare namespace Cloudflare {
     DOCS: R2Bucket;
     ADMIN_PASSWORD: string;
     SITE_NAME: string;
+    /** Optional transactional email (Resend). All of these are optional — see src/lib/server/email.ts. */
+    RESEND_API_KEY?: string;
+    EMAIL_FROM?: string;
+    STAFF_NOTIFY_EMAIL?: string;
+    CONTACT_NOTIFY_EMAIL?: string;
+    SITE_URL?: string;
+    EMAIL_SIGNING_SECRET?: string;
   }
 }
 

@@ -5,6 +5,7 @@ import { str, emailField, phoneField } from "../../lib/server/validate";
 import { clientIp, rateLimit } from "../../lib/server/security";
 import { insertMessage } from "../../lib/server/db";
 import { randomId } from "../../lib/server/ids";
+import { sendStaffContactNotificationEmail } from "../../lib/server/email";
 
 const TOPICS = new Set(["general", "scholarship", "donation", "volunteer", "partnership"]);
 
@@ -29,6 +30,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (message.length < 10) throw new ApiError(400, "Message must be at least 10 characters.", "message");
 
     await insertMessage(env.DB, { id: randomId(), name, email, phone, topic, subject, message });
+    await sendStaffContactNotificationEmail({ name, email, topic, message });
 
     return wantsHtml ? formRedirect(request, { sent: "contact" }) : jsonResponse({ ok: true }, 201);
   } catch (err) {

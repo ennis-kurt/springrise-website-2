@@ -86,7 +86,7 @@ const archived = season.status === "archived";
         {season.state === "upcoming" && (
           <>
             <p class="apply-card__big">Opens in <b>{days}</b> {days === 1 ? "day" : "days"}</p>
-            <p class="muted">Applications open {fmtDateTime(season.opens_at)}. Get your documents ready now, and we'll email you the moment it opens.</p>
+            <p class="muted">Applications open {fmtDateTime(season.opens_at)}. Get your documents ready now — and leave your email so we can let you know when it opens.</p>
             <form class="alert-form" action="/api/subscribe" method="post" data-ajax data-success="Done — we'll email you when applications open.">
               <input type="hidden" name="source" value={`season-alert:${season.slug}`} />
               <div class="honeypot" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off" /></label></div>

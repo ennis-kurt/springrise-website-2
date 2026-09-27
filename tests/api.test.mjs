@@ -11,9 +11,10 @@
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { createHash, createHmac } from "node:crypto";
 import path from "node:path";
 
-const BASE = process.env.BASE_URL || "http://localhost:4400";
+const BASE = process.env.BASE_URL || process.argv[2] || "http://localhost:4321";
 const ORIGIN = new URL(BASE).origin;
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
@@ -47,6 +48,15 @@ function readAdminPassword() {
 
 function uniqueEmail(tag) {
   return `sr-test-${tag}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
+}
+
+// Mirrors src/lib/server/email.ts's ADMIN_PASSWORD-derived fallback signing
+// secret (used when EMAIL_SIGNING_SECRET isn't set — the local-dev default),
+// so this test can produce a valid unsubscribe token without any server help.
+const UNSUBSCRIBE_SIGNING_PREFIX = "springrise-unsubscribe-v1:";
+function computeUnsubscribeToken(email, adminPassword) {
+  const secretHex = createHash("sha256").update(UNSUBSCRIBE_SIGNING_PREFIX + adminPassword, "utf8").digest("hex");
+  return createHmac("sha256", secretHex).update(email.trim().toLowerCase(), "utf8").digest("hex");
 }
 
 const PDF_BYTES = "%PDF-1.4\n1 0 obj<< /Type /Catalog >>\nendobj\ntrailer<< /Root 1 0 R >>\n%%EOF\n";
@@ -238,6 +248,33 @@ async function main() {
   });
   ok("duplicate subscribe is idempotent -> 200", subscribeAgainRes.status === 200, subscribeAgainRes.status);
 
+  // --- GET /unsubscribe ---------------------------------------------------------
+  const badTokenRes = await fetch(`${BASE}/unsubscribe?e=${encodeURIComponent(subscribeEmail)}&t=not-a-real-token`);
+  const badTokenHtml = await badTokenRes.text();
+  ok(
+    "unsubscribe with a bad token shows an invalid-link message",
+    badTokenRes.status === 200 && badTokenHtml.includes("isn't valid"),
+    badTokenRes.status,
+  );
+
+  const adminPasswordForToken = readAdminPassword();
+  const validToken = computeUnsubscribeToken(subscribeEmail, adminPasswordForToken);
+  const unsubUrl = `${BASE}/unsubscribe?e=${encodeURIComponent(subscribeEmail)}&t=${validToken}`;
+  const confirmRes = await fetch(unsubUrl);
+  const confirmHtml = await confirmRes.text();
+  ok("unsubscribe link asks for confirmation before removing", confirmRes.status === 200 && confirmHtml.includes("Yes, unsubscribe me"), confirmRes.status);
+  const goodTokenRes = await fetch(unsubUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded", Origin: new URL(BASE).origin },
+    body: "",
+  });
+  const goodTokenHtml = await goodTokenRes.text();
+  ok(
+    "unsubscribe with a valid token confirms and deletes the subscriber",
+    goodTokenRes.status === 200 && goodTokenHtml.includes("You're unsubscribed"),
+    goodTokenRes.status,
+  );
+
   // --- Unauthenticated admin access ------------------------------------------
   const noAuthPageRes = await fetch(`${BASE}/admin`, { redirect: "manual" });
   ok(
@@ -280,6 +317,25 @@ async function main() {
 
   const overviewRes = await fetch(`${BASE}/admin`, { headers: { Cookie: cookie } });
   ok("GET /admin with session -> 200", overviewRes.status === 200, overviewRes.status);
+
+  // The subscriber unsubscribed above should really be gone.
+  const subscribersCsvRes = await fetch(`${BASE}/api/admin/export/subscribers.csv`, { headers: { Cookie: cookie } });
+  const subscribersCsvText = await subscribersCsvRes.text();
+  ok("unsubscribed email is gone from the subscribers export", !subscribersCsvText.includes(subscribeEmail), subscribeEmail);
+
+  // --- POST /api/admin/seasons/:id/announce (email unconfigured locally) -------
+  const announceRes = await fetch(`${BASE}/api/admin/seasons/${encodeURIComponent(seasonId)}/announce`, {
+    method: "POST",
+    redirect: "manual",
+    headers: postHeaders({ Cookie: cookie, "Content-Type": "application/x-www-form-urlencoded" }),
+    body: new URLSearchParams({}),
+  });
+  const announceLocation = announceRes.headers.get("location") || "";
+  ok(
+    "announce -> 303 back to the season page (error, since email isn't configured locally)",
+    announceRes.status === 303 && announceLocation.startsWith(`/admin/seasons/${seasonId}`) && announceLocation.includes("error="),
+    { status: announceRes.status, location: announceLocation },
+  );
 
   // --- CSV export contains the reference --------------------------------------
   const csvRes = await fetch(`${BASE}/api/admin/export/applications.csv?season=${encodeURIComponent(seasonId)}`, {

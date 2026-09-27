@@ -13,6 +13,7 @@ import {
   findApplicationByIdempotency,
   getSeasonForApplication,
 } from "../../../lib/server/db";
+import { sendApplicationConfirmationEmail, sendStaffNewApplicationEmail } from "../../../lib/server/email";
 
 // A little headroom over MAX_TOTAL_BYTES (25MB) for multipart boundaries/field overhead.
 const MAX_REQUEST_BYTES = 27 * 1024 * 1024;
@@ -27,7 +28,8 @@ export const POST: APIRoute = apiRoute(async ({ request }) => {
   const contentType = request.headers.get("Content-Type") || "";
   if (!contentType.toLowerCase().includes("multipart/form-data")) fail(415, "Expected a multipart form submission.");
 
-  await rateLimit(env.DB, { bucket: "applications", subject: clientIp(request), limit: 5, windowMs: 3_600_000 });
+  // Raised from 5: students on a shared campus network can otherwise collide near a deadline.
+  await rateLimit(env.DB, { bucket: "applications", subject: clientIp(request), limit: 20, windowMs: 3_600_000 });
 
   const bytes = await readLimitedBytes(request, MAX_REQUEST_BYTES);
   let form: FormData;
@@ -194,6 +196,12 @@ export const POST: APIRoute = apiRoute(async ({ request }) => {
     if (duplicate) fail(409, DUPLICATE_MESSAGE);
     throw err;
   }
+
+  // Best-effort emails — never let a provider hiccup block or fail the submission response.
+  await Promise.all([
+    sendApplicationConfirmationEmail({ to: email, firstName: data.firstName, reference, seasonTitle: season.title, submittedAtIso: submittedAt }),
+    sendStaffNewApplicationEmail({ firstName: data.firstName, lastName: data.lastName, reference, seasonTitle: season.title, applicationId }),
+  ]);
 
   return jsonResponse({ reference, email, season: season.title, submittedAt }, 201);
 });

@@ -4,9 +4,11 @@ import AdminLayout from "../../../layouts/AdminLayout.astro";
 import Notice from "../../../components/admin/Notice.astro";
 import StatusBadge from "../../../components/admin/StatusBadge.astro";
 import { getApplicationDetail, getSeason } from "../../../lib/server/db";
+import { emailEnabled } from "../../../lib/server/email";
 import { fmtDateTime, STATUS_LABELS } from "../../../lib/seasons";
 import { DOCUMENTS } from "../../../lib/content";
 
+const emailOn = emailEnabled();
 const id = Astro.params.id!;
 const app = await getApplicationDetail(env.DB, id);
 if (!app) return new Response(null, { status: 404 });
@@ -60,7 +62,7 @@ function fmtBytes(n: number) {
         <dt>Institution</dt><dd>{app.institution}</dd>
         <dt>Study level</dt><dd>{app.data.studyLevel}</dd>
         <dt>Major</dt><dd>{app.data.major || "—"}</dd>
-        <dt>Tuition requested</dt><dd>${(app.tuitionCents / 100).toFixed(2)}</dd>
+        <dt>Tuition requested</dt><dd>{(app.tuitionCents / 100).toLocaleString("en-US", { style: "currency", currency: "USD" })}</dd>
         <dt>Tuition deadline</dt><dd>{app.data.tuitionDeadline}</dd>
       </dl>
     </div>
@@ -140,6 +142,17 @@ function fmtBytes(n: number) {
       <div class="field">
         <label for="staffNotes">Staff notes</label>
         <textarea id="staffNotes" name="staffNotes" rows="4" maxlength="4000">{app.staffNotes}</textarea>
+      </div>
+      <div class="field">
+        <label for="notifyApplicant" style="text-transform:none; font-family:var(--font-sans); font-size:0.95rem; letter-spacing:normal; display:flex; align-items:center; gap:0.5rem;">
+          <input id="notifyApplicant" name="notifyApplicant" type="checkbox" style="width:auto;" disabled={!emailOn} />
+          Email the applicant about this update
+        </label>
+        {!emailOn && <p class="hint">Email sending isn't configured (RESEND_API_KEY).</p>}
+      </div>
+      <div class="field">
+        <label for="applicantMessage">Message to applicant (optional)</label>
+        <textarea id="applicantMessage" name="applicantMessage" rows="3" maxlength="2000" placeholder="A short note included in the email." disabled={!emailOn}></textarea>
       </div>
       <div class="form-actions">
         <button class="btn btn-primary" type="submit">Save</button>

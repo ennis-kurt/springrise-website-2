@@ -1,27 +1,30 @@
 ---
 import { utcIsoToEasternWallTime } from "../../lib/server/time";
+import type { SeasonFormValues } from "../../lib/server/season-input";
 import type { Season } from "../../lib/seasons";
 
 export interface Props {
   action: string;
   season?: Season | null;
   slugLocked?: boolean;
+  /** Raw values from a just-failed submission, taking precedence over `season` so the form doesn't lose what was typed. */
+  values?: SeasonFormValues;
 }
-const { action, season = null, slugLocked = false } = Astro.props;
+const { action, season = null, slugLocked = false, values } = Astro.props;
 
 const v = {
-  title: season?.title ?? "",
-  slug: season?.slug ?? "",
-  term: season?.term ?? "Spring",
-  year: season?.year ?? new Date().getFullYear(),
-  status: season?.status ?? "draft",
-  opensAt: utcIsoToEasternWallTime(season?.opens_at),
-  closesAt: utcIsoToEasternWallTime(season?.closes_at),
-  decisionAt: utcIsoToEasternWallTime(season?.decision_at),
-  summary: season?.summary ?? "",
-  announcement: season?.announcement ?? "",
-  eligibility: season?.eligibility ?? "",
-  requirements: season?.requirements ?? "",
+  title: values?.title ?? season?.title ?? "",
+  slug: values?.slug ?? season?.slug ?? "",
+  term: values?.term ?? season?.term ?? "Spring",
+  year: values?.year ?? String(season?.year ?? new Date().getFullYear()),
+  status: values?.status ?? season?.status ?? "draft",
+  opensAt: values?.opensAt ?? utcIsoToEasternWallTime(season?.opens_at),
+  closesAt: values?.closesAt ?? utcIsoToEasternWallTime(season?.closes_at),
+  decisionAt: values?.decisionAt ?? utcIsoToEasternWallTime(season?.decision_at),
+  summary: values?.summary ?? season?.summary ?? "",
+  announcement: values?.announcement ?? season?.announcement ?? "",
+  eligibility: values?.eligibility ?? season?.eligibility ?? "",
+  requirements: values?.requirements ?? season?.requirements ?? "",
 };
 ---
 
@@ -62,7 +65,7 @@ const v = {
     <label for="status">Status</label>
     <select id="status" name="status" required>
       {["draft", "published", "archived"].map((s) => (
-        <option value={s} selected={s === v.status}>{s}</option>
+        <option value={s} selected={s === v.status}>{s[0].toUpperCase() + s.slice(1)}</option>
       ))}
     </select>
     <p class="hint">

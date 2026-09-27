@@ -137,6 +137,24 @@ export async function seasonHasApplications(db: D1Database, id: string): Promise
   return !!row;
 }
 
+export interface SeasonAnnouncementInfo {
+  announced_at: string | null;
+  announced_count: number;
+}
+
+/** Reads the announcement columns added by migrations/0002_announcements.sql. */
+export async function getSeasonAnnouncementInfo(db: D1Database, id: string): Promise<SeasonAnnouncementInfo | null> {
+  const row = await db.prepare("SELECT announced_at, announced_count FROM seasons WHERE id = ?").bind(id).first<SeasonAnnouncementInfo>();
+  return row ?? null;
+}
+
+export async function markSeasonAnnounced(db: D1Database, id: string, count: number): Promise<void> {
+  await db
+    .prepare("UPDATE seasons SET announced_at = strftime('%Y-%m-%dT%H:%M:%fZ','now'), announced_count = ? WHERE id = ?")
+    .bind(count, id)
+    .run();
+}
+
 // --------------------------------------------------------------------------
 // Applications
 // --------------------------------------------------------------------------
@@ -437,6 +455,22 @@ export interface ApplicationStatusLookup {
   season_title: string;
 }
 
+export interface ApplicationEmailInfo {
+  email: string;
+  first_name: string;
+  season_id: string;
+}
+
+/** Minimal lookup for sending the applicant a status-change email (no documents, no DOB). */
+export async function getApplicationEmailInfo(db: D1Database, id: string): Promise<ApplicationEmailInfo | null> {
+  const row = await db.prepare("SELECT email, first_name, season_id FROM applications WHERE id = ?").bind(id).first<ApplicationEmailInfo>();
+  return row ?? null;
+}
+
+export async function insertApplicationEmailEvent(db: D1Database, id: string, detail: string): Promise<void> {
+  await db.prepare("INSERT INTO application_events (id, application_id, kind, detail) VALUES (?, ?, 'email', ?)").bind(randomId(), id, detail).run();
+}
+
 export async function getApplicationStatusLookup(
   db: D1Database,
   reference: string,
@@ -617,6 +651,11 @@ export async function listSubscribers(db: D1Database): Promise<SubscriberRow[]> 
 export async function countSubscribers(db: D1Database): Promise<number> {
   const row = await db.prepare("SELECT COUNT(*) AS n FROM subscribers").first<{ n: number }>();
   return row?.n ?? 0;
+}
+
+export async function deleteSubscriberByEmail(db: D1Database, email: string): Promise<boolean> {
+  const result = await db.prepare("DELETE FROM subscribers WHERE email = ?").bind(email).run();
+  return (result.meta.changes ?? 0) > 0;
 }
 
 // --------------------------------------------------------------------------

@@ -9,6 +9,33 @@ const TERMS: Term[] = ["Spring", "Summer", "Fall", "Winter"];
 const STATUSES: SeasonStatus[] = ["draft", "published", "archived"];
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+const SEASON_FORM_FIELDS = [
+  "title",
+  "slug",
+  "term",
+  "year",
+  "status",
+  "opensAt",
+  "closesAt",
+  "decisionAt",
+  "summary",
+  "announcement",
+  "eligibility",
+  "requirements",
+] as const;
+
+export type SeasonFormValues = Partial<Record<(typeof SEASON_FORM_FIELDS)[number], string>>;
+
+/** Raw (unvalidated) string values from a season form submission, for re-rendering the form after a validation error. */
+export function rawSeasonFormValues(form: FormData): SeasonFormValues {
+  const out: SeasonFormValues = {};
+  for (const key of SEASON_FORM_FIELDS) {
+    const value = form.get(key);
+    if (typeof value === "string") out[key] = value;
+  }
+  return out;
+}
+
 function toUtcOrFail(wallTime: string, field: string, label: string): string {
   try {
     return easternWallTimeToUtcIso(wallTime);

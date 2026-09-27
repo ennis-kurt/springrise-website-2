@@ -9,6 +9,14 @@ scholarships**, and applicants can **apply online** with PDFs. Staff then **revi
 
 ![Home page](docs/screenshots/home.png)
 
+| Scholarship season | Application | Received | Staff workspace |
+|---|---|---|---|
+| ![](docs/screenshots/season.png) | ![](docs/screenshots/apply.png) | ![](docs/screenshots/apply-success.png) | ![](docs/screenshots/admin-overview.png) |
+
+Full-page views: [home](docs/screenshots/home-full.jpg) · [scholarships](docs/screenshots/scholarships-full.jpg) ·
+[about](docs/screenshots/about-full.jpg) · [mobile home](docs/screenshots/mobile-home.png) ·
+[mobile application](docs/screenshots/mobile-apply.png)
+
 ## Design
 
 The visual identity comes from the foundation's name and heritage:
@@ -62,12 +70,18 @@ the mismatched-semester errors found on the old form.
 
 **Staff workspace** (`/admin`, password-protected):
 - An overview showing the current season, counts by status and recent applications.
-- Seasons: create, edit, publish, archive, and announce a new season.
+- Seasons: create, edit, publish and archive. **Email subscribers** sends the season announcement in one click, with a
+  personal unsubscribe link in every message. Staff can preview a **draft** season on the public site before
+  publishing it.
 - Applications: filter and search, open a full application, view each PDF, set the status (received → under review →
   needs information → awarded / not awarded / withdrawn), record the award amount and private notes, see an audit
-  timeline and email the applicant.
+  timeline, email the applicant, and optionally send the applicant an automatic status-update email.
 - Messages from the contact forms, and the season-alert subscriber list.
 - CSV exports for applications, messages and subscribers. Cells are protected against formula injection.
+
+**Email (optional)**: applicants get a confirmation email with their reference. Staff are notified of new
+applications and contact messages. Seasons can be announced to subscribers. Everything works without email; when it
+isn't configured, sending is skipped and the staff buttons explain why.
 
 ## Tech
 
@@ -109,8 +123,9 @@ npm run dev                   # http://localhost:4321  ·  staff: http://localho
 Tests (with the dev server running and the demo season open):
 
 ```sh
-npm run test:api              # API contract, validation, auth, exports
+npm run test:api              # 31 checks: API contract, validation, auth, exports, unsubscribe
 npm run test:e2e              # real-browser application flow (Playwright + Chromium)
+npm run check                 # TypeScript / Astro diagnostics
 ```
 
 ## Deploy to Cloudflare
@@ -121,11 +136,31 @@ npx wrangler d1 create springrise                 # copy the database_id into wr
 npx wrangler r2 bucket create springrise-documents
 npm run db:migrate:remote
 npx wrangler secret put ADMIN_PASSWORD             # at least 16 characters
+# optional: email — see below
 npm run deploy
 ```
 
 Then add `springrise.org` as a custom domain on the Worker, in the Cloudflare dashboard under Workers → springrise →
 Settings → Domains.
+
+### Email (optional)
+
+The site uses [Resend](https://resend.com) over plain HTTPS. Verify the `springrise.org` sending domain in Resend,
+then:
+
+```sh
+npx wrangler secret put RESEND_API_KEY
+npx wrangler secret put EMAIL_SIGNING_SECRET   # any long random string; signs unsubscribe links
+```
+
+Optional variables (set in `wrangler.jsonc` → `vars`):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `EMAIL_FROM` | `Springrise Foundation <scholarship@springrise.org>` | Sender |
+| `STAFF_NOTIFY_EMAIL` | `scholarship@springrise.org` | New-application alerts |
+| `CONTACT_NOTIFY_EMAIL` | `info@springrise.org` | Contact-form alerts |
+| `SITE_URL` | `https://springrise.org` | Links inside emails |
 
 ## Running the scholarship season (staff)
 
