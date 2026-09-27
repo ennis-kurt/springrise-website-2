@@ -81,9 +81,11 @@ export default function ApplicationForm({ season, documents, preview, maxFile, m
   const idem = useRef<string>("");
   const headingRef = useRef<HTMLHeadingElement>(null);
   const ready = useRef(false);
+  const [hydrated, setHydrated] = useState(false);
 
   /* restore draft */
   useEffect(() => {
+    setHydrated(true);
     (async () => {
       try {
         const raw = localStorage.getItem(draftKey);
@@ -369,7 +371,7 @@ export default function ApplicationForm({ season, documents, preview, maxFile, m
       </aside>
 
       {/* ---------- Form ---------- */}
-      <form class="apply__form" onSubmit={next} noValidate>
+      <form class="apply__form" onSubmit={next} noValidate method="post" action="#">
         {preview && (
           <div class="notice notice--warning apply__preview">
             <span><strong>Preview mode.</strong> Explore every step — nothing will be submitted while this season is not accepting applications.</span>
@@ -576,7 +578,7 @@ export default function ApplicationForm({ season, documents, preview, maxFile, m
 
         <div class="apply__nav">
           {step > 0 ? <button type="button" class="btn btn--ghost" onClick={() => go(step - 1)} disabled={busy}>← Back</button> : <span />}
-          <button type="submit" class={`btn btn--lg ${step === STEPS.length - 1 ? "btn--cobalt" : ""}`} disabled={busy || (step === STEPS.length - 1 && preview)}>
+          <button type="submit" class={`btn btn--lg ${step === STEPS.length - 1 ? "btn--cobalt" : ""}`} disabled={!hydrated || busy || (step === STEPS.length - 1 && preview)}>
             {step === STEPS.length - 1 ? (preview ? "Submission unavailable in preview" : busy ? "Submitting…" : `Submit application`) : `Continue to ${STEPS[step + 1].title.toLowerCase()}`}
             {!busy && <span aria-hidden="true"> →</span>}
           </button>

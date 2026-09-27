@@ -4,6 +4,7 @@ import "@fontsource-variable/geist-mono";
 import "@fontsource/instrument-serif";
 import "../styles/tokens.css";
 import "../styles/admin.css";
+import Mark from "../components/Mark.astro";
 
 export interface Props {
   title: string;
@@ -13,11 +14,11 @@ export interface Props {
 const { title, active } = Astro.props;
 
 const NAV = [
-  { key: "overview", href: "/admin", label: "Overview" },
-  { key: "seasons", href: "/admin/seasons", label: "Seasons" },
-  { key: "applications", href: "/admin/applications", label: "Applications" },
-  { key: "messages", href: "/admin/messages", label: "Messages" },
-  { key: "subscribers", href: "/admin/subscribers", label: "Subscribers" },
+  { key: "overview", href: "/admin", label: "Overview", d: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" },
+  { key: "seasons", href: "/admin/seasons", label: "Seasons", d: "M3.5 5h17v15h-17zM3.5 10h17M8 3v4M16 3v4" },
+  { key: "applications", href: "/admin/applications", label: "Applications", d: "M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h4" },
+  { key: "messages", href: "/admin/messages", label: "Messages", d: "M3 5h18v14H3zM3.5 6.5 12 13l8.5-6.5" },
+  { key: "subscribers", href: "/admin/subscribers", label: "Subscribers", d: "M9 11.2A3.2 3.2 0 1 0 9 4.8a3.2 3.2 0 0 0 0 6.4M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3 3 0 0 1 0 6M18 14c2 .7 3 2.8 3 6" },
 ] as const;
 ---
 
@@ -28,24 +29,29 @@ const NAV = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>{title} · Springrise Staff</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body class="admin">
     <div class="admin-shell">
       <header class="admin-topbar">
-        <a class="admin-wordmark" href="/admin">Springrise <small>Staff</small></a>
+        <a class="admin-wordmark" href="/admin"><Mark size={28} tone="light" /><span>Springrise</span></a>
         <form method="POST" action="/api/admin/logout">
           <button class="btn btn-secondary" type="submit">Log out</button>
         </form>
       </header>
 
       <aside class="admin-sidebar">
-        <a class="admin-wordmark" href="/admin">Springrise <small>Staff</small></a>
+        <a class="admin-wordmark" href="/admin"><Mark size={34} tone="light" /><span>Springrise <small>Staff workspace</small></span></a>
         <nav class="admin-nav" aria-label="Staff sections">
           {NAV.map((item) => (
-            <a href={item.href} aria-current={active === item.key ? "page" : undefined}>{item.label}</a>
+            <a href={item.href} aria-current={active === item.key ? "page" : undefined}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={item.d} /></svg>
+              {item.label}
+            </a>
           ))}
         </nav>
-        <div class="admin-logout">
+        <div class="admin-sidebar__foot admin-logout">
+          <a class="admin-sidebar__site" href="/" target="_blank" rel="noopener">View public site ↗</a>
           <form method="POST" action="/api/admin/logout">
             <button type="submit">Log out</button>
           </form>

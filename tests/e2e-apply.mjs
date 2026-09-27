@@ -12,6 +12,7 @@ const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePa
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
+const hydrated = () => page.waitForSelector("astro-island:not([ssr])", { state: "attached", timeout: 20000 });
 const step = async (label) => { await page.getByRole("button", { name: label }).click(); await page.waitForTimeout(250); };
 const assert = (cond, msg) => { if (!cond) { console.error("✗", msg); process.exitCode = 1; throw new Error(msg); } console.log("✓", msg); };
 
@@ -19,6 +20,7 @@ try {
   await page.goto(`${BASE}/scholarships/${SLUG}/apply`, { waitUntil: "networkidle" });
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: "networkidle" });
+  await hydrated();
 
   // Validation blocks an empty step
   await step(/Continue to study/);
@@ -38,6 +40,7 @@ try {
   // Draft survives a reload
   await page.waitForTimeout(300);
   await page.reload({ waitUntil: "networkidle" });
+  await hydrated();
   await page.waitForTimeout(400);
   assert((await page.inputValue("#f-city")) === "Paterson", "draft restored after reload");
   await step(/Continue to study/);

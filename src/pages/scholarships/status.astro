@@ -134,7 +134,7 @@ import { ORG } from "../../lib/content";
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify(body),
       });
-      const data = await res.json().catch(() => ({}));
+      const data = (await res.json().catch(() => ({}))) as Record<string, any>;
       if (!res.ok) throw new Error(data.error || "We couldn't find an application with that reference and email.");
 
       const status: string = data.status ?? "received";
