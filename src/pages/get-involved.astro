@@ -1,0 +1,168 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import CtaBand from "../components/CtaBand.astro";
+import Icon from "../components/Icon.astro";
+
+const ways = [
+  {
+    icon: "megaphone" as const,
+    title: "Raise awareness",
+    body: "Know a student of Turkish descent who could use tuition support? Share the scholarship listing with them.",
+    action: { kind: "copy" as const, value: "https://springrise.org/scholarships", label: "Copy scholarship link" },
+  },
+  {
+    icon: "clock" as const,
+    title: "Volunteer",
+    body: "Lend an evening a month to application review, events or outreach in your community.",
+    action: { kind: "link" as const, href: "mailto:info@springrise.org?subject=Volunteering", label: "Email us about volunteering" },
+  },
+  {
+    icon: "handshake" as const,
+    title: "Partner with us",
+    body: "We work with schools, community organizations and industry leaders on mentorship and training programs.",
+    action: { kind: "link" as const, href: "#interest", label: "Start a partnership conversation" },
+  },
+  {
+    icon: "heart" as const,
+    title: "Donate",
+    body: "Every gift becomes tuition, paid directly to a student's school — plus support for mentorship.",
+    action: { kind: "link" as const, href: "/donate", label: "See ways to give" },
+  },
+  {
+    icon: "people" as const,
+    title: "Become a mentor",
+    body: "Share what you've learned with a student who's early on the same path you once walked.",
+    action: { kind: "link" as const, href: "#interest", label: "Tell us you're interested" },
+  },
+];
+---
+<BaseLayout title="Get involved" description="Take part. You can make a difference for a student of Turkish descent working toward a degree.">
+  <PageHero
+    eyebrow="Get involved"
+    title="Take part."
+    accent="You can make a difference."
+    lead="Springrise runs on people who show up — to review an application, mentor a student, or simply spread the word. Here's where to start."
+    art="arch"
+  >
+    <a class="btn btn--cobalt" href="#interest">Tell us how you'd like to help <Icon name="arrow" size={18} /></a>
+  </PageHero>
+
+  <section class="section">
+    <div class="container">
+      <div class="ways-grid">
+        {ways.map((w, i) => (
+          <div class="way-card reveal" style={`--d:${(i * 0.06).toFixed(2)}s`}>
+            <span class="way-card__icon"><Icon name={w.icon} size={22} /></span>
+            <h3 class="h3">{w.title}</h3>
+            <p class="muted">{w.body}</p>
+            {w.action.kind === "copy" ? (
+              <button class="btn btn--ghost btn--sm" type="button" data-copy={w.action.value}>
+                <Icon name="copy" size={16} /> <span data-copy-label>{w.action.label}</span>
+              </button>
+            ) : (
+              <a class="link-arrow" href={w.action.href}>{w.action.label} <Icon name="arrow" size={16} /></a>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--paper2">
+    <div class="container">
+      <div class="mentor-grid">
+        <div class="mentor-art reveal" aria-hidden="true">
+          <div class="frame-arch">
+            <img class="photo" src="/images/mentoring.jpg" alt="A mentor helping a student in a lecture hall" loading="lazy" width="720" height="900" />
+          </div>
+        </div>
+        <div class="reveal" style="--d:.1s">
+          <p class="eyebrow">Become a mentor</p>
+          <h2 class="h2" style="margin-top:1rem; max-width:14em;">Be the person <em>who believed in you.</em></h2>
+          <p class="lead" style="margin-top:1.25rem;">Our mentorship program pairs scholarship recipients with people who can offer guidance, encouragement and a little perspective on what comes next. No special credentials required — just time and attention.</p>
+          <a class="btn btn--cobalt" style="margin-top:1.75rem;" href="#interest">Tell us you're interested <Icon name="arrow" size={18} /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="interest">
+    <div class="container">
+      <div class="interest-grid">
+        <div class="reveal">
+          <p class="eyebrow">Volunteer &amp; partnership interest</p>
+          <h2 class="h2" style="margin-top:1rem; max-width:14em;">Let's find the <em>right fit.</em></h2>
+          <p class="lead" style="margin-top:1.25rem;">Tell us a bit about yourself or your organization and how you'd like to be involved. We'll follow up personally.</p>
+        </div>
+        <form class="interest-form reveal" style="--d:.1s" action="/api/contact" method="post" data-ajax data-success="Thank you — we'll be in touch soon.">
+          <div class="honeypot" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+          <div class="field">
+            <label for="gi-topic">I'm interested in</label>
+            <select class="select" id="gi-topic" name="topic" required>
+              <option value="volunteer">Volunteering or mentoring</option>
+              <option value="partnership">Partnering as an organization</option>
+              <option value="general">Something else</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="gi-name">Name</label>
+              <input class="input" id="gi-name" name="name" type="text" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label for="gi-email">Email</label>
+              <input class="input" id="gi-email" name="email" type="email" autocomplete="email" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="gi-phone">Phone <small>(optional)</small></label>
+            <input class="input" id="gi-phone" name="phone" type="tel" autocomplete="tel" />
+          </div>
+          <div class="field">
+            <label for="gi-message">Message</label>
+            <textarea class="textarea" id="gi-message" name="message" required placeholder="A little about you or your organization, and how you'd like to help…"></textarea>
+          </div>
+          <button class="btn btn--cobalt" type="submit">Send <Icon name="arrow" size={18} /></button>
+          <p class="form-msg" role="status" aria-live="polite" data-form-msg></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Prefer to give"
+    accent="right now?"
+    body="Gifts of any size become tuition, paid directly to a school."
+    primary={{ href: "/donate", label: "Give today" }}
+    secondary={{ href: "/about", label: "Learn about us" }}
+  />
+</BaseLayout>
+
+<style>
+  .ways-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr)); gap: 1.5rem; }
+  .way-card { display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.6rem, 3vw, 2.1rem); transition: border-color 0.25s, transform 0.35s var(--ease); }
+  .way-card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+  .way-card__icon { display: inline-flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: 50%; background: var(--paper-2); color: var(--cobalt); margin-bottom: 1.1rem; }
+  .way-card h3 { margin-bottom: 0.5rem; }
+  .way-card .link-arrow, .way-card button[data-copy] { margin-top: auto; padding-top: 1.25rem; align-self: flex-start; color: var(--cobalt); }
+
+  .mentor-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+  .mentor-grid h2 em { color: var(--cobalt); font-style: italic; }
+  .mentor-art .frame-arch { aspect-ratio: 4 / 5; box-shadow: var(--shadow); }
+
+  .interest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: start; }
+  .interest-grid h2 em { color: var(--cobalt); font-style: italic; }
+  .interest-form { display: grid; gap: 1.1rem; background: var(--paper-2); border-radius: var(--radius-lg); padding: clamp(1.75rem, 3vw, 2.5rem); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+  .form-msg { font-size: 0.9rem; color: var(--success); min-height: 1.3em; }
+  .form-msg.is-error { color: var(--danger); }
+
+  @media (max-width: 900px) {
+    .mentor-grid, .interest-grid { grid-template-columns: 1fr; }
+    .mentor-art { max-width: 22rem; }
+  }
+  @media (max-width: 560px) {
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>

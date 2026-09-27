@@ -1,0 +1,21 @@
+---
+import { STATUS_LABELS } from "../../lib/seasons";
+
+export interface Props {
+  status: string;
+}
+const { status } = Astro.props;
+
+const TONES: Record<string, string> = {
+  received: "badge-neutral",
+  under_review: "badge-cobalt",
+  needs_information: "badge-warning",
+  awarded: "badge-success",
+  not_awarded: "badge-danger",
+  withdrawn: "badge-faint",
+};
+const tone = TONES[status] ?? "badge-neutral";
+const label = STATUS_LABELS[status] ?? status;
+---
+
+<span class={`badge ${tone}`}>{label}</span>

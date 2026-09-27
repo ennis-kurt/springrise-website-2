@@ -1,0 +1,28 @@
+---
+// The Springrise mark: an İznik-style tulip rising from a sun on the horizon.
+// Tulip = spring & Turkish heritage; sun = rise; horizon = the ground we stand on.
+interface Props { size?: number; tone?: "color" | "mono" | "light"; class?: string; title?: string; /** tulip only — no sun or horizon */ bare?: boolean }
+const { size = 40, tone = "color", class: cls = "", title, bare = false } = Astro.props;
+const petal = tone === "color" ? "var(--cobalt)" : "currentColor";
+const center = tone === "color" ? "var(--ink)" : "currentColor";
+const sun = tone === "mono" ? "currentColor" : "var(--tulip)";
+const sunOpacity = tone === "mono" ? 0.35 : 1;
+---
+<svg
+  class:list={["mark", cls]}
+  width={size}
+  height={size}
+  viewBox="0 0 64 64"
+  role={title ? "img" : undefined}
+  aria-label={title}
+  aria-hidden={title ? undefined : "true"}
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  {!bare && <path d="M16 57a16 16 0 0 1 32 0Z" fill={sun} opacity={sunOpacity} />}
+  <path d="M32 57V41" stroke={center} stroke-width="2.6" stroke-linecap="round" />
+  <path d="M32 42C22.6 41.2 15.6 33.6 15.2 13.8c5.6 4.9 11.9 12.4 16.8 28.2Z" fill={petal} />
+  <path d="M32 42c9.4-.8 16.4-8.4 16.8-28.2C43.2 18.7 36.9 26.2 32 42Z" fill={petal} />
+  <path d="M32 6c6.2 8.3 8.7 16.8 7.5 24.7C38.6 36.4 35.9 40 32 42.5c-3.9-2.5-6.6-6.1-7.5-11.8C23.3 22.8 25.8 14.3 32 6Z" fill={center} />
+  {!bare && <path d="M8 57h48" stroke={center} stroke-width="2.6" stroke-linecap="round" />}
+</svg>

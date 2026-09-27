@@ -1,0 +1,168 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import CtaBand from "../components/CtaBand.astro";
+import Icon from "../components/Icon.astro";
+import { ORG } from "../lib/content";
+---
+<BaseLayout title="Give" description="Give to Springrise Foundation — gifts become tuition, paid directly to a student's school." headerTone="ink">
+  <PageHero
+    eyebrow="Give"
+    title="Your gift becomes tuition,"
+    accent="paid straight to a school."
+    lead="No overhead story, no middle step — Springrise pays scholarships directly to accredited institutions, one semester at a time."
+    art="none"
+    tone="ink"
+  >
+    <a class="btn btn--light" href="#ways">See ways to give <Icon name="arrow" size={18} /></a>
+    <a class="btn btn--ghost-light" href="#gift-goes">Where your gift goes</a>
+  </PageHero>
+
+  <section class="section" id="ways">
+    <div class="container">
+      <p class="eyebrow reveal">Ways to give</p>
+      <h2 class="h2 reveal" style="margin-top:1rem; max-width:18em;">Three ways to give, <em>today.</em></h2>
+
+      <div class="give-grid">
+        <div class="give-card reveal">
+          <span class="give-card__icon"><Icon name="spark" size={22} /></span>
+          <h3 class="h3">Zelle</h3>
+          <p class="muted">Send directly, no fees. Use the email below as the Zelle recipient.</p>
+          <dl class="give-card__facts">
+            <div><dt class="label">Send to</dt><dd>{ORG.zelle.email}</dd></div>
+            <div><dt class="label">Account name</dt><dd>{ORG.zelle.name}</dd></div>
+          </dl>
+          <button class="btn btn--ghost btn--sm" type="button" data-copy={ORG.zelle.email}>
+            <Icon name="copy" size={16} /> <span data-copy-label>Copy email</span>
+          </button>
+        </div>
+
+        <div class="give-card reveal" style="--d:.08s">
+          <span class="give-card__icon"><Icon name="handshake" size={22} /></span>
+          <h3 class="h3">Employer matching</h3>
+          <p class="muted">Springrise is registered with Benevity. Many employers will match your gift dollar-for-dollar.</p>
+          <ol class="give-card__steps" role="list">
+            <li>Submit your donation receipt in your employer's matching-gift portal.</li>
+            <li>Search for <strong>Springrise Foundation</strong>.</li>
+            <li>Your company sends the match directly through Benevity.</li>
+          </ol>
+        </div>
+
+        <div class="give-card reveal" style="--d:.16s">
+          <span class="give-card__icon"><Icon name="mail" size={22} /></span>
+          <h3 class="h3">Bank transfer or check</h3>
+          <p class="muted">Email us and we'll send transfer details, or mail a check to our P.O. box.</p>
+          <dl class="give-card__facts">
+            <div><dt class="label">Email</dt><dd><a href={`mailto:${ORG.emails.donation}`}>{ORG.emails.donation}</a></dd></div>
+            <div><dt class="label">Mail a check to</dt><dd>{ORG.legalName}<br />{ORG.address.line1}<br />{ORG.address.city}, {ORG.address.region} {ORG.address.postal}</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <p class="coming-soon reveal">
+        <Icon name="clock" size={16} /> Card payments, recurring gifts and Venmo are coming soon — we're working on it.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--paper2" id="gift-goes">
+    <div class="container">
+      <div class="goes-grid">
+        <div class="reveal">
+          <p class="eyebrow">Where your gift goes</p>
+          <h2 class="h2" style="margin-top:1rem; max-width:14em;">Tuition first, <em>always.</em></h2>
+        </div>
+        <ul class="check-list reveal" role="list" style="--d:.1s">
+          <li><Icon name="school" size={20} /><span>Scholarships are paid straight to accredited U.S. colleges and universities, applied as tuition — never to the student.</span></li>
+          <li><Icon name="calendar" size={20} /><span>Awards cover one semester at a time, so students reapply each season they still need support.</span></li>
+          <li><Icon name="people" size={20} /><span>Your gift also supports mentorship — pairing recipients with people who help them navigate the road ahead.</span></li>
+        </ul>
+      </div>
+
+      <div class="tax-note reveal" style="--d:.15s">
+        <Icon name="shield" size={20} />
+        <p>Springrise Foundation is a {ORG.taxStatus}. Gifts are tax-deductible to the extent permitted by law.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="request-grid">
+        <div class="reveal">
+          <p class="eyebrow">Prefer to talk it through?</p>
+          <h2 class="h2" style="margin-top:1rem; max-width:14em;">Request giving <em>information.</em></h2>
+          <p class="lead" style="margin-top:1.25rem;">Tell us a little about what you're looking for and we'll follow up with the right details — bank transfer instructions, matching-gift help, or anything else.</p>
+        </div>
+        <form class="request-form reveal" style="--d:.1s" action="/api/contact" method="post" data-ajax data-success="Thank you — we'll be in touch with giving details soon.">
+          <input type="hidden" name="topic" value="donation" />
+          <div class="honeypot" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+          <div class="field">
+            <label for="donate-name">Name</label>
+            <input class="input" id="donate-name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="donate-email">Email</label>
+            <input class="input" id="donate-email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="donate-phone">Phone <small>(optional)</small></label>
+            <input class="input" id="donate-phone" name="phone" type="tel" autocomplete="tel" />
+          </div>
+          <div class="field">
+            <label for="donate-message">Message</label>
+            <textarea class="textarea" id="donate-message" name="message" required placeholder="I'd like to set up a matching gift…"></textarea>
+          </div>
+          <button class="btn btn--cobalt" type="submit">Request information <Icon name="arrow" size={18} /></button>
+          <p class="form-msg" role="status" aria-live="polite" data-form-msg></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Not ready to give"
+    accent="but want to help?"
+    body="Share the scholarship, volunteer your time, or become a mentor."
+    primary={{ href: "/get-involved", label: "Get involved" }}
+    secondary={{ href: "/about", label: "Learn about us" }}
+  />
+</BaseLayout>
+
+<style>
+  .give-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin-top: clamp(2rem, 4vw, 3rem); }
+  .give-card { display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.75rem, 3vw, 2.25rem); }
+  .give-card__icon { display: inline-flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: 50%; background: var(--paper-2); color: var(--cobalt); margin-bottom: 1.25rem; }
+  .give-card h3 { margin-bottom: 0.5rem; }
+  .give-card__facts { margin-top: 1.25rem; display: grid; gap: 0.85rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+  .give-card__facts dt { color: var(--text-faint); margin-bottom: 0.15rem; }
+  .give-card__facts dd { font-weight: 500; line-height: 1.5; }
+  .give-card__facts a { color: var(--cobalt); }
+  .give-card__steps { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--line); display: grid; gap: 0.65rem; padding-left: 1.1em; }
+  .give-card__steps li { font-size: 0.95rem; line-height: 1.5; }
+  .give-card button[data-copy] { margin-top: auto; padding-top: 1.5rem; align-self: flex-start; }
+
+  .coming-soon { display: flex; align-items: center; gap: 0.6rem; margin-top: 2rem; color: var(--text-muted); font-size: 0.92rem; }
+  .coming-soon svg { flex: none; color: var(--saffron); }
+
+  .goes-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  .goes-grid h2 em { color: var(--cobalt); font-style: italic; }
+  .check-list { display: grid; gap: 1.1rem; }
+  .check-list li { display: flex; gap: 0.85rem; align-items: flex-start; line-height: 1.5; }
+  .check-list li svg { flex: none; margin-top: 0.15rem; color: var(--cobalt); }
+
+  .tax-note { display: flex; gap: 0.85rem; align-items: flex-start; margin-top: clamp(2rem, 4vw, 3rem); padding: 1.25rem 1.5rem; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); max-width: 44rem; }
+  .tax-note svg { flex: none; color: var(--turquoise); margin-top: 0.15rem; }
+
+  .request-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: start; }
+  .request-form { display: grid; gap: 1.1rem; background: var(--paper-2); border-radius: var(--radius-lg); padding: clamp(1.75rem, 3vw, 2.5rem); }
+  .form-msg { font-size: 0.9rem; color: var(--success); min-height: 1.3em; }
+  .form-msg.is-error { color: var(--danger); }
+
+  @media (max-width: 980px) {
+    .give-grid { grid-template-columns: 1fr; max-width: 30rem; }
+  }
+  @media (max-width: 900px) {
+    .goes-grid, .request-grid { grid-template-columns: 1fr; }
+  }
+</style>

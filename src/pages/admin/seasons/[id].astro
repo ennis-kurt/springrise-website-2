@@ -1,0 +1,34 @@
+---
+import { env } from "cloudflare:workers";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import Notice from "../../../components/admin/Notice.astro";
+import SeasonForm from "../../../components/admin/SeasonForm.astro";
+import { getSeason, seasonHasApplications } from "../../../lib/server/db";
+
+const id = Astro.params.id!;
+const season = await getSeason(env.DB, id);
+
+if (!season) {
+  return new Response(null, { status: 404 });
+}
+
+const hasApplications = await seasonHasApplications(env.DB, id);
+const saved = Astro.url.searchParams.get("saved");
+const error = Astro.url.searchParams.get("error");
+---
+
+<AdminLayout title={season.title} active="seasons">
+  <div class="section-heading" style="margin-top:0;">
+    <div>
+      <h1 class="page-title">{season.title}</h1>
+      <p class="page-subtitle">Editing this season's dates, status and public copy. Times are shown in Eastern (America/New_York).</p>
+    </div>
+    <a class="btn btn-secondary" href={`/scholarships`} target="_blank" rel="noopener">View public page ↗</a>
+  </div>
+
+  <Notice saved={saved} error={error} savedMessage="Season saved." />
+
+  <div class="card">
+    <SeasonForm action={`/api/admin/seasons/${season.id}`} season={season} slugLocked={hasApplications} />
+  </div>
+</AdminLayout>

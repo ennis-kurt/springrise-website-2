@@ -1,0 +1,203 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import CtaBand from "../components/CtaBand.astro";
+import Icon from "../components/Icon.astro";
+import { ORG, PROGRAMS, VALUES } from "../lib/content";
+
+const programIcon: Record<string, "school" | "people" | "handshake" | "megaphone"> = {
+  scholarships: "school",
+  mentorship: "people",
+  partnerships: "handshake",
+  advocacy: "megaphone",
+};
+---
+<BaseLayout title="About us" description={ORG.mission}>
+  <PageHero
+    eyebrow="About us"
+    title="Rooted in community,"
+    accent="rising together."
+    lead={ORG.mission}
+    art="arch"
+  >
+    <a class="btn btn--cobalt" href="/scholarships">See open scholarships <Icon name="arrow" size={18} /></a>
+  </PageHero>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="mission-grid">
+        <div class="reveal">
+          <p class="eyebrow">Our mission</p>
+          <h2 class="h2" style="margin-top:1.2rem;">Financial circumstances shouldn't decide <em>who gets to finish school.</em></h2>
+          <p class="lead" style="margin-top:1.5rem;">{ORG.mission}</p>
+          <ul class="fact-strip" role="list">
+            <li>{ORG.taxStatus}</li>
+            <li>Based in {ORG.state}</li>
+            <li>Two seasons a year — Spring &amp; Fall</li>
+            <li>Awarding seasons since Spring 2024</li>
+          </ul>
+        </div>
+        <div class="mission-art reveal" style="--d:.1s" aria-hidden="true">
+          <div class="frame-arch">
+            <img class="photo" src="/images/community.jpg" alt="Two students studying together outdoors on a college campus" loading="lazy" width="720" height="900" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--paper2">
+    <div class="container">
+      <p class="eyebrow reveal">What we believe</p>
+      <h2 class="h2 reveal" style="margin-top:1rem; max-width:16em;">The values behind <em>every decision.</em></h2>
+      <ol class="values-list" role="list">
+        {VALUES.map((v, i) => (
+          <li class="values-list__item reveal" style={`--d:${(i * 0.07).toFixed(2)}s`}>
+            <span class="values-list__num display" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+            <div>
+              <h3 class="h3">{v.title}</h3>
+              <p class="muted values-list__body">{v.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="programs">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">What we do</p>
+        <h2 class="h2" style="margin-top:1rem;">Four ways we open <em>the door to higher education.</em></h2>
+      </div>
+      <div class="programs-grid">
+        {PROGRAMS.map((p, i) => (
+          <div class="program-card reveal" id={p.key !== "scholarships" ? p.key : undefined} style={`--d:${(i * 0.06).toFixed(2)}s`}>
+            <span class="program-card__icon"><Icon name={programIcon[p.key]} size={22} /></span>
+            <h3 class="h3">{p.title}</h3>
+            <p class="muted">{p.body}</p>
+            {p.key === "scholarships" && (
+              <a class="link-arrow" href="/scholarships">See scholarship seasons <Icon name="arrow" size={16} /></a>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight section--paper2">
+    <div class="container">
+      <div class="decide-grid">
+        <div class="reveal">
+          <p class="eyebrow">How awards are decided</p>
+          <h2 class="h2" style="margin-top:1rem; max-width:14em;">A holistic review, <em>every season.</em></h2>
+        </div>
+        <ul class="check-list reveal" role="list" style="--d:.1s">
+          <li><Icon name="check" size={18} /><span>Every application is reviewed by our volunteer Board of Directors.</span></li>
+          <li><Icon name="check" size={18} /><span>We weigh academics alongside financial need, resilience, leadership and community involvement — not GPA alone.</span></li>
+          <li><Icon name="check" size={18} /><span>Awards are paid directly to the student's institution as tuition — never to the student.</span></li>
+          <li><Icon name="check" size={18} /><span>Each application covers one semester. Students apply again each season they need support.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="where-grid">
+        <div class="reveal">
+          <p class="eyebrow">Where we are</p>
+          <h2 class="h2" style="margin-top:1rem;">New Jersey based, <em>reach across the U.S.</em></h2>
+          <p class="lead" style="margin-top:1.25rem;">Springrise Foundation is a New Jersey nonprofit. Our recipients attend accredited institutions across the country — the mail stays local, the impact doesn't.</p>
+          <div class="where-card">
+            <Icon name="pin" size={20} />
+            <address>
+              {ORG.address.line1}<br />
+              {ORG.address.city}, {ORG.address.region} {ORG.address.postal}
+            </address>
+          </div>
+        </div>
+        <div class="connect-card reveal" style="--d:.1s">
+          <p class="eyebrow">Let's connect</p>
+          <h3 class="h3" style="margin-top:.75rem;">Send us a note.</h3>
+          <p class="muted" style="margin-top:.5rem;">General questions, partnership ideas, or just saying hello — we read everything.</p>
+          <form class="connect-form" action="/api/contact" method="post" data-ajax data-success="Thanks — we've received your note and will be in touch soon.">
+            <input type="hidden" name="topic" value="general" />
+            <div class="honeypot" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+            <div class="field">
+              <label for="about-name">Name</label>
+              <input class="input" id="about-name" name="name" type="text" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label for="about-email">Email</label>
+              <input class="input" id="about-email" name="email" type="email" autocomplete="email" required />
+            </div>
+            <div class="field">
+              <label for="about-message">Message</label>
+              <textarea class="textarea" id="about-message" name="message" required></textarea>
+            </div>
+            <button class="btn btn--cobalt" type="submit">Send message <Icon name="arrow" size={18} /></button>
+            <p class="form-msg" role="status" aria-live="polite" data-form-msg></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Ready to help a student"
+    accent="stay in school?"
+    body="Every gift becomes tuition, paid directly to a school. Every hour becomes mentorship."
+    primary={{ href: "/donate", label: "Give today" }}
+    secondary={{ href: "/get-involved", label: "Get involved" }}
+  />
+</BaseLayout>
+
+<style>
+  .mission-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+  .mission-grid h2 em { color: var(--cobalt); font-style: italic; }
+  .fact-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem 0.7rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+  .fact-strip li { display: flex; align-items: center; gap: 0.7rem; font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.03em; color: var(--text-muted); }
+  .fact-strip li:not(:first-child)::before { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--line-strong); flex: none; margin-right: 0.05rem; }
+  .fact-strip li:not(:first-child) { padding-left: 0; }
+  .mission-art .frame-arch { aspect-ratio: 4 / 5; box-shadow: var(--shadow); }
+
+  .section-head { max-width: 40rem; margin-bottom: clamp(2rem, 5vw, 3.5rem); }
+  .section-head h2 em { color: var(--cobalt); font-style: italic; }
+
+  .values-list { margin-top: clamp(2rem, 5vw, 3rem); }
+  .values-list__item { display: grid; grid-template-columns: 4.5rem 1fr; gap: 1.75rem; padding-block: 1.75rem; border-top: 1px solid var(--line); }
+  .values-list__item:last-child { border-bottom: 1px solid var(--line); }
+  .values-list__num { font-size: clamp(2rem, 4vw, 2.75rem); color: var(--cobalt); line-height: 1; }
+  .values-list__body { margin-top: 0.4rem; max-width: 42em; }
+
+  .programs-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; margin-top: clamp(1.5rem, 4vw, 2.5rem); }
+  .program-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.75rem, 3vw, 2.5rem); transition: border-color 0.25s, transform 0.35s var(--ease); }
+  .program-card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+  .program-card__icon { display: inline-flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: 50%; background: var(--paper-2); color: var(--cobalt); margin-bottom: 1.25rem; }
+  .program-card h3 { margin-bottom: 0.6rem; }
+  .program-card .link-arrow { margin-top: 1.1rem; color: var(--cobalt); }
+
+  .decide-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  .decide-grid h2 em { color: var(--cobalt); font-style: italic; }
+  .check-list { display: grid; gap: 1.1rem; }
+  .check-list li { display: flex; gap: 0.85rem; align-items: flex-start; line-height: 1.5; }
+  .check-list li svg { flex: none; margin-top: 0.2rem; color: var(--turquoise); }
+
+  .where-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  .where-grid h2 em { color: var(--cobalt); font-style: italic; }
+  .where-card { display: flex; gap: 0.85rem; align-items: flex-start; margin-top: 2rem; padding: 1.25rem 1.5rem; background: var(--paper-2); border-radius: var(--radius); }
+  .where-card svg { flex: none; color: var(--cobalt); margin-top: 0.15rem; }
+  .where-card address { font-style: normal; line-height: 1.6; }
+
+  .connect-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.75rem, 3vw, 2.5rem); box-shadow: var(--shadow); }
+  .connect-form { display: grid; gap: 1.1rem; margin-top: 1.5rem; position: relative; }
+  .form-msg { font-size: 0.9rem; color: var(--success); min-height: 1.3em; }
+  .form-msg.is-error { color: var(--danger); }
+
+  @media (max-width: 900px) {
+    .mission-grid, .decide-grid, .where-grid { grid-template-columns: 1fr; }
+    .mission-art { order: -1; max-width: 22rem; }
+    .programs-grid { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,25 @@
+---
+import Mark from "./Mark.astro";
+interface Props { tone?: "color" | "light"; class?: string }
+const { tone = "color", class: cls = "" } = Astro.props;
+---
+<a href="/" class:list={["logo", `logo--${tone}`, cls]} aria-label="Springrise Foundation — home">
+  <Mark size={38} tone={tone === "light" ? "light" : "color"} />
+  <span class="logo__word">
+    <span class="logo__name">Springrise</span>
+    <span class="logo__sub">Foundation</span>
+  </span>
+</a>
+
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 0.6rem; color: var(--ink); text-decoration: none; }
+  .logo--light { color: var(--paper); }
+  .logo__word { display: grid; line-height: 1; }
+  .logo__name { font-family: var(--font-display); font-size: 1.72rem; letter-spacing: -0.01em; }
+  .logo__sub {
+    font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.34em; text-transform: uppercase;
+    margin-top: 0.2rem; opacity: 0.7;
+  }
+  .logo:hover :global(.mark) { transform: translateY(-1px) rotate(-2deg); }
+  .logo :global(.mark) { transition: transform 0.5s var(--ease); flex: none; }
+</style>

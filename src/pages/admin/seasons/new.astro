@@ -1,0 +1,18 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import Notice from "../../../components/admin/Notice.astro";
+import SeasonForm from "../../../components/admin/SeasonForm.astro";
+
+const error = Astro.url.searchParams.get("error");
+---
+
+<AdminLayout title="New season" active="seasons">
+  <h1 class="page-title">New season</h1>
+  <p class="page-subtitle">Set up a new scholarship season. It starts as a draft and is never shown publicly until you set its status to Published.</p>
+
+  <Notice error={error} />
+
+  <div class="card">
+    <SeasonForm action="/api/admin/seasons" />
+  </div>
+</AdminLayout>

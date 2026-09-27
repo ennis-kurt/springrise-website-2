@@ -1,0 +1,66 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ApplicationForm from "../../../components/apply/ApplicationForm.tsx";
+import Icon from "../../../components/Icon.astro";
+import { getSiteState } from "../../../lib/site";
+import { fmtDateTime } from "../../../lib/seasons";
+import { DOCUMENTS, MAX_FILE_BYTES, MAX_TOTAL_BYTES, ORG } from "../../../lib/content";
+import "../../../styles/apply.css";
+
+const site = await getSiteState();
+const season = site.seasons.find((s) => s.slug === Astro.params.slug);
+if (!season) return Astro.rewrite("/404");
+
+const wantsPreview = Astro.url.searchParams.has("preview");
+const isOpen = season.state === "open";
+const showForm = isOpen || wantsPreview;
+---
+<BaseLayout title={`Apply — ${season.title}`} description={`Apply for the ${season.title}.`} site={site} noindex>
+  <section class="apply-page">
+    <div class="container">
+      <header class="apply-page__head">
+        <a class="back" href={`/scholarships/${season.slug}`}><Icon name="arrow-left" size={16} /> {season.term} {season.year} details</a>
+        <p class="eyebrow">{season.title}</p>
+        <h1 class="display">Your story <em>starts here.</em></h1>
+        {showForm && <p class="lead">Five short steps. Take your time — everything is saved on this device as you go.</p>}
+      </header>
+
+      {showForm ? (
+        <ApplicationForm
+          client:load
+          season={{ id: season.id, slug: season.slug, title: season.title, term: season.term, year: season.year, closesLabel: fmtDateTime(season.closes_at) }}
+          documents={DOCUMENTS.map((d) => ({ ...d }))}
+          preview={!isOpen}
+          maxFile={MAX_FILE_BYTES}
+          maxTotal={MAX_TOTAL_BYTES}
+        />
+      ) : (
+        <div class="closed-card">
+          <p class="chip"><span class:list={["dot", `dot--${season.state}`]}></span>{season.state === "upcoming" ? "Not open yet" : "Closed"}</p>
+          <h2 class="h2">{season.state === "upcoming" ? <>Applications open <em>{fmtDateTime(season.opens_at)}</em>.</> : <>Applications for {season.term} {season.year} <em>have closed.</em></>}</h2>
+          <p class="muted">
+            {season.state === "upcoming"
+              ? "You can preview every step of the application now and prepare your documents."
+              : <>If you need to send additional documents for a submitted application, email <a href={`mailto:${ORG.emails.scholarship}`}>{ORG.emails.scholarship}</a> with your reference number.</>}
+          </p>
+          <div class="closed-card__actions">
+            <a class="btn btn--cobalt" href={`/scholarships/${season.slug}/apply?preview=1`}>Preview the application <Icon name="arrow" size={18} /></a>
+            <a class="btn btn--ghost" href="/scholarships">Current season</a>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .apply-page { padding-top: clamp(1.5rem, 3vw, 3rem); padding-bottom: clamp(4rem, 8vw, 7rem); }
+  .apply-page__head { display: grid; gap: 1rem; max-width: 50rem; margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+  .apply-page__head h1 em { color: var(--cobalt); }
+  .back { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; color: var(--text-muted); text-decoration: none; margin-bottom: 0.75rem; }
+  .back:hover { color: var(--cobalt); }
+  .closed-card { display: grid; gap: 1.25rem; justify-items: start; max-width: 46rem; padding: clamp(2rem, 4vw, 3.5rem); border-radius: var(--radius-lg); background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow); }
+  .closed-card h2 em { color: var(--cobalt); }
+  .closed-card a:not(.btn) { color: var(--cobalt); }
+  .closed-card__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+</style>

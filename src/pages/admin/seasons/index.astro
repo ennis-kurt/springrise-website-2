@@ -1,0 +1,45 @@
+---
+import { env } from "cloudflare:workers";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import SeasonBadge from "../../../components/admin/SeasonBadge.astro";
+import { listSeasonsWithCounts } from "../../../lib/server/db";
+import { fmtDateTime } from "../../../lib/seasons";
+
+const seasons = await listSeasonsWithCounts(env.DB);
+---
+
+<AdminLayout title="Seasons" active="seasons">
+  <div class="section-heading" style="margin-top:0;">
+    <div>
+      <h1 class="page-title">Seasons</h1>
+      <p class="page-subtitle">Every scholarship season, including drafts — only published seasons appear on the public site.</p>
+    </div>
+    <a class="btn btn-primary btn-lg" href="/admin/seasons/new">New season</a>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Season</th>
+          <th>Status</th>
+          <th>Opens</th>
+          <th>Closes</th>
+          <th>Applications</th>
+        </tr>
+      </thead>
+      <tbody>
+        {seasons.length === 0 && <tr><td colspan="5" class="table-empty">No seasons yet.</td></tr>}
+        {seasons.map((season) => (
+          <tr>
+            <td><a class="link-quiet" href={`/admin/seasons/${season.id}`}>{season.title}</a></td>
+            <td><SeasonBadge season={season} /></td>
+            <td>{fmtDateTime(season.opens_at)}</td>
+            <td>{fmtDateTime(season.closes_at)}</td>
+            <td>{season.application_count}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>

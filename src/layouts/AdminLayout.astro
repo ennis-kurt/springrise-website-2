@@ -1,0 +1,62 @@
+---
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
+import "@fontsource/instrument-serif";
+import "../styles/tokens.css";
+import "../styles/admin.css";
+
+export interface Props {
+  title: string;
+  active?: "overview" | "seasons" | "applications" | "messages" | "subscribers";
+}
+
+const { title, active } = Astro.props;
+
+const NAV = [
+  { key: "overview", href: "/admin", label: "Overview" },
+  { key: "seasons", href: "/admin/seasons", label: "Seasons" },
+  { key: "applications", href: "/admin/applications", label: "Applications" },
+  { key: "messages", href: "/admin/messages", label: "Messages" },
+  { key: "subscribers", href: "/admin/subscribers", label: "Subscribers" },
+] as const;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>{title} · Springrise Staff</title>
+  </head>
+  <body class="admin">
+    <div class="admin-shell">
+      <header class="admin-topbar">
+        <a class="admin-wordmark" href="/admin">Springrise <small>Staff</small></a>
+        <form method="POST" action="/api/admin/logout">
+          <button class="btn btn-secondary" type="submit">Log out</button>
+        </form>
+      </header>
+
+      <aside class="admin-sidebar">
+        <a class="admin-wordmark" href="/admin">Springrise <small>Staff</small></a>
+        <nav class="admin-nav" aria-label="Staff sections">
+          {NAV.map((item) => (
+            <a href={item.href} aria-current={active === item.key ? "page" : undefined}>{item.label}</a>
+          ))}
+        </nav>
+        <div class="admin-logout">
+          <form method="POST" action="/api/admin/logout">
+            <button type="submit">Log out</button>
+          </form>
+        </div>
+      </aside>
+
+      <div class="admin-main">
+        <main class="admin-content">
+          <slot />
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

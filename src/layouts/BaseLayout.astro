@@ -1,0 +1,105 @@
+---
+import "@fontsource/instrument-serif/400.css";
+import "@fontsource/instrument-serif/400-italic.css";
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { getSiteState } from "../lib/site";
+import { ORG } from "../lib/content";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Pre-fetched site state, to avoid a second query when the page already has it */
+  site?: Awaited<ReturnType<typeof getSiteState>>;
+  headerTone?: "paper" | "ink";
+  noindex?: boolean;
+  image?: string;
+}
+const {
+  title,
+  description = ORG.mission,
+  headerTone = "paper",
+  noindex = false,
+  image = "/og.png",
+} = Astro.props;
+const site = Astro.props.site ?? (await getSiteState());
+const fullTitle = title ? `${title} — Springrise Foundation` : "Springrise Foundation — Where potential rises";
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+const ogImage = new URL(image, Astro.site ?? Astro.url).href;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  name: ORG.name,
+  legalName: ORG.legalName,
+  url: "https://springrise.org",
+  logo: "https://springrise.org/favicon.svg",
+  email: ORG.emails.info,
+  telephone: "+1-973-804-9082",
+  nonprofitStatus: "Nonprofit501c3",
+  address: { "@type": "PostalAddress", postOfficeBoxNumber: "55", addressLocality: "Denville", addressRegion: "NJ", postalCode: "07834", addressCountry: "US" },
+  description: ORG.mission,
+};
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#f7f2e9" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Springrise Foundation" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>document.documentElement.classList.replace("no-js", "js");</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header current={site.current} tone={headerTone} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer current={site.current} />
+    <script>
+      // Scroll reveal
+      const els = document.querySelectorAll<HTMLElement>(".reveal");
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          (entries) => entries.forEach((e) => {
+            if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+          }),
+          { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
+        );
+        els.forEach((el) => io.observe(el));
+      } else {
+        els.forEach((el) => el.classList.add("is-in"));
+      }
+      // Copy-to-clipboard buttons: <button data-copy="text">
+      document.addEventListener("click", async (ev) => {
+        const btn = (ev.target as HTMLElement).closest<HTMLElement>("[data-copy]");
+        if (!btn) return;
+        try {
+          await navigator.clipboard.writeText(btn.dataset.copy!);
+          const label = btn.querySelector("[data-copy-label]");
+          if (label) {
+            const prev = label.textContent;
+            label.textContent = "Copied";
+            setTimeout(() => (label.textContent = prev), 1800);
+          }
+        } catch { /* clipboard unavailable */ }
+      });
+    </script>
+  </body>
+</html>

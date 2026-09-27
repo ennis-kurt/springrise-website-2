@@ -1,0 +1,146 @@
+---
+import Mark from "./Mark.astro";
+import Icon from "./Icon.astro";
+import { ORG } from "../lib/content";
+import type { PublicSeason } from "../lib/site";
+interface Props { current: PublicSeason | null }
+const { current } = Astro.props;
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-signup">
+        <p class="eyebrow">Season alerts</p>
+        <h2 class="h2">Be the first to know <em>when applications open.</em></h2>
+        <form class="signup" action="/api/subscribe" method="post" data-ajax data-success="You're on the list. We'll email you when the next season opens.">
+          <input type="hidden" name="source" value="footer" />
+          <div class="honeypot" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+          <label class="visually-hidden" for="footer-email">Email address</label>
+          <input class="signup__input" id="footer-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
+          <button class="btn btn--light" type="submit">Notify me <Icon name="arrow" size={18} /></button>
+          <p class="signup__msg" role="status" aria-live="polite" data-form-msg></p>
+        </form>
+      </div>
+      <div class="footer-cols">
+        <nav aria-label="Foundation">
+          <p class="label">Foundation</p>
+          <ul role="list">
+            <li><a href="/about">About us</a></li>
+            <li><a href="/get-involved">Get involved</a></li>
+            <li><a href="/donate">Donate</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Scholarships">
+          <p class="label">Scholarships</p>
+          <ul role="list">
+            {current && <li><a href={`/scholarships/${current.slug}`}>{current.term} {current.year} season</a></li>}
+            <li><a href="/scholarships#eligibility">Eligibility</a></li>
+            <li><a href="/scholarships#faq">Questions</a></li>
+            <li><a href="/scholarships/status">Check application status</a></li>
+          </ul>
+        </nav>
+        <div>
+          <p class="label">Reach us</p>
+          <address>
+            <a href={`mailto:${ORG.emails.info}`}>{ORG.emails.info}</a><br />
+            <a href={`mailto:${ORG.emails.scholarship}`}>{ORG.emails.scholarship}</a><br />
+            <a href={ORG.phoneHref}>{ORG.phone}</a><br />
+            <span class="footer-muted">{ORG.address.line1}<br />{ORG.address.city}, {ORG.address.region} {ORG.address.postal}</span>
+          </address>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© {year} {ORG.legalName}. A {ORG.taxStatus} — gifts are tax-deductible to the extent permitted by law.</p>
+      <p class="footer-links"><a href="/privacy">Privacy</a><a href="/admin">Staff sign-in</a></p>
+    </div>
+  </div>
+  <div class="footer-word" aria-hidden="true">
+    <span>Springrise</span>
+    <Mark size={200} tone="light" class="footer-word__mark" />
+  </div>
+</footer>
+
+<style>
+  .site-footer { position: relative; background: var(--ink); color: var(--paper); padding-top: clamp(4rem, 8vw, 7.5rem); overflow: hidden; }
+  .footer-top { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(3rem, 6vw, 6rem); }
+  .footer-signup .eyebrow { color: rgb(247 242 233 / 0.65); }
+  .footer-signup h2 { margin-top: 1.2rem; max-width: 12em; }
+  .footer-signup h2 em { color: var(--saffron); }
+  .signup { position: relative; display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.25rem; max-width: 34rem; }
+  .signup__input {
+    flex: 1 1 16rem; min-height: 3.25rem; padding: 0.8rem 1.35rem; border-radius: var(--radius-pill);
+    background: rgb(255 255 255 / 0.06); border: 1px solid rgb(255 255 255 / 0.22); color: var(--paper);
+  }
+  .signup__input::placeholder { color: rgb(247 242 233 / 0.45); }
+  .signup__input:focus { outline: none; border-color: var(--saffron); background: rgb(255 255 255 / 0.1); }
+  .signup__msg { flex-basis: 100%; font-size: 0.92rem; min-height: 1.4em; color: var(--turquoise-soft); }
+  .signup__msg.is-error { color: #ffb4a6; }
+  .footer-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; align-content: start; padding-top: 0.5rem; }
+  .footer-cols .label { color: rgb(247 242 233 / 0.55); margin-bottom: 1.1rem; }
+  .footer-cols ul { display: grid; gap: 0.6rem; }
+  .footer-cols a { text-decoration: none; opacity: 0.92; transition: color 0.2s; }
+  .footer-cols a:hover { color: var(--saffron); }
+  address { font-style: normal; line-height: 1.9; font-size: 0.95rem; }
+  .footer-muted { color: rgb(247 242 233 / 0.6); display: inline-block; margin-top: 0.4rem; line-height: 1.5; }
+  .footer-bottom {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; margin-top: clamp(3.5rem, 6vw, 6rem);
+    padding-top: 1.5rem; border-top: 1px solid rgb(255 255 255 / 0.12); font-size: 0.85rem; color: rgb(247 242 233 / 0.6);
+  }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { text-decoration: none; }
+  .footer-links a:hover { color: var(--paper); }
+  .footer-word {
+    position: relative; display: flex; align-items: flex-end; justify-content: center;
+    margin-top: 2rem; height: clamp(5rem, 17vw, 17rem); overflow: hidden; pointer-events: none;
+  }
+  .footer-word span {
+    font-family: var(--font-display); font-size: clamp(6rem, 25vw, 26rem); line-height: 0.74; letter-spacing: -0.045em;
+    color: transparent; -webkit-text-stroke: 1px rgb(247 242 233 / 0.22); transform: translateY(12%); white-space: nowrap;
+  }
+  .footer-word :global(.footer-word__mark) {
+    position: absolute; left: 50%; bottom: -12%; width: clamp(5rem, 14vw, 13rem); height: auto;
+    transform: translateX(-50%); opacity: 0;
+  }
+  @media (max-width: 900px) {
+    .footer-top { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .footer-cols { grid-template-columns: 1fr 1fr; }
+    .footer-cols > div { grid-column: 1 / -1; }
+  }
+</style>
+
+<script>
+  // Progressive enhancement for simple forms: <form data-ajax data-success="…">
+  document.querySelectorAll<HTMLFormElement>("form[data-ajax]").forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const msg = form.querySelector<HTMLElement>("[data-form-msg]");
+      const btn = form.querySelector<HTMLButtonElement>("button[type=submit]");
+      const body = Object.fromEntries(new FormData(form).entries());
+      btn?.setAttribute("disabled", "");
+      msg?.classList.remove("is-error");
+      if (msg) msg.textContent = "Sending…";
+      try {
+        const res = await fetch(form.action, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
+        if (msg) msg.textContent = form.dataset.success || "Thank you.";
+        form.reset();
+        form.dispatchEvent(new CustomEvent("ajax:success", { detail: data }));
+      } catch (err) {
+        if (msg) { msg.textContent = (err as Error).message; msg.classList.add("is-error"); }
+      } finally {
+        btn?.removeAttribute("disabled");
+      }
+    });
+  });
+</script>

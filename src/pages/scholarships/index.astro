@@ -1,0 +1,186 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Icon from "../../components/Icon.astro";
+import SeasonCard from "../../components/SeasonCard.astro";
+import Requirements from "../../components/scholarship/Requirements.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import TilePattern from "../../components/TilePattern.astro";
+import { getSiteState } from "../../lib/site";
+import { fmtDate, fmtDateTime, paragraphs } from "../../lib/seasons";
+import { ORG } from "../../lib/content";
+
+const site = await getSiteState();
+const { current, seasons } = site;
+const hasNext = seasons.some((s) => s.state !== "closed");
+const faqs = [
+  { q: "When can I apply?", a: "We run two seasons a year — one for the Spring semester and one for the Fall semester. Each season has its own application window, shown on this page. Join the season alerts list and we'll email you when the next one opens." },
+  { q: "I'm a high-school senior. Can I apply?", a: "Yes, if you've been accepted to an accredited U.S. college or university. Incoming first-year students need a cumulative high-school GPA of at least 3.5 (on a 4.0 scale) and an SAT score of at least 1350." },
+  { q: "My GPA is below 3.0. Should I still apply?", a: "A lower GPA may be considered only in extremely limited circumstances, and only once per applicant. Explain your circumstances in your personal statement so the Board can consider them." },
+  { q: "How much is an award?", a: "Award amounts vary. The Board of Directors decides each award based on socioeconomic challenges, financial need, academic performance, tuition cost, references and community engagement — and on the funds available that season." },
+  { q: "Will the money be paid to me?", a: "No. Scholarships are paid directly to your institution as tuition. Request only the tuition balance that remains after other scholarships and grants, excluding housing, health insurance and other non-tuition costs." },
+  { q: "Do I need to apply every semester?", a: "Yes. Each application covers one semester. To be considered again, apply in the next season. Recipients must keep making progress toward their degree, and a failed course can't be funded a second time." },
+  { q: "Can I save my application and finish later?", a: "Yes. The online application saves your answers and uploaded PDFs on your device as you go. Come back on the same device and browser to pick up where you left off." },
+  { q: "I have a documented disability. Is there anything different?", a: "You can request an individualized, holistic review. It considers your academics alongside personal circumstances, socioeconomic disadvantage, resilience, leadership, community involvement and commitment to education. Upload supporting documentation with your application." },
+  { q: "How do I check on my application or send more documents?", a: "Use the status page with your reference number and email. To send additional documents, email scholarship@springrise.org and include your reference." },
+];
+const past = seasons.filter((s) => s.id !== current?.id);
+---
+<BaseLayout title="Scholarships" description="Seasonal tuition scholarships for students of Turkish descent in U.S. higher education — eligibility, documents, deadlines and how to apply." site={site}>
+  <section class="sch-hero">
+    <div class="container sch-hero__grid">
+      <div class="sch-hero__text">
+        <p class="eyebrow reveal">Tuition scholarships</p>
+        <h1 class="display reveal" style="--d:.06s">Stay in school. <em>We'll help with tuition.</em></h1>
+        <p class="lead reveal" style="--d:.12s">
+          Each Spring and Fall, Springrise awards need-based tuition scholarships to students of Turkish descent at
+          accredited U.S. colleges and universities. Awards are paid straight to your school — one semester at a time.
+        </p>
+        <nav class="sch-hero__jump reveal" style="--d:.18s" aria-label="On this page">
+          <a href="#eligibility">Eligibility</a><a href="#documents">Documents</a><a href="#terms">Award terms</a><a href="#faq">Questions</a><a href="/scholarships/status">Check status</a>
+        </nav>
+      </div>
+      <div class="sch-hero__card reveal" style="--d:.12s">
+        <SeasonCard season={current} hasNext={hasNext} variant="float" />
+      </div>
+    </div>
+  </section>
+
+  {current && (
+    <section class="announce">
+      <div class="container">
+        <article class="announce__card reveal">
+          <TilePattern id="announce-tile" color="var(--paper)" opacity={0.08} />
+          <div class="announce__main">
+            <p class="eyebrow">{current.state === "closed" ? "Latest season" : "Season announcement"}</p>
+            <h2 class="h2">{current.title}</h2>
+            {current.summary && <p class="announce__summary">{current.summary}</p>}
+            {paragraphs(current.announcement).map((p) => <p class="announce__p">{p}</p>)}
+            <a class="btn btn--light" href={`/scholarships/${current.slug}`}>Season details <Icon name="arrow" size={18} /></a>
+          </div>
+          <dl class="announce__dates">
+            <div><dt>Applications open</dt><dd>{current.opens_at ? fmtDateTime(current.opens_at) : "To be announced"}</dd></div>
+            <div><dt>Deadline</dt><dd>{current.closes_at ? fmtDateTime(current.closes_at) : "To be announced"}</dd></div>
+            {current.decision_at && <div><dt>Decisions expected</dt><dd>{fmtDate(current.decision_at)}</dd></div>}
+            <div><dt>Questions</dt><dd><a href={`mailto:${ORG.emails.scholarship}`}>{ORG.emails.scholarship}</a></dd></div>
+          </dl>
+        </article>
+      </div>
+    </section>
+  )}
+
+  <Requirements eligibility={current?.eligibility} requirements={current?.requirements} />
+
+  <section class="section section--paper2 faq" id="faq">
+    <div class="container faq__grid">
+      <header>
+        <p class="eyebrow reveal">Questions</p>
+        <h2 class="h1 reveal" style="--d:.06s">Good questions, <em>straight answers.</em></h2>
+        <p class="muted reveal" style="--d:.12s">Still unsure? Email <a href={`mailto:${ORG.emails.scholarship}`}>{ORG.emails.scholarship}</a> or call <a href={ORG.phoneHref}>{ORG.phone}</a>.</p>
+      </header>
+      <div class="faq__list">
+        {faqs.map((f, i) => (
+          <details class="qa reveal" style={`--d:${i * 0.03}s`} open={i === 0}>
+            <summary><span>{f.q}</span><span class="qa__icon" aria-hidden="true"></span></summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {past.length > 0 && (
+    <section class="section section--tight archive">
+      <div class="container">
+        <div class="archive__head">
+          <p class="eyebrow reveal">Season archive</p>
+          <h2 class="h2 reveal" style="--d:.06s">Every season <em>since 2024.</em></h2>
+        </div>
+        <ul class="archive__list" role="list">
+          {past.map((s) => (
+            <li class="reveal">
+              <a href={`/scholarships/${s.slug}`}>
+                <span class="archive__title">{s.term} <em>{s.year}</em></span>
+                <span class="archive__name muted">{s.title}</span>
+                <span class:list={["chip"]}><span class:list={["dot", `dot--${s.state}`]}></span>{s.state === "open" ? "Open" : s.state === "upcoming" ? "Upcoming" : "Closed"}</span>
+                <Icon name="arrow-up-right" size={20} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <CtaBand
+    title="Know a student who should apply?"
+    accent="Pass it on."
+    body="Share this page with students of Turkish descent at U.S. colleges — or join the list to hear when applications open."
+    primary={{ href: "/get-involved", label: "Ways to help" }}
+    secondary={{ href: "#footer-email", label: "Get season alerts" }}
+  />
+</BaseLayout>
+
+<style>
+  .sch-hero { padding-top: clamp(2.5rem, 5vw, 5rem); padding-bottom: clamp(3rem, 6vw, 5.5rem); }
+  .sch-hero__grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.8fr); gap: clamp(2rem, 5vw, 6rem); align-items: end; }
+  .sch-hero h1 { margin-top: 1.4rem; }
+  .sch-hero h1 em { color: var(--cobalt); display: block; }
+  .sch-hero .lead { margin-top: 1.6rem; }
+  .sch-hero__jump { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+  .sch-hero__jump a { padding: 0.5rem 0.95rem; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font-size: 0.9rem; text-decoration: none; transition: all 0.25s; }
+  .sch-hero__jump a:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  @media (max-width: 900px) { .sch-hero__grid { grid-template-columns: 1fr; } .sch-hero__card { max-width: 26rem; } }
+
+  .announce__card {
+    position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr); gap: clamp(2rem, 5vw, 5rem);
+    padding: clamp(2rem, 5vw, 4rem); border-radius: var(--radius-lg); background: var(--cobalt); color: var(--white);
+  }
+  .announce__main, .announce__dates { position: relative; }
+  .announce__main { display: grid; gap: 1.1rem; justify-items: start; align-content: start; }
+  .announce__main .eyebrow { color: rgb(255 255 255 / 0.75); }
+  .announce__summary { font-size: var(--fs-lead); line-height: 1.45; }
+  .announce__p { color: rgb(255 255 255 / 0.82); max-width: 40rem; }
+  .announce__main .btn { margin-top: 0.75rem; }
+  .announce__dates { display: grid; align-content: start; border-top: 1px solid rgb(255 255 255 / 0.25); }
+  .announce__dates div { display: grid; gap: 0.2rem; padding: 1.1rem 0; border-bottom: 1px solid rgb(255 255 255 / 0.25); }
+  .announce__dates dt { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgb(255 255 255 / 0.7); }
+  .announce__dates dd { font-family: var(--font-display); font-size: 1.45rem; line-height: 1.2; }
+  .announce__dates a { color: inherit; }
+  @media (max-width: 900px) { .announce__card { grid-template-columns: 1fr; } }
+
+  .faq__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 6vw, 7rem); align-items: start; }
+  .faq__grid header { position: sticky; top: 7rem; display: grid; gap: 1.1rem; }
+  .faq__grid header em { color: var(--cobalt); }
+  .faq__grid header a { color: var(--cobalt); }
+  .faq__list { border-top: 1px solid var(--line-strong); }
+  .qa { border-bottom: 1px solid var(--line-strong); }
+  .qa summary {
+    display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.4rem 0; cursor: pointer; list-style: none;
+    font-family: var(--font-display); font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.7rem); line-height: 1.2;
+  }
+  .qa summary::-webkit-details-marker { display: none; }
+  .qa__icon { position: relative; flex: none; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 1px solid var(--line-strong); transition: all 0.35s var(--ease); }
+  .qa__icon::before, .qa__icon::after { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 1.5px; background: currentColor; transform: translate(-50%, -50%); transition: transform 0.35s var(--ease); }
+  .qa__icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+  .qa[open] .qa__icon { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .qa[open] .qa__icon::after { transform: translate(-50%, -50%) rotate(0deg); }
+  .qa summary:hover .qa__icon { border-color: var(--ink); }
+  .qa p { padding: 0 3.5rem 1.6rem 0; color: var(--text-muted); max-width: 44rem; }
+  @media (max-width: 900px) { .faq__grid { grid-template-columns: 1fr; } .faq__grid header { position: static; } .qa p { padding-right: 0; } }
+
+  .archive__head { margin-bottom: 2rem; display: grid; gap: 1rem; }
+  .archive__head em { color: var(--cobalt); }
+  .archive__list { list-style: none; padding: 0; border-top: 1px solid var(--line-strong); }
+  .archive__list a {
+    display: grid; grid-template-columns: 12rem 1fr auto auto; gap: 1.5rem; align-items: center; padding: 1.1rem 0.5rem;
+    border-bottom: 1px solid var(--line-strong); text-decoration: none; transition: padding 0.4s var(--ease), background-color 0.3s;
+  }
+  .archive__list a:hover { background: var(--white); padding-inline: 1.25rem; }
+  .archive__title { font-family: var(--font-display); font-size: 1.8rem; line-height: 1; }
+  .archive__title em { color: var(--text-muted); }
+  @media (max-width: 640px) {
+    .archive__list a { grid-template-columns: 1fr auto; }
+    .archive__name { display: none; }
+    .archive__list a > :global(svg) { display: none; }
+  }
+</style>

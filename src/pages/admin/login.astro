@@ -1,0 +1,45 @@
+---
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
+import "@fontsource/instrument-serif";
+import "../../styles/tokens.css";
+import "../../styles/admin.css";
+
+const nextParam = Astro.url.searchParams.get("next") ?? "/admin";
+const next = nextParam.startsWith("/admin") ? nextParam : "/admin";
+const hasError = Astro.url.searchParams.get("error") === "1";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Staff sign in · Springrise</title>
+  </head>
+  <body class="admin" style="display:flex; align-items:center; justify-content:center; min-height:100vh;">
+    <div class="card" style="width: min(26rem, 92vw);">
+      <p class="label" style="margin-bottom: 0.5rem;">Springrise · Staff</p>
+      <h1 class="page-title" style="font-size: 1.9rem;">Sign in</h1>
+      <p class="page-subtitle">Staff workspace access only.</p>
+
+      {hasError && (
+        <div class="notice notice-error" role="alert">
+          <span>That password wasn't correct. Please try again.</span>
+        </div>
+      )}
+
+      <form method="POST" action="/api/admin/login">
+        <input type="hidden" name="next" value={next} />
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required autofocus autocomplete="current-password" />
+        </div>
+        <div class="form-actions" style="border-top:none; padding-top:0; margin-top:0.5rem;">
+          <button class="btn btn-primary btn-lg" type="submit">Sign in</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

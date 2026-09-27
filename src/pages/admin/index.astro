@@ -1,0 +1,126 @@
+---
+import { env } from "cloudflare:workers";
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import StatusBadge from "../../components/admin/StatusBadge.astro";
+import {
+  countApplicationsByStatus,
+  countMessagesByStatus,
+  countSubscribers,
+  listPublicSeasons,
+  listRecentApplications,
+} from "../../lib/server/db";
+import { featuredSeason, seasonState, fmtDateTime, daysUntil, STATUS_LABELS } from "../../lib/seasons";
+
+const seasons = await listPublicSeasons(env.DB);
+const season = featuredSeason(seasons);
+const state = season ? seasonState(season) : null;
+
+const counts = season ? await countApplicationsByStatus(env.DB, season.id) : {};
+const totalForSeason = Object.values(counts).reduce((a, b) => a + b, 0);
+
+const [recent, unreadMessages, subscriberCount] = await Promise.all([
+  listRecentApplications(env.DB, 8),
+  countMessagesByStatus(env.DB, "new"),
+  countSubscribers(env.DB),
+]);
+
+const STATUS_ORDER = ["received", "under_review", "needs_information", "awarded", "not_awarded", "withdrawn"];
+---
+
+<AdminLayout title="Overview" active="overview">
+  <div class="section-heading" style="margin-top:0;">
+    <div>
+      <h1 class="page-title">Overview</h1>
+      <p class="page-subtitle">Where things stand today.</p>
+    </div>
+    <a class="btn btn-primary btn-lg" href="/admin/seasons/new">Announce a new season</a>
+  </div>
+
+  <div class="card">
+    {season ? (
+      <div>
+        <div class="section-heading" style="margin-top:0;">
+          <div>
+            <p class="label" style="margin-bottom:0.35rem;">Featured season</p>
+            <h2 style="font-family:var(--font-display); font-size:1.7rem; margin:0;">{season.title}</h2>
+          </div>
+          <span class={`badge ${state === "open" ? "badge-success" : state === "upcoming" ? "badge-warning" : "badge-neutral"}`}>{state}</span>
+        </div>
+        <p style="color:var(--text-muted); margin-top:0.25rem;">
+          {state === "open" && <>Open now — closes {fmtDateTime(season.closes_at)} ({daysUntil(season.closes_at)} days left).</>}
+          {state === "upcoming" && <>Opens {fmtDateTime(season.opens_at)} ({daysUntil(season.opens_at)} days away).</>}
+          {state === "closed" && <>Closed on {fmtDateTime(season.closes_at)}.</>}
+        </p>
+        <div class="grid cols-4" style="margin-top:1.25rem;">
+          {STATUS_ORDER.map((key) => (
+            <div class="stat">
+              <span class="label">{STATUS_LABELS[key]}</span>
+              <span class="value">{counts[key] ?? 0}</span>
+            </div>
+          ))}
+        </div>
+        <p style="margin-top:1rem; color:var(--text-muted);">{totalForSeason} application{totalForSeason === 1 ? "" : "s"} total for this season.</p>
+        <div style="margin-top:1rem; display:flex; gap:1rem; flex-wrap:wrap;">
+          <a class="btn btn-secondary" href={`/admin/applications?season=${season.id}`}>View applications</a>
+          <a class="btn btn-secondary" href={`/admin/seasons/${season.id}`}>Edit season</a>
+          <a class="btn btn-ghost" href={`/scholarships`} target="_blank" rel="noopener">View public page ↗</a>
+        </div>
+      </div>
+    ) : (
+      <div class="empty-state">
+        <p>No published season right now.</p>
+        <a class="btn btn-primary" href="/admin/seasons/new">Create a season</a>
+      </div>
+    )}
+  </div>
+
+  <div class="grid cols-3" style="margin-top:1.25rem;">
+    <div class="card stat">
+      <span class="label">Unread messages</span>
+      <span class="value">{unreadMessages}</span>
+      <a class="link-quiet" href="/admin/messages?status=new">Review inbox</a>
+    </div>
+    <div class="card stat">
+      <span class="label">Subscribers</span>
+      <span class="value">{subscriberCount}</span>
+      <a class="link-quiet" href="/admin/subscribers">View list</a>
+    </div>
+    <div class="card stat">
+      <span class="label">Seasons</span>
+      <span class="value">{seasons.length}</span>
+      <a class="link-quiet" href="/admin/seasons">Manage seasons</a>
+    </div>
+  </div>
+
+  <div class="section-heading">
+    <h2>Recent applications</h2>
+    <a class="link-quiet" href="/admin/applications">View all</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Applicant</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Submitted</th>
+        </tr>
+      </thead>
+      <tbody>
+        {recent.length === 0 && (
+          <tr><td colspan="5" class="table-empty">No applications yet.</td></tr>
+        )}
+        {recent.map((app) => (
+          <tr>
+            <td><a class="link-quiet" href={`/admin/applications/${app.id}`}>{app.reference}</a></td>
+            <td>{app.first_name} {app.last_name}</td>
+            <td>{app.email}</td>
+            <td><StatusBadge status={app.status} /></td>
+            <td>{fmtDateTime(app.created_at)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>

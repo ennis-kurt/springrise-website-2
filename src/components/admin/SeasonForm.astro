@@ -1,0 +1,117 @@
+---
+import { utcIsoToEasternWallTime } from "../../lib/server/time";
+import type { Season } from "../../lib/seasons";
+
+export interface Props {
+  action: string;
+  season?: Season | null;
+  slugLocked?: boolean;
+}
+const { action, season = null, slugLocked = false } = Astro.props;
+
+const v = {
+  title: season?.title ?? "",
+  slug: season?.slug ?? "",
+  term: season?.term ?? "Spring",
+  year: season?.year ?? new Date().getFullYear(),
+  status: season?.status ?? "draft",
+  opensAt: utcIsoToEasternWallTime(season?.opens_at),
+  closesAt: utcIsoToEasternWallTime(season?.closes_at),
+  decisionAt: utcIsoToEasternWallTime(season?.decision_at),
+  summary: season?.summary ?? "",
+  announcement: season?.announcement ?? "",
+  eligibility: season?.eligibility ?? "",
+  requirements: season?.requirements ?? "",
+};
+---
+
+<form method="POST" action={action}>
+  <div class="field-row">
+    <div class="field">
+      <label for="title">Title</label>
+      <input id="title" name="title" required maxlength="200" value={v.title} placeholder="Spring 2027 Tuition Scholarship" />
+    </div>
+    <div class="field">
+      <label for="slug">Slug</label>
+      <input id="slug" name="slug" required maxlength="100" pattern="[a-z0-9]+(-[a-z0-9]+)*" value={v.slug} placeholder="spring-2027" disabled={slugLocked} />
+      {slugLocked ? (
+        <p class="hint">Locked — this season already has applications.</p>
+      ) : (
+        <p class="hint">Lowercase letters, numbers and hyphens. Used in the public URL.</p>
+      )}
+      {slugLocked && <input type="hidden" name="slug" value={v.slug} />}
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label for="term">Term</label>
+      <select id="term" name="term" required>
+        {["Spring", "Summer", "Fall", "Winter"].map((t) => (
+          <option value={t} selected={t === v.term}>{t}</option>
+        ))}
+      </select>
+    </div>
+    <div class="field">
+      <label for="year">Year</label>
+      <input id="year" name="year" type="number" required min="2000" max="2100" value={v.year} />
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="status">Status</label>
+    <select id="status" name="status" required>
+      {["draft", "published", "archived"].map((s) => (
+        <option value={s} selected={s === v.status}>{s}</option>
+      ))}
+    </select>
+    <p class="hint">
+      <strong>Draft</strong> is never shown publicly. <strong>Published</strong> appears on the public site (open, upcoming
+      or closed based on the dates below). <strong>Archived</strong> keeps the record but hides open/closed countdowns.
+    </p>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label for="opensAt">Opens at</label>
+      <input id="opensAt" name="opensAt" type="datetime-local" value={v.opensAt} />
+    </div>
+    <div class="field">
+      <label for="closesAt">Closes at</label>
+      <input id="closesAt" name="closesAt" type="datetime-local" value={v.closesAt} />
+    </div>
+  </div>
+  <p class="hint" style="margin-top:-0.6rem; margin-bottom:1.1rem;">
+    Times are entered and shown in <strong>America/New_York</strong> (Eastern) time, and required unless the season is archived.
+  </p>
+
+  <div class="field">
+    <label for="decisionAt">Decision date (optional)</label>
+    <input id="decisionAt" name="decisionAt" type="datetime-local" value={v.decisionAt} />
+  </div>
+
+  <div class="field">
+    <label for="summary">Summary</label>
+    <textarea id="summary" name="summary" maxlength="500" rows="2" placeholder="One or two sentences for cards and previews.">{v.summary}</textarea>
+  </div>
+
+  <div class="field">
+    <label for="announcement">Announcement</label>
+    <textarea id="announcement" name="announcement" maxlength="8000" rows="5" placeholder="Longer announcement. Leave a blank line between paragraphs.">{v.announcement}</textarea>
+  </div>
+
+  <div class="field">
+    <label for="eligibility">Eligibility</label>
+    <textarea id="eligibility" name="eligibility" maxlength="8000" rows="5" placeholder="One criterion per line. Leave blank to use the default eligibility list.">{v.eligibility}</textarea>
+  </div>
+
+  <div class="field">
+    <label for="requirements">Requirements</label>
+    <textarea id="requirements" name="requirements" maxlength="8000" rows="5" placeholder="One requirement per line. Leave blank to use the default requirements list.">{v.requirements}</textarea>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Save season</button>
+    <a class="btn btn-ghost" href="/admin/seasons">Cancel</a>
+  </div>
+</form>
