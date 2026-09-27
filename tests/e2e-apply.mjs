@@ -81,6 +81,10 @@ try {
   await page.getByRole("button", { name: /Submit application/ }).click();
   await page.waitForSelector(".receipt__ref", { timeout: 20000 });
   const ref = (await page.textContent(".receipt__ref"))?.trim();
+  if (process.env.SCREENSHOT_DIR) {
+    await page.waitForTimeout(800);
+    await page.screenshot({ path: `${process.env.SCREENSHOT_DIR}/apply-success.png` });
+  }
   assert(/^SR-[A-Z]\d{2}-[A-Z0-9]{6}$/.test(ref ?? ""), `submitted with reference ${ref}`);
   assert(await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("springrise-draft")).length === 0), "draft cleared after submit");
 

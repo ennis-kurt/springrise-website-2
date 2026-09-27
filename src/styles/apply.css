@@ -143,7 +143,7 @@
 
 /* success */
 .apply-success {
-  position: relative; overflow: hidden; max-width: 58rem; margin-inline: auto; display: grid; gap: 1.5rem;
+  position: relative; overflow: hidden; max-width: 58rem; margin-inline: auto; display: grid; gap: 1.5rem; scroll-margin-top: 7rem;
   padding: clamp(2rem, 5vw, 4.5rem); border-radius: var(--radius-lg); background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow);
 }
 .apply-success h2:focus { outline: none; }

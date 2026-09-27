@@ -22,7 +22,7 @@
   /* Semantic */
   --text: var(--ink);
   --text-muted: #4a5272;
-  --text-faint: #636a82;
+  --text-faint: #5f6680;
   --line: rgb(13 23 51 / 0.14);
   --line-strong: rgb(13 23 51 / 0.28);
   --focus: var(--cobalt);
