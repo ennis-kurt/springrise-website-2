@@ -256,7 +256,10 @@ const steps = [
 <style>
   /* HERO */
   .hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; overflow: hidden; padding-top: 7rem; }
-  .hero__veil { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(16 15 26 / 0.55) 0%, rgb(16 15 26 / 0) 45%); pointer-events: none; }
+  .hero__veil { position: absolute; inset: 0; pointer-events: none; background:
+    radial-gradient(70% 55% at 18% 88%, rgb(16 15 26 / 0.92) 0%, rgb(16 15 26 / 0.6) 45%, rgb(16 15 26 / 0) 75%),
+    linear-gradient(0deg, rgb(16 15 26 / 0.75) 0%, rgb(16 15 26 / 0) 30%),
+    linear-gradient(180deg, rgb(16 15 26 / 0.55) 0%, rgb(16 15 26 / 0) 30%); }
   .hero__inner { position: relative; padding-bottom: clamp(2rem, 5vw, 3.5rem); display: grid; gap: clamp(1.2rem, 2.5vw, 2rem); }
   .hero__title { margin-top: 0.5rem; }
   .hero__foot { display: grid; grid-template-columns: minmax(0, 1.2fr) auto; gap: 2rem 4rem; align-items: end; }
@@ -266,7 +269,7 @@ const steps = [
   .hero__legend .muted { text-transform: none; letter-spacing: 0; font-family: var(--font-sans); font-size: 0.88rem; }
   .dot { display: inline-block; width: 0.55rem; height: 0.55rem; border-radius: 50%; margin-right: 0.55rem; vertical-align: 1px; }
   .dot--now { background: var(--shoot); box-shadow: 0 0 12px var(--shoot); } .dot--then { background: var(--lilac); }
-  @media (max-width: 900px) { .hero__foot { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .hero__foot { grid-template-columns: 1fr; } .hero__veil { background: linear-gradient(0deg, rgb(16 15 26 / 0.55) 0%, rgb(16 15 26 / 0.78) 35%, rgb(16 15 26 / 0.5) 55%, rgb(16 15 26 / 0) 80%); } }
 
   /* TICKER */
   .ticker { background: var(--shoot); color: var(--night); padding-block: 1.1rem; overflow: hidden; }
@@ -277,7 +280,7 @@ const steps = [
   .purpose__grid { display: grid; grid-template-columns: minmax(0, 0.28fr) minmax(0, 1fr); gap: 2rem clamp(2rem, 5vw, 5rem); }
   .purpose__side { display: grid; gap: 1rem; align-content: start; justify-items: start; padding-top: 0.8rem; }
   .purpose__text { font-family: var(--font-display); font-weight: 650; font-size: clamp(2rem, 1rem + 3.6vw, 4.6rem); line-height: 1.04; letter-spacing: -0.04em; }
-  .purpose__text span { color: rgb(16 15 26 / 0.16); transition: color 0.35s; }
+  .purpose__text span { color: rgb(16 15 26 / 0.5); transition: color 0.35s; }
   .purpose__text span.on { color: var(--night); }
   @media (max-width: 800px) { .purpose__grid { grid-template-columns: 1fr; } }
 
@@ -297,7 +300,8 @@ const steps = [
   .pillar:hover .pillar__detail, .pillar:focus-visible .pillar__detail { max-height: 8rem; opacity: 1; }
   @media (max-width: 900px) {
     .pillar-row { flex-direction: column; min-height: 0; }
-    .pillar { min-height: 20rem; }
+    .pillar { min-height: 0; overflow: visible; }
+    .pillar__t { margin-top: 1rem; }
     .pillar__detail { max-height: none; opacity: 1; color: var(--text-muted); }
     .pillar:hover .pillar__detail { color: var(--night-muted); }
   }

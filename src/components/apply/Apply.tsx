@@ -109,7 +109,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
   }, [a, step, ready]);
 
   useEffect(() => {
-    const guard = (e: BeforeUnloadEvent) => { if (sending) { e.preventDefault(); e.returnValue = ""; } };
+    const guard = (e: BeforeUnloadEvent) => { if (sending) e.preventDefault(); };
     addEventListener("beforeunload", guard);
     return () => removeEventListener("beforeunload", guard);
   }, [sending]);
@@ -313,8 +313,8 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
     <div class="ap" id="application">
       <aside class="ap-rail" aria-label="Progress">
         <div class="ap-stem" aria-hidden="true">
-          <span class="ap-stem__line" style={{ height: `${progress}%` }} />
-          <span class="ap-stem__bud" style={{ bottom: `${progress}%` }} />
+          <span class="ap-stem__line" style={{ height: `${Math.max(4, progress)}%` }} />
+          <span class="ap-stem__bud" style={{ top: `${Math.max(4, progress)}%` }} />
         </div>
         <ol class="ap-steps" role="list">
           {CHAPTERS.map((c, i) => {

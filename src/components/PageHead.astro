@@ -1,11 +1,13 @@
 ---
 // Interior page opener: night band with a split-reveal headline. Optional right-hand slot.
 import Split from "./Split.astro";
+import RisingField from "./RisingField.astro";
 interface Props { kicker: string; title: string; accent?: string; lead?: string; tone?: "night" | "bone" }
 const { kicker, title, accent, lead, tone = "night" } = Astro.props;
 const hasSide = Astro.slots.has("default");
 ---
 <section class:list={["ph", tone === "night" ? "night grid-bg" : "ph--bone"]}>
+  {tone === "night" && <RisingField class="ph__field" density={0.5} groups={[{ count: 16, color: "#c5f04a", label: "", weight: 0.95 }, { count: 11, color: "#a99cff", label: "", weight: 0.7 }]} />}
   <div class:list={["wrap ph__grid", hasSide && "ph__grid--side"]}>
     <div class="ph__text">
       <p class="kicker rv">{kicker}</p>
@@ -17,6 +19,9 @@ const hasSide = Astro.slots.has("default");
 </section>
 
 <style>
+  .ph { position: relative; }
+  .ph :global(.ph__field) { left: 38%; opacity: 0.55; -webkit-mask-image: linear-gradient(90deg, transparent, #000 35%); mask-image: linear-gradient(90deg, transparent, #000 35%); }
+  .ph__grid { position: relative; }
   .ph { padding-top: clamp(8rem, 13vw, 11.5rem); padding-bottom: clamp(3.5rem, 7vw, 6.5rem); overflow: hidden; }
   .ph--bone { background: var(--bone); }
   .ph__grid { display: grid; gap: 2rem; }

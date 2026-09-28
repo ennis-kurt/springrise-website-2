@@ -14,11 +14,11 @@ const target = s?.phase === "open" ? s.closes_at : s?.phase === "upcoming" ? s.o
     {s && <span class="mono spot__season">{s.term} {s.year}</span>}
   </header>
 
-  <h3 class="spot__title">
+  <h2 class="spot__title">
     {s?.phase === "open" && <>The {s.term} {s.year} scholarship is <span class="hl">open.</span></>}
     {s?.phase === "upcoming" && <>{s.term} {s.year} opens <span class="hl">{formatDate(s.opens_at, { year: undefined })}.</span></>}
     {(!s || s.phase === "closed") && <>The next season is <span class="hl">on its way.</span></>}
-  </h3>
+  </h2>
 
   {target && (
     <div class="spot__clock" data-countdown={target} role="timer" aria-label={s?.phase === "open" ? `Closes ${formatDateTime(target)}` : `Opens ${formatDateTime(target)}`}>
@@ -51,6 +51,7 @@ const target = s?.phase === "open" ? s.closes_at : s?.phase === "upcoming" ? s.o
     content: ""; position: absolute; inset: auto -20% -60% auto; width: 80%; aspect-ratio: 1; border-radius: 50%; z-index: -1;
     background: radial-gradient(circle, rgb(197 240 74 / 0.22), transparent 62%);
   }
+  :global(.night) .spot { background: var(--night-2); box-shadow: inset 0 0 0 1px var(--night-line-strong); }
   .spot--upcoming::before { background: radial-gradient(circle, rgb(255 118 88 / 0.22), transparent 62%); }
   .spot--closed::before { background: radial-gradient(circle, rgb(169 156 255 / 0.22), transparent 62%); }
   .spot__top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }

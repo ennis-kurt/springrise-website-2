@@ -13,7 +13,7 @@ const money = (n: number) => n.toLocaleString("en-US", { style: "currency", curr
 const rows = [
   { k: "Total contributions & donations", v: F.contributions },
   { k: "Scholarships paid", v: F.scholarships },
-  { k: "Operating & legal expenses", v: F.operations },
+  { k: "Operating & legal expenses", v: F.operations, cost: true },
   { k: "Net operating income", v: F.netIncome, note: true },
 ];
 const flows = F.years.map((y, i) => {
@@ -96,7 +96,7 @@ const [y24, y25] = REACH.students;
                   <th scope="row">{r.k}</th>
                   <td class="mono">{money(r.v[0])}</td>
                   <td class="mono">{money(r.v[1])}</td>
-                  <td><span class:list={["delta mono", c < 0 ? "delta--down" : "delta--up"]}>{c >= 0 ? "+" : ""}{c.toFixed(1)}%{r.note ? "*" : ""}</span></td>
+                  <td><span class:list={["delta mono", r.cost ? "delta--cost" : c < 0 ? "delta--down" : "delta--up"]}>{c >= 0 ? "+" : ""}{c.toFixed(1)}%{r.note ? "*" : ""}</span></td>
                 </tr>
               );
             })}
@@ -197,6 +197,7 @@ const [y24, y25] = REACH.students;
   .delta { display: inline-block; padding: 0.25rem 0.6rem; border-radius: var(--r-pill); font-size: 0.82rem; }
   .delta--up { background: var(--night); color: var(--shoot); }
   .delta--down { background: var(--bone-2); color: var(--dawn-deep); }
+  .delta--cost { background: var(--bone-2); color: var(--text-muted); }
 
   .eff { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
   .eff__text { display: grid; gap: 1.3rem; justify-items: start; }

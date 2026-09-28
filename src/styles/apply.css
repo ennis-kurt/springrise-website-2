@@ -4,9 +4,9 @@
 /* rail */
 .ap-rail { position: sticky; top: 6.5rem; display: grid; grid-template-columns: 1.5rem 1fr; gap: 0 1rem; color: var(--bone); }
 .ap-stem { position: relative; grid-row: 1; width: 3px; margin-inline: auto; border-radius: 3px; background: var(--night-3); }
-.ap-stem__line { position: absolute; left: 0; right: 0; bottom: 0; border-radius: inherit; background: linear-gradient(0deg, var(--lilac), var(--shoot)); transition: height 0.9s var(--ease); }
-.ap-stem__bud { position: absolute; left: 50%; width: 14px; height: 14px; border-radius: 50%; background: var(--shoot); transform: translate(-50%, 50%); box-shadow: 0 0 18px var(--shoot); transition: bottom 0.9s var(--ease); }
-.ap-steps { grid-row: 1; display: flex; flex-direction: column-reverse; gap: 0.2rem; }
+.ap-stem__line { position: absolute; left: 0; right: 0; top: 0; border-radius: inherit; background: linear-gradient(180deg, var(--lilac), var(--shoot)); transition: height 0.9s var(--ease); }
+.ap-stem__bud { position: absolute; left: 50%; width: 14px; height: 14px; border-radius: 50%; background: var(--shoot); transform: translate(-50%, -50%); box-shadow: 0 0 18px var(--shoot); transition: top 0.9s var(--ease); }
+.ap-steps { grid-row: 1; display: flex; flex-direction: column; gap: 0.2rem; }
 .ap-steps button { display: grid; grid-template-columns: 2.1rem 1fr; gap: 0.6rem; width: 100%; text-align: left; padding: 0.75rem 0.8rem; border-radius: var(--r-sm); color: inherit; transition: background-color 0.25s; }
 .ap-steps button:not(:disabled):hover { background: rgb(243 240 232 / 0.06); }
 .ap-steps button:disabled { cursor: default; }
@@ -22,6 +22,13 @@
 .ap-reset { justify-self: start; font-size: 0.84rem; color: var(--night-muted); text-decoration: underline; }
 .ap-reset:hover { color: var(--dawn); }
 
+/* sheet — a light surface inside the night page */
+.ap-form .input, .ap-form .select, .ap-form .textarea { background: var(--paper); border-color: var(--line-strong); color: var(--night); }
+.ap-form .input::placeholder, .ap-form .textarea::placeholder { color: #8b889c; }
+.ap-form .input:focus, .ap-form .select:focus, .ap-form .textarea:focus { border-color: var(--lilac-deep); box-shadow: 0 0 0 4px rgb(91 75 214 / 0.16); }
+.ap-form .muted { color: var(--text-muted); }
+.ap-form :focus-visible { outline-color: var(--lilac-deep); }
+.ap-form .btn--line { --fg: var(--night); --bd: var(--line-strong); }
 /* sheet */
 .ap-form { min-width: 0; display: grid; gap: 1.8rem; padding: clamp(1.5rem, 4vw, 3.5rem); border-radius: var(--r-lg); background: var(--paper); color: var(--night); box-shadow: var(--shadow-lg); }
 .ap-head { display: grid; gap: 0.5rem; }

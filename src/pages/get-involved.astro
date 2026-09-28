@@ -21,7 +21,7 @@ const roles = [
         {roles.map((r, i) => (
           <li class="role rv" id={r.id} style={`--d:${(i % 3) * 0.06}s`}>
             <span class="role__tag mono">{String(i + 1).padStart(2, "0")} · {r.tag}</span>
-            <h2 class="t-2">{r.t}</h2>
+            <h2 class="t-3 role__t">{r.t}</h2>
             <p class="muted">{r.b}</p>
             {r.href ? <a class="btn btn--line" href={r.href}>{r.cta} <span class="arr">→</span></a>
               : r.copy ? <button class="btn btn--line" type="button" data-copy={r.copy}><span data-copy-label>{r.cta}</span></button>
@@ -52,7 +52,7 @@ const roles = [
 <script>
   document.querySelectorAll<HTMLAnchorElement>("[data-reason]").forEach((a) =>
     a.addEventListener("click", () => {
-      const sel = document.querySelector<HTMLSelectElement>("#join-reason");
+      const sel = document.getElementById("join-reason") as HTMLSelectElement | null;
       if (sel) sel.value = a.dataset.reason!;
       setTimeout(() => document.querySelector<HTMLInputElement>("#join-name")?.focus({ preventScroll: true }), 500);
     }),
@@ -66,6 +66,7 @@ const roles = [
   .role:target { outline: 2px solid var(--shoot-deep); }
   .role__tag { font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: auto; padding-bottom: 3rem; }
   .role .btn { margin-top: 0.4rem; }
+  .role__t { font-size: clamp(1.6rem, 1.2rem + 1vw, 2.2rem); font-weight: 700; letter-spacing: -0.035em; }
   @media (max-width: 1000px) { .roles { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .roles { grid-template-columns: 1fr; } .role { min-height: 0; } }
   .join { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }

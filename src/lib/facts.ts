@@ -97,7 +97,7 @@ export const DOCUMENTS = [
   { key: "enrollment", label: "Proof of enrollment", help: "Enrollment verification or your acceptance letter.", required: true },
   { key: "statement", label: "Personal statement", help: "300+ words: your goals, achievements, financial need and challenges.", required: true },
   { key: "tuitionBill", label: "Tuition bill", help: "Your school statement showing the balance you owe.", required: true },
-  { key: "disability", label: "Disability documentation", help: "Optional — only if you'd like an individualized review.", required: false },
+  { key: "disability", label: "Disability documentation", help: "Include only if you'd like an individualized review.", required: false },
 ] as const;
 export type DocKey = (typeof DOCUMENTS)[number]["key"];
 export const FILE_LIMIT = 5 * 1024 * 1024;

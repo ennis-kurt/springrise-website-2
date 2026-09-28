@@ -25,15 +25,15 @@ const max = Math.max(...GIFTS.map((g) => g.amount));
 </div>
 
 <style>
-  .gift { display: grid; gap: 1.6rem; }
+  .gift { display: grid; gap: 1.6rem; container-type: inline-size; }
   .gift__tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
   .gift__tier {
-    display: grid; gap: 0.35rem; justify-items: start; padding: 1.2rem 1.25rem; border-radius: var(--r); text-align: left;
+    display: grid; gap: 0.35rem; justify-items: start; padding: 1.1rem 1rem; min-width: 0; border-radius: var(--r); text-align: left;
     border: 1.5px solid var(--line-strong); background: var(--paper); transition: background-color 0.3s, border-color 0.3s, transform 0.4s var(--ease);
   }
   .gift__tier:hover { transform: translateY(-3px); border-color: var(--night); }
   .gift__tier[aria-checked="true"] { background: var(--night); color: var(--bone); border-color: var(--night); }
-  .gift__amt { font-family: var(--font-display); font-weight: 750; font-size: clamp(1.5rem, 1.1rem + 1.3vw, 2.3rem); letter-spacing: -0.04em; line-height: 1; }
+  .gift__amt { font-family: var(--font-display); font-weight: 750; font-size: clamp(1.25rem, 6.4cqi, 2.4rem); letter-spacing: -0.04em; line-height: 1; }
   .gift__lab { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
   .gift__tier[aria-checked="true"] .gift__lab { color: var(--shoot); opacity: 1; }
   .gift__out { display: grid; gap: 1rem; }
@@ -47,7 +47,7 @@ const max = Math.max(...GIFTS.map((g) => g.amount));
   .gift--night .gift__tier[aria-checked="true"] .gift__lab { color: var(--night); }
   .gift--night .gift__meter { background: var(--night-3); }
   .gift--night .gift__ticks i { border-color: rgb(243 240 232 / 0.08); }
-  @media (max-width: 520px) { .gift__tiers { grid-template-columns: 1fr; } }
+  @container (max-width: 340px) { .gift__tiers { grid-template-columns: 1fr; } .gift__amt { font-size: 1.8rem; } }
 </style>
 
 <script>
