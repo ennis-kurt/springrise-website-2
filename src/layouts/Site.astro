@@ -5,6 +5,7 @@ import "@fontsource-variable/inter";
 import "../styles/site.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import BrandDefs from "../components/BrandDefs.astro";
 import { siteData, type SiteData } from "../lib/public";
 import { ORG } from "../lib/facts";
 
@@ -45,6 +46,7 @@ const ld = {
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
+    <BrandDefs />
     <Header spotlight={site.spotlight} />
     <main id="main"><slot /></main>
     <Footer spotlight={site.spotlight} />

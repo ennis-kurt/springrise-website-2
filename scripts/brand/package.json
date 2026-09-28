@@ -1,0 +1,13 @@
+{
+  "name": "springrise-brand-tools",
+  "private": true,
+  "type": "module",
+  "description": "Generates every Springrise logo file, the header sprite, the OG image and the identity boards from one parametric source.",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "fontkit": "^2.0.0",
+    "wawoff2": "^2.0.0"
+  }
+}

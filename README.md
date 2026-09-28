@@ -12,10 +12,13 @@ internships and mentorship.
   foundation has supported: 25 clay stems for 2025 and 19 leaf-green stems for 2024. The stems grow in, sway gently
   and lean toward the cursor like plants turning to light. All pointer motion is eased every frame, so nothing snaps.
   Quieter versions of the field open every interior page.
-- **The mark** is an open book whose pages cradle a rising tulip bud, and the gap down the book's spine is the tulip's
-  stem. The book stands for education, the tulip for spring and for Turkish heritage, and the bud's upward point for
-  rising. It works in color, on dark and in one color, and still reads at favicon size. Logo files live in
-  `public/brand/` (SVG marks, PNG lockups) and the logo board is at `docs/brand/logo-board.png`.
+- **The mark** is a tulip holding the rising sun: two petals, one stem, one leaf and a sun where the third petal
+  would be. It reads as a tulip (the lale of Turkish heritage, and spring), as a sunrise held in a cup ("room to
+  rise"), and in one color as a figure with arms raised. The cup's inner edge is concentric with the sun, so the ring
+  of light around it is constant and the mark survives in one color and at favicon size, where a sturdier small cut
+  takes over. The wordmark is Fraunces outlined to paths, with the tittle of the "i" in "rise" as the sun, and on
+  hover the sun rises out of the tulip. Logo files live in `public/brand/`, and the identity boards and brand guide
+  are in [`docs/brand/`](docs/brand/README.md).
 - **Palette:** warm and hand-made rather than corporate. Paper `#fffcf6` and bone `#f7f1e7` grounds, espresso
   `#2b2320` for dark sections, with clay `#b4502d`, marigold `#f0b44c` and leaf `#7f9f5c` accents.
 - **Type:** Fraunces (a soft, warm serif) for headings and Inter for text, on a calm, moderate scale. All fonts are

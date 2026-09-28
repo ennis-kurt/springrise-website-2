@@ -1,40 +1,50 @@
 ---
-// The Springrise mark: an open book whose pages cradle a rising tulip bud. The gap down the spine is the stem.
-// Book for education, tulip for spring and heritage, the bud's upward point for rising.
+// The Springrise mark: a tulip whose middle petal is the rising sun. Read it three ways: a tulip (spring, and
+// Turkish heritage), a sunrise held in a cup ("room to rise"), and in one colour a figure with arms raised.
+// The stem and petals are one path; the sun is a circle in a ring of clear space; a single leaf tips it to life.
+// The name is Fraunces outlined to paths (see BrandDefs.astro), with the tittle of the "i" in "rise" as the sun.
+//
+// `size` is the height of the mark's 64-unit box in px. The lockup proportions are the brand's own:
+// with the sub-line the mark stands 1.12× the text block (cap line → FOUNDATION baseline); without, 1.34× (cap → descender).
 interface Props { size?: number; tone?: "night" | "bone"; withName?: boolean; sub?: boolean; class?: string }
-const { size = 34, tone = "night", withName = true, sub = true, class: cls = "" } = Astro.props;
+const { size = 40, tone = "night", withName = true, sub = true, class: cls = "" } = Astro.props;
+
+const V = 49.5 / 64;                       // visible height of the mark within its 64 box
+const v = size * V;
+const k = sub ? v / 1.12 / 123.3 : v / 1.34 / 94.5;   // px per wordmark unit (name set at size 100)
+const px = (n: number) => `${(n * k).toFixed(2)}px`;
 ---
-<span class:list={["wm", `wm--${tone}`, cls]}>
-  <svg class="wm__mark" width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
-    <g class="wm__pages">
-      <path d="M30.6 57.6C23 56.8 14 53.4 6 48.2L7.6 21.4C15.5 21.1 21 23.3 24.3 27.8C23.7 37.2 26.7 45.3 30.6 50.8Z" />
-      <path d="M33.4 57.6C41 56.8 50 53.4 58 48.2L56.4 21.4C48.5 21.1 43 23.3 39.7 27.8C40.3 37.2 37.3 45.3 33.4 50.8Z" />
-    </g>
-    <g class="wm__bud">
-      <path class="wm__bud-l" d="M32 49C24.6 39.6 24.4 21 32 5Z" />
-      <path class="wm__bud-r" d="M32 49C39.4 39.6 39.6 21 32 5Z" />
-    </g>
+<span class:list={["wm", `wm--${tone}`, cls]} role="img" aria-label={withName ? "Springrise Foundation" : "Springrise"} style={`--gap:${px(26)};--sub-gap:${px(6.2)}`}>
+  <svg class="wm__mark" viewBox="13.5 7 37 49.5" width={(size * 37) / 64} height={v} aria-hidden="true" focusable="false">
+    <path class="wm__y" d="M29.7 41.5C29.8 35.8 15.8 35.8 14.6 25.2C13.5 16.5 14 10.6 15.07 7.84Q15.4 7 15.63 7.87C16.5 11.2 20.3 14.9 22.65 19.8A10.8 10.8 0 1 0 41.35 19.8C43.7 14.9 47.5 11.2 48.37 7.87Q48.6 7 48.93 7.84C50 10.6 50.5 16.5 49.4 25.2C48.2 35.8 34.2 35.8 34.3 41.5L34.3 54.2A2.3 2.3 0 0 1 29.7 54.2Z" />
+    <path class="wm__y" d="M33.2 49.6Q36.46 41.82 44.6 39.6Q40.22 46.1 33.2 49.6Z" />
+    <circle class="wm__sun" cx="32" cy="25.2" r="8.4" />
   </svg>
-  {withName && <span class="wm__txt"><span class="wm__name">Springrise</span>{sub && <span class="wm__sub">Foundation</span>}</span>}
+  {withName && (
+    <span class="wm__txt">
+      <svg class="wm__name" viewBox="0 0 473.6 97.4" width={px(473.6)} height={px(97.4)} aria-hidden="true" focusable="false"><use href="#sr-name" /></svg>
+      {sub && <svg class="wm__sub" viewBox="0 0 290.6 22.6" width={px(290.6)} height={px(22.6)} aria-hidden="true" focusable="false"><use href="#sr-sub" /></svg>}
+    </span>
+  )}
 </span>
 
 <style>
-  .wm { display: inline-flex; align-items: center; gap: 0.6rem; line-height: 1; }
-  .wm__mark { flex: none; overflow: visible; }
-  .wm__pages { fill: var(--shoot-deep); stroke: var(--shoot-deep); stroke-width: 1.4; stroke-linejoin: round; }
-  .wm__bud-l { fill: var(--shoot); }
-  .wm__bud-r { fill: #dc8f2c; }
-  .wm--bone .wm__pages { fill: var(--bone); stroke: var(--bone); }
-  .wm__txt { display: grid; gap: 0.28rem; }
-  .wm__name {
-    font-family: var(--font-display); font-weight: 560; font-size: 1.42rem; letter-spacing: -0.01em;
-    font-variation-settings: "SOFT" 70;
-  }
-  .wm__sub { font-size: 0.56rem; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: var(--text-muted); }
+  .wm { display: inline-flex; align-items: center; gap: var(--gap); line-height: 0; --wm-sun: var(--shoot); --wm-rise: 0px; }
+  .wm svg { display: block; overflow: visible; }
+  .wm__y { fill: var(--shoot-deep); }
+  .wm__sun { fill: var(--shoot); transition: transform 0.9s var(--ease); }
+  .wm__txt { display: grid; gap: var(--sub-gap); justify-items: start; }
+  .wm__name { color: var(--text); }
+  .wm__sub { color: var(--text-muted); }
+  .wm--bone .wm__y { fill: var(--bone); }
   .wm--bone .wm__name { color: var(--bone); }
   .wm--bone .wm__sub { color: var(--night-muted); }
-  /* On hover the bud rises a little out of the book. */
-  .wm__bud { transition: transform 0.9s var(--ease); }
-  :global(a:hover) > .wm .wm__bud { transform: translateY(-2.5px); }
-  @media (prefers-reduced-motion: reduce) { .wm__bud { transition: none; } }
+  /* On hover the sun rises a little out of the tulip, and the tittle of "rise" lifts with it. */
+  :global(a:hover) > .wm .wm__sun, :global(a:focus-visible) > .wm .wm__sun { transform: translateY(-2.5px); }
+  :global(a:hover) > .wm, :global(a:focus-visible) > .wm { --wm-rise: -7px; }
+  @media (prefers-reduced-motion: reduce) {
+    .wm__sun { transition: none; }
+    :global(a:hover) > .wm .wm__sun, :global(a:focus-visible) > .wm .wm__sun { transform: none; }
+    :global(a:hover) > .wm, :global(a:focus-visible) > .wm { --wm-rise: 0px; }
+  }
 </style>

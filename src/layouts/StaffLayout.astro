@@ -5,6 +5,7 @@ import "@fontsource-variable/inter";
 import "../styles/tokens.css";
 import "../styles/staff.css";
 import Wordmark from "../components/Wordmark.astro";
+import BrandDefs from "../components/BrandDefs.astro";
 
 interface Props {
   title: string;
@@ -31,6 +32,7 @@ const nav = [
   </head>
   <body class:list={["staff", { "staff--bare": bare }]}>
     <a class="skip" href="#main">Skip to content</a>
+    <BrandDefs />
     {
       bare ? (
         <main id="main" class="bare-main">
