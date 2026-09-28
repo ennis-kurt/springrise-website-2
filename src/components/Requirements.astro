@@ -1,0 +1,112 @@
+---
+// Eligibility, a tick-as-you-go document checklist, and award terms.
+import { DOCUMENTS, ELIGIBILITY, FILE_LIMIT, TERMS } from "../lib/facts";
+import { lines } from "../lib/season";
+interface Props { eligibility?: string; requirements?: string }
+const elig = lines(Astro.props.eligibility).length ? lines(Astro.props.eligibility) : ELIGIBILITY;
+const terms = lines(Astro.props.requirements).length ? lines(Astro.props.requirements) : TERMS;
+---
+<section class="section req" id="eligibility" aria-labelledby="elig-h">
+  <div class="wrap req__grid">
+    <header class="req__head">
+      <p class="kicker rv">Who can apply</p>
+      <h2 class="t-1 rv" id="elig-h">Eligibility</h2>
+      <p class="muted rv">Criteria can shift with available funds and each year's objectives. Not sure you qualify? <a href="mailto:scholarship@springrise.org">Ask us</a> — we'd rather hear from you.</p>
+    </header>
+    <ol class="elig" role="list">
+      {elig.map((e, i) => <li class="rv" style={`--d:${i * 0.04}s`}><span class="elig__n">{String(i + 1).padStart(2, "0")}</span><p>{e}</p></li>)}
+    </ol>
+  </div>
+</section>
+
+<section class="section req paper" id="documents" aria-labelledby="docs-h">
+  <div class="wrap req__grid">
+    <header class="req__head">
+      <p class="kicker rv">Before you start</p>
+      <h2 class="t-1 rv" id="docs-h">What you'll need</h2>
+      <p class="muted rv">Five PDFs, each up to {FILE_LIMIT / 1024 / 1024} MB, plus contact details for two references who aren't relatives. Tick them off as you go — we'll remember on this device.</p>
+      <p class="docs__progress rv mono" data-docs-progress>0 / 5 ready</p>
+    </header>
+    <ul class="docs" role="list" data-docs>
+      {DOCUMENTS.map((d, i) => (
+        <li class="rv" style={`--d:${i * 0.04}s`}>
+          <label class:list={["doc", !d.required && "doc--opt"]}>
+            <input type="checkbox" data-doc={d.key} data-required={d.required ? "1" : "0"} />
+            <span class="doc__box" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-7" /></svg></span>
+            <span class="doc__txt"><b>{d.label}{!d.required && <em> · optional</em>}</b><span>{d.help}</span></span>
+            <span class="doc__pdf mono" aria-hidden="true">PDF</span>
+          </label>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<section class="section req" id="terms" aria-labelledby="terms-h">
+  <div class="wrap req__grid">
+    <header class="req__head">
+      <p class="kicker rv">How awards work</p>
+      <h2 class="t-1 rv" id="terms-h">The terms</h2>
+      <p class="muted rv">Decisions are made by the Board of Trustees after each deadline.</p>
+    </header>
+    <ul class="terms" role="list">
+      {terms.map((t, i) => <li class="rv" style={`--d:${i * 0.04}s`}><span class="terms__mark" aria-hidden="true"></span><p>{t}</p></li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .req__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 6vw, 7rem); align-items: start; }
+  .req__head { position: sticky; top: 7rem; display: grid; gap: 1.1rem; }
+  .req__head a { color: var(--lilac-deep); }
+  .elig { border-top: 1.5px solid var(--night); }
+  .elig li { display: grid; grid-template-columns: 4rem 1fr; gap: 1rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line-strong); font-size: 1.1rem; }
+  .elig__n { font-family: var(--font-display); font-weight: 700; font-size: 1.9rem; line-height: 1; letter-spacing: -0.04em; color: var(--shoot-deep); }
+  .docs { display: grid; gap: 0.6rem; }
+  .doc { display: grid; grid-template-columns: auto 1fr auto; gap: 1.1rem; align-items: center; padding: 1.15rem 1.3rem; border-radius: var(--r); background: var(--bone); border: 1.5px solid transparent; cursor: pointer; transition: border-color 0.25s, background-color 0.3s, transform 0.4s var(--ease); }
+  .doc:hover { border-color: var(--night); }
+  .doc input { position: absolute; opacity: 0; pointer-events: none; }
+  .doc__box { display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 8px; border: 1.5px solid var(--line-strong); background: var(--paper); transition: all 0.3s var(--ease); }
+  .doc__box svg { width: 1rem; fill: none; stroke: var(--night); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 16; stroke-dashoffset: 16; transition: stroke-dashoffset 0.4s var(--ease); }
+  .doc input:checked ~ .doc__box { background: var(--shoot); border-color: var(--shoot); }
+  .doc input:checked ~ .doc__box svg { stroke-dashoffset: 0; }
+  .doc input:focus-visible ~ .doc__box { outline: 2px solid var(--lilac-deep); outline-offset: 2px; }
+  .doc:has(input:checked) { background: var(--night); color: var(--bone); }
+  .doc:has(input:checked) .doc__txt span { color: var(--night-muted); }
+  .doc__txt { display: grid; gap: 0.15rem; }
+  .doc__txt em { font-style: normal; font-weight: 400; color: var(--text-faint); }
+  .doc__txt span { font-size: 0.9rem; color: var(--text-muted); }
+  .doc__pdf { font-size: 0.66rem; letter-spacing: 0.1em; padding: 0.3rem 0.5rem; border-radius: 6px; border: 1px solid currentColor; opacity: 0.5; }
+  .doc--opt { background: transparent; border: 1.5px dashed var(--line-strong); }
+  .docs__progress { font-size: 0.8rem; letter-spacing: 0.06em; justify-self: start; padding: 0.45rem 0.8rem; border-radius: var(--r-pill); background: var(--night); color: var(--shoot); }
+  .terms { border-top: 1.5px solid var(--night); }
+  .terms li { display: grid; grid-template-columns: 2rem 1fr; gap: 1rem; padding: 1.3rem 0; border-bottom: 1px solid var(--line-strong); }
+  .terms__mark { width: 0.8rem; height: 0.8rem; margin-top: 0.45rem; border-radius: 3px; background: var(--shoot-deep); transform: rotate(45deg); }
+  @media (max-width: 900px) { .req__grid { grid-template-columns: 1fr; } .req__head { position: static; } }
+  @media (max-width: 520px) { .doc__pdf { display: none; } .elig li { grid-template-columns: 3rem 1fr; } }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-docs]");
+  const out = document.querySelector<HTMLElement>("[data-docs-progress]");
+  if (root && out) {
+    const key = "springrise:doc-checklist";
+    let saved: Record<string, boolean> = {};
+    try { saved = JSON.parse(localStorage.getItem(key) || "{}"); } catch { /* storage unavailable */ }
+    const boxes = [...root.querySelectorAll<HTMLInputElement>("input[data-doc]")];
+    const req = boxes.filter((b) => b.dataset.required === "1");
+    const draw = () => {
+      const n = req.filter((b) => b.checked).length;
+      out.textContent = n === req.length ? `All ${req.length} ready — you're set ✓` : `${n} / ${req.length} ready`;
+    };
+    boxes.forEach((b) => {
+      b.checked = !!saved[b.dataset.doc!];
+      b.addEventListener("change", () => {
+        saved[b.dataset.doc!] = b.checked;
+        try { localStorage.setItem(key, JSON.stringify(saved)); } catch { /* ignore */ }
+        draw();
+      });
+    });
+    draw();
+  }
+</script>

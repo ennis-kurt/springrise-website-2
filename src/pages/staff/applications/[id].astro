@@ -1,0 +1,198 @@
+---
+import StaffLayout from "../../../layouts/StaffLayout.astro";
+import StageBadge from "../../../components/staff/StageBadge.astro";
+import Alert from "../../../components/staff/Alert.astro";
+import { env } from "cloudflare:workers";
+import { DOCUMENTS } from "../../../lib/facts";
+import { STAGES, formatDate, type Stage } from "../../../lib/season";
+import { activityStmt, getActivity, getApplication, getAttachments, getSeason, nowIso } from "../../../lib/server/db";
+import { dollars, money } from "../../../lib/server/format";
+import { emailEnabled, stageChange } from "../../../lib/server/mail";
+import { formatEt } from "../../../lib/server/time";
+import { parseDollars } from "../../../lib/server/validate";
+
+const id = Astro.params.id ?? "";
+const app = await getApplication(id);
+if (!app) return new Response("Application not found", { status: 404, headers: { "Content-Type": "text/plain" } });
+
+let error = "";
+let notice = Astro.url.searchParams.get("saved") ? "Saved." : "";
+if (Astro.url.searchParams.get("emailed") === "1") notice = "Saved, and the applicant was emailed.";
+if (Astro.url.searchParams.get("emailed") === "0") error = "Saved, but the email to the applicant couldn't be sent.";
+
+const form = { stage: app.stage as string, award: dollars(app.award_cents), notes: app.notes, notify: false, message: "" };
+
+if (Astro.request.method === "POST") {
+  const fd = await Astro.request.formData();
+  form.stage = String(fd.get("stage") ?? "");
+  form.award = String(fd.get("award") ?? "").trim();
+  form.notes = String(fd.get("notes") ?? "").replace(/\r\n/g, "\n").trim();
+  form.notify = fd.get("notify") === "yes";
+  form.message = String(fd.get("message") ?? "").replace(/\r\n/g, "\n").trim();
+
+  const award = form.award === "" ? null : parseDollars(form.award);
+  if (!(form.stage in STAGES)) error = "Choose a stage.";
+  else if (form.award !== "" && (award == null || award > 100_000_00)) error = "Enter the award in dollars, e.g. 4750 or 4750.00.";
+  else if (form.notes.length > 20_000) error = "Notes are too long.";
+  else if (form.message.length > 5000) error = "Keep the message to the applicant under 5,000 characters.";
+  else if (form.notify && !emailEnabled()) error = "Email isn't configured, so the applicant can't be emailed. Untick the box to save.";
+
+  if (error) {
+    Astro.response.status = 400;
+  } else {
+    const stage = form.stage as Stage;
+    const changes: string[] = [];
+    if (stage !== app.stage) changes.push(`Stage changed from ${STAGES[app.stage]} to ${STAGES[stage]}`);
+    if (award !== app.award_cents) changes.push(award == null ? "Award cleared" : `Award set to ${money(award)}`);
+    if (form.notes !== app.notes) changes.push("Notes updated");
+    const at = nowIso();
+    const stmts = [
+      env.DB.prepare("UPDATE applications SET stage = ?1, award_cents = ?2, notes = ?3, updated_at = ?4 WHERE id = ?5")
+        .bind(stage, award, form.notes, changes.length ? at : app.updated_at, id),
+      ...changes.map((c) => activityStmt(id, c, at)),
+    ];
+    let emailed: string | null = null;
+    if (form.notify) {
+      const season = await getSeason(app.season_slug);
+      const r = await stageChange({
+        email: app.email, firstName: app.first_name, code: app.code, seasonTitle: season?.title ?? app.season_slug,
+        stage, note: form.message,
+      });
+      emailed = "ok" in r && r.ok ? "1" : "0";
+      if (emailed === "1") stmts.push(activityStmt(id, `Applicant emailed about: ${STAGES[stage]}`, at));
+    }
+    await env.DB.batch(stmts);
+    return Astro.redirect(`/staff/applications/${id}?saved=1${emailed ? `&emailed=${emailed}` : ""}`, 303);
+  }
+}
+
+let a: Record<string, string> = {};
+try { a = JSON.parse(app.answers); } catch { /* ignore */ }
+const [season, files, activity] = await Promise.all([getSeason(app.season_slug), getAttachments(id), getActivity(id)]);
+const docLabel = Object.fromEntries(DOCUMENTS.map((d) => [d.key, d.label]));
+const order = DOCUMENTS.map((d) => d.key as string);
+files.sort((x, y) => order.indexOf(x.kind) - order.indexOf(y.kind));
+const kb = (n: number) => (n < 1024 * 1024 ? `${Math.max(1, Math.round(n / 1024))} KB` : `${(n / 1024 / 1024).toFixed(1)} MB`);
+const date = (v: string | undefined) => (v ? formatDate(`${v}T12:00:00Z`) : "—");
+const mailto = `mailto:${app.email}?subject=${encodeURIComponent(`Your Springrise application ${app.code}`)}`;
+const address = [a.address1, a.address2, [a.city, a.state, a.postalCode].filter(Boolean).join(", "), a.country].filter(Boolean);
+const mailOn = emailEnabled();
+---
+<StaffLayout title={`${app.first_name} ${app.last_name}`} active="applications">
+  <header class="page-head">
+    <div>
+      <a class="crumb" href={`/staff/applications?season=${app.season_slug}`}>← {season?.title ?? "Applications"}</a>
+      <div class="actions" style="margin-bottom:8px"><StageBadge stage={app.stage} /><span class="mono">{app.code}</span></div>
+      <h1>{app.first_name} {app.last_name}</h1>
+      <p>Submitted {formatEt(app.created_at)} · updated {formatEt(app.updated_at)}</p>
+    </div>
+    <div class="actions">
+      <a class="btn btn--ghost" href={mailto}>Email applicant</a>
+    </div>
+  </header>
+  <Alert error={error} ok={notice} />
+
+  <div class="grid grid-main">
+    <div class="stack">
+      <section class="card" aria-labelledby="h-app">
+        <h2 id="h-app" style="margin-bottom:12px">Applicant</h2>
+        <dl class="dl">
+          <dt>Name</dt><dd>{a.firstName ?? app.first_name} {a.lastName ?? app.last_name}</dd>
+          <dt>Email</dt><dd><a href={mailto}>{app.email}</a></dd>
+          <dt>Phone</dt><dd><a href={`tel:${app.phone.replace(/[^\d+]/g, "")}`}>{app.phone}</a></dd>
+          <dt>Date of birth</dt><dd>{date(a.birthDate)}</dd>
+          <dt>Address</dt><dd>{address.map((l) => <>{l}<br /></>)}</dd>
+        </dl>
+      </section>
+
+      <section class="card" aria-labelledby="h-edu">
+        <h2 id="h-edu" style="margin-bottom:12px">Education &amp; tuition</h2>
+        <dl class="dl">
+          <dt>School</dt><dd>{app.school}</dd>
+          <dt>Level</dt><dd>{app.level}</dd>
+          <dt>Major</dt><dd>{a.major || "—"}</dd>
+          <dt>Tuition owed</dt><dd class="mono num">{money(app.tuition_cents)}</dd>
+          <dt>Tuition due</dt><dd>{date(a.tuitionDueDate)}</dd>
+        </dl>
+      </section>
+
+      <section class="card" aria-labelledby="h-ref">
+        <h2 id="h-ref" style="margin-bottom:12px">References</h2>
+        <div class="grid grid-2">
+          {[1, 2].map((n) => (
+            <dl class="dl">
+              <dt>Reference {n}</dt><dd><strong>{a[`ref${n}Name`]}</strong></dd>
+              <dt>Relation</dt><dd>{a[`ref${n}Relation`] || "—"}</dd>
+              <dt>Email</dt><dd><a href={`mailto:${a[`ref${n}Email`]}`}>{a[`ref${n}Email`]}</a></dd>
+              <dt>Phone</dt><dd>{a[`ref${n}Phone`]}</dd>
+            </dl>
+          ))}
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="h-docs">
+        <h2 id="h-docs" style="margin-bottom:12px">Documents</h2>
+        {files.length ? (
+          <ul class="files">
+            {files.map((file) => (
+              <li>
+                <a class="file" href={`/api/staff/files/${file.id}`} target="_blank" rel="noopener">
+                  <span><span class="name">{docLabel[file.kind] ?? file.kind}</span> <span class="muted" style="font-size:.85rem">{file.file_name}</span></span>
+                  <span class="mono muted">{kb(file.bytes)} · PDF ↗</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : <p class="muted">No documents.</p>}
+      </section>
+
+      <section class="card" aria-labelledby="h-note">
+        <h2 id="h-note" style="margin-bottom:12px">Note from the applicant</h2>
+        {a.note ? <p class="prose-note">{a.note}</p> : <p class="muted" style="margin:0">No note.</p>}
+        <p class="hint" style="margin:14px 0 0">Consent to terms: {a.consent === "yes" ? "Yes" : "—"}</p>
+      </section>
+    </div>
+
+    <div class="stack">
+      <form method="post" class="card form" aria-labelledby="h-decision">
+        <h2 id="h-decision">Review</h2>
+        <label class="field">
+          <span class="lab">Stage</span>
+          <select name="stage">
+            {(Object.keys(STAGES) as Stage[]).map((st) => <option value={st} selected={form.stage === st}>{STAGES[st]}</option>)}
+          </select>
+        </label>
+        <label class="field">
+          <span class="lab">Award (USD)</span>
+          <input type="text" name="award" value={form.award} inputmode="decimal" placeholder="e.g. 4750.00" aria-describedby="award-hint" />
+          <span class="hint" id="award-hint">Leave blank if no award has been set.</span>
+        </label>
+        <label class="field">
+          <span class="lab">Internal notes</span>
+          <textarea name="notes" rows="6">{form.notes}</textarea>
+          <span class="hint">Only staff can see notes.</span>
+        </label>
+        <fieldset class="plain form" style="gap:10px">
+          <label class="check">
+            <input type="checkbox" name="notify" value="yes" checked={form.notify} disabled={!mailOn} />
+            <span>Email the applicant about this update{!mailOn && <span class="muted"> (email not configured)</span>}</span>
+          </label>
+          <label class="field">
+            <span class="lab">Message to the applicant (optional)</span>
+            <textarea name="message" rows="4" disabled={!mailOn}>{form.message}</textarea>
+          </label>
+        </fieldset>
+        <button class="btn btn--primary" type="submit">Save</button>
+      </form>
+
+      <section class="card" aria-labelledby="h-act">
+        <h2 id="h-act" style="margin-bottom:14px">Activity</h2>
+        <ol class="timeline">
+          {activity.map((e) => (
+            <li><time datetime={e.created_at}>{formatEt(e.created_at)}</time>{e.what}</li>
+          ))}
+        </ol>
+      </section>
+    </div>
+  </div>
+</StaffLayout>

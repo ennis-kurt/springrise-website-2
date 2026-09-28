@@ -1,0 +1,9 @@
+---
+import { phaseOf, type Season } from "../../lib/season";
+interface Props { season: Pick<Season, "status" | "opens_at" | "closes_at"> }
+const { season } = Astro.props;
+const phase = phaseOf(season);
+const key = season.status === "published" ? phase : season.status;
+const label = season.status === "published" ? { open: "Open", upcoming: "Upcoming", closed: "Closed" }[phase] : season.status === "draft" ? "Draft" : "Archived";
+---
+<span class={`badge badge--${key}`}>{label}</span>

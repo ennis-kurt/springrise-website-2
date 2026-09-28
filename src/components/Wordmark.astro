@@ -1,0 +1,32 @@
+---
+// The Springrise mark: a growth curve that becomes a leaf — rising data and a new shoot in one line.
+interface Props { size?: number; tone?: "night" | "bone"; withName?: boolean; class?: string }
+const { size = 30, tone = "night", withName = true, class: cls = "" } = Astro.props;
+---
+<span class:list={["wm", `wm--${tone}`, cls]}>
+  <svg class="wm__mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
+    <rect class="wm__tile" width="32" height="32" rx="9" />
+    <path class="wm__stem" d="M7 25.5c6.2 0 10.4-4.8 12.6-13" />
+    <path class="wm__leaf" d="M19.3 12.8c-.3-4.4 2.7-7.3 6.9-7.4.3 4.3-2.6 7.3-6.9 7.4Z" />
+    <circle class="wm__seed" cx="7" cy="25.5" r="1.9" />
+  </svg>
+  {withName && <span class="wm__name">springrise</span>}
+</span>
+
+<style>
+  .wm { display: inline-flex; align-items: center; gap: 0.55rem; line-height: 1; }
+  .wm__tile { fill: var(--night); }
+  .wm__stem { fill: none; stroke: var(--shoot); stroke-width: 2.7; stroke-linecap: round; }
+  .wm__leaf { fill: var(--shoot); }
+  .wm__seed { fill: var(--dawn); }
+  .wm--bone .wm__tile { fill: var(--shoot); }
+  .wm--bone .wm__stem { stroke: var(--night); }
+  .wm--bone .wm__leaf { fill: var(--night); }
+  .wm__name {
+    font-family: var(--font-display); font-weight: 750; font-size: 1.45rem; letter-spacing: -0.055em;
+    font-variation-settings: "opsz" 48;
+  }
+  .wm--bone .wm__name { color: var(--bone); }
+  .wm__mark { transition: transform 0.6s var(--ease); flex: none; }
+  :global(a:hover) > .wm .wm__mark { transform: rotate(-8deg) scale(1.04); }
+</style>

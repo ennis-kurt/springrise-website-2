@@ -1,0 +1,85 @@
+---
+import StaffLayout from "../../../layouts/StaffLayout.astro";
+import StageBadge from "../../../components/staff/StageBadge.astro";
+import { STAGES, type Stage } from "../../../lib/season";
+import { allSeasonsWithCounts, filterFrom, filterQuery, listApplications } from "../../../lib/server/db";
+import { money } from "../../../lib/server/format";
+import { formatEt } from "../../../lib/server/time";
+
+const PER = 50;
+const f = filterFrom(Astro.url);
+const page = Math.max(1, Math.min(10_000, Number.parseInt(Astro.url.searchParams.get("page") ?? "1", 10) || 1));
+const [seasons, { rows, total }] = await Promise.all([allSeasonsWithCounts(), listApplications(f, PER, (page - 1) * PER)]);
+const pages = Math.max(1, Math.ceil(total / PER));
+const titles = Object.fromEntries(seasons.map((s) => [s.slug, s.title]));
+const filtered = !!(f.season || f.stage || f.q);
+---
+<StaffLayout title="Applications" active="applications">
+  <header class="page-head">
+    <div>
+      <span class="kicker">Applications</span>
+      <h1>Applications</h1>
+      <p>{total.toLocaleString("en-US")} {filtered ? "matching" : "in total"}{f.season ? ` · ${titles[f.season] ?? f.season}` : ""}</p>
+    </div>
+    <a class="btn btn--ghost" href={`/api/staff/export/applications.csv${filterQuery(f)}`} download>Export CSV</a>
+  </header>
+
+  <form method="get" class="filters" role="search">
+    <label class="field">
+      <span class="lab">Season</span>
+      <select name="season">
+        <option value="">All seasons</option>
+        {seasons.map((s) => <option value={s.slug} selected={f.season === s.slug}>{s.title} ({s.applications})</option>)}
+      </select>
+    </label>
+    <label class="field">
+      <span class="lab">Stage</span>
+      <select name="stage">
+        <option value="">Any stage</option>
+        {(Object.keys(STAGES) as Stage[]).map((st) => <option value={st} selected={f.stage === st}>{STAGES[st]}</option>)}
+      </select>
+    </label>
+    <label class="field field--grow">
+      <span class="lab">Search</span>
+      <input type="search" name="q" value={f.q ?? ""} placeholder="Name, email or code" maxlength="100" />
+    </label>
+    <button class="btn btn--primary" type="submit">Filter</button>
+    {filtered && <a class="btn btn--ghost" href="/staff/applications">Clear</a>}
+  </form>
+
+  <div class="table-wrap">
+    {rows.length ? (
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Applicant</th><th scope="col">Code</th><th scope="col">Season</th><th scope="col">School</th>
+            <th scope="col">Stage</th><th scope="col" class="r">Tuition owed</th><th scope="col" class="r">Award</th><th scope="col">Submitted (ET)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((a) => (
+            <tr>
+              <td><a class="row-link" href={`/staff/applications/${a.id}`}>{a.last_name}, {a.first_name}</a><span class="sub">{a.email}</span></td>
+              <td class="mono">{a.code}</td>
+              <td class="muted">{titles[a.season_slug] ?? a.season_slug}</td>
+              <td>{a.school}<span class="sub">{a.level}</span></td>
+              <td><StageBadge stage={a.stage} /></td>
+              <td class="r mono num">{money(a.tuition_cents)}</td>
+              <td class="r mono num">{a.award_cents != null ? money(a.award_cents) : <span class="faint">—</span>}</td>
+              <td class="muted">{formatEt(a.created_at, false)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    ) : (
+      <p class="empty">{filtered ? "No applications match these filters." : "No applications yet."}</p>
+    )}
+  </div>
+  {pages > 1 && (
+    <nav class="pager" aria-label="Pagination">
+      {page > 1 ? <a class="btn btn--ghost btn--small" href={`/staff/applications${filterQuery(f, { page: page - 1 })}`}>← Newer</a> : <span />}
+      <span class="num">Page {page} of {pages}</span>
+      {page < pages ? <a class="btn btn--ghost btn--small" href={`/staff/applications${filterQuery(f, { page: page + 1 })}`}>Older →</a> : <span />}
+    </nav>
+  )}
+</StaffLayout>

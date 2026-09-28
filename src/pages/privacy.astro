@@ -1,0 +1,36 @@
+---
+import Site from "../layouts/Site.astro";
+import PageHead from "../components/PageHead.astro";
+import { ORG } from "../lib/facts";
+---
+<Site title="Privacy" description="How Springrise Foundation collects, uses and protects personal information.">
+  <PageHead kicker="Privacy" title="Your information," accent="handled with care." lead="Plain language about what we collect, why, and the choices you have. Last updated September 28, 2026." />
+  <section class="section">
+    <div class="wrap--text prose">
+      <h2>What we collect</h2>
+      <ul>
+        <li><b>Scholarship applications</b> — your contact details, date of birth, address, school and study details, tuition information, two references' contact details, your optional note, and the PDF documents you upload.</li>
+        <li><b>Messages</b> you send through our forms: your name, email, optional phone and message.</li>
+        <li><b>Season alerts</b> — your email address, if you ask to hear when applications open.</li>
+      </ul>
+      <h2>Why we use it</h2>
+      <p>Only to run the foundation's programs: to review and administer scholarship applications, pay awards to institutions, reply to you, and tell subscribers when a new season opens. We never sell or rent personal information.</p>
+      <h2>Who can see it</h2>
+      <p>Authorized foundation staff and the Board of Trustees, who review applications. Applicants can see only their application's stage on the status page — never its contents.</p>
+      <h2>How it's stored</h2>
+      <p>On Cloudflare's infrastructure, encrypted in transit. Application documents are stored privately and are available only to signed-in staff. If email notifications are enabled, messages are delivered through an email provider.</p>
+      <h2>Drafts on your device</h2>
+      <p>While you fill out an application, your answers and chosen PDFs are saved in your own browser so you can return later. They're cleared when you submit, or when you choose "Start over".</p>
+      <h2>Cookies</h2>
+      <p>We use no advertising or tracking cookies. The only cookie is a strictly necessary sign-in cookie for foundation staff.</p>
+      <h2>How long we keep it</h2>
+      <p>As long as needed to administer scholarships and meet our legal and record-keeping obligations, as set by the Board.</p>
+      <h2>Your choices</h2>
+      <p>To see, correct or delete your information, or to unsubscribe, email <a href={`mailto:${ORG.email.info}`}>{ORG.email.info}</a>. Every season-alert email includes an unsubscribe link.</p>
+      <h2>Applicants under 18</h2>
+      <p>Applicants under 18 should apply with a parent's or guardian's knowledge.</p>
+      <h2>Contact</h2>
+      <p>{ORG.legal}, {ORG.address.join(", ")} · <a href={`mailto:${ORG.email.info}`}>{ORG.email.info}</a> · {ORG.phone}</p>
+    </div>
+  </section>
+</Site>

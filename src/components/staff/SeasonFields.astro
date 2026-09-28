@@ -1,0 +1,76 @@
+---
+import type { SeasonForm } from "../../lib/server/seasons";
+import { STATUSES, TERMS } from "../../lib/server/seasons";
+
+interface Props { values: SeasonForm; errorField?: string; slugLocked?: boolean }
+const { values: v, errorField, slugLocked = false } = Astro.props;
+const inv = (f: string) => (errorField === f ? "true" : undefined);
+const statusLabel = { draft: "Draft — only staff can see it", published: "Published — live on the website", archived: "Archived — past season" };
+---
+<fieldset class="plain form">
+  <div class="form-row">
+    <label class="field" style="grid-column: span 2">
+      <span class="lab">Title</span>
+      <input type="text" name="title" value={v.title} required maxlength="120" aria-invalid={inv("title")} />
+    </label>
+    <label class="field">
+      <span class="lab">Term</span>
+      <select name="term" aria-invalid={inv("term")}>
+        {TERMS.map((t) => <option value={t} selected={v.term === t}>{t}</option>)}
+      </select>
+    </label>
+    <label class="field">
+      <span class="lab">Year</span>
+      <input type="number" name="year" value={v.year} min="2020" max="2100" required aria-invalid={inv("year")} />
+    </label>
+  </div>
+  <div class="form-row">
+    <label class="field">
+      <span class="lab">URL slug</span>
+      <input type="text" name="slug" value={v.slug} required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxlength="60" readonly={slugLocked} aria-invalid={inv("slug")} aria-describedby="slug-hint" />
+      <span class="hint" id="slug-hint">{slugLocked ? "Locked because applications exist." : <>Public address: <span class="mono">/scholarships/{v.slug || "…"}</span></>}</span>
+    </label>
+    <label class="field">
+      <span class="lab">Status</span>
+      <select name="status" aria-invalid={inv("status")}>
+        {STATUSES.map((s) => <option value={s} selected={v.status === s}>{statusLabel[s]}</option>)}
+      </select>
+    </label>
+  </div>
+  <div class="form-row">
+    <label class="field">
+      <span class="lab">Applications open (ET)</span>
+      <input type="datetime-local" name="opens" value={v.opens} aria-invalid={inv("opens")} />
+    </label>
+    <label class="field">
+      <span class="lab">Applications close (ET)</span>
+      <input type="datetime-local" name="closes" value={v.closes} aria-invalid={inv("closes")} />
+    </label>
+    <label class="field">
+      <span class="lab">Decisions by (ET, optional)</span>
+      <input type="datetime-local" name="decision" value={v.decision} aria-invalid={inv("decision")} />
+    </label>
+  </div>
+  <p class="hint" style="margin:-6px 0 0">All times are New York time (ET); daylight saving is handled automatically. Tip: close at 11:59 PM on the last day.</p>
+  <label class="field">
+    <span class="lab">Headline</span>
+    <input type="text" name="headline" value={v.headline} maxlength="200" aria-invalid={inv("headline")} />
+  </label>
+  <label class="field">
+    <span class="lab">Announcement</span>
+    <textarea name="announcement" rows="5" aria-invalid={inv("announcement")}>{v.announcement}</textarea>
+    <span class="hint">Separate paragraphs with a blank line.</span>
+  </label>
+  <div class="form-row">
+    <label class="field">
+      <span class="lab">Eligibility</span>
+      <textarea name="eligibility" rows="6" aria-invalid={inv("eligibility")}>{v.eligibility}</textarea>
+      <span class="hint">One item per line. Leave blank to use the standard criteria.</span>
+    </label>
+    <label class="field">
+      <span class="lab">Requirements</span>
+      <textarea name="requirements" rows="6" aria-invalid={inv("requirements")}>{v.requirements}</textarea>
+      <span class="hint">One item per line. Leave blank to use the standard terms.</span>
+    </label>
+  </div>
+</fieldset>

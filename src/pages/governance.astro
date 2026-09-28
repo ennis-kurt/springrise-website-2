@@ -1,0 +1,127 @@
+---
+import Site from "../layouts/Site.astro";
+import PageHead from "../components/PageHead.astro";
+import { BYLAWS } from "../lib/bylaws";
+import { ORG } from "../lib/facts";
+
+const small = new Set(["of", "the", "and", "its", "upon", "by", "in", "to"]);
+const title = (t: string) => t.split(" ").map((w, i) => (i > 0 && small.has(w.toLowerCase()) ? w.toLowerCase() : w)).join(" ");
+const facts = [
+  { k: "Legal form", v: "New Jersey nonprofit corporation", d: "Organized under the New Jersey Nonprofit Corporation Act, N.J.S.A. 15A:1-1 et seq. The corporation has no members." },
+  { k: "Tax status", v: "501(c)(3) public charity", d: `Recognized by the IRS as exempt from federal income tax under IRC §501(c)(3), effective ${ORG.exemptSince}. Contributions are deductible under §170.`, id: "tax-status" },
+  { k: "EIN", v: ORG.ein, d: "Employer Identification Number, for matching-gift forms and donor records." },
+  { k: "Board of Trustees", v: "At least three trustees", d: "Elected by a majority of the entire Board for three-year terms. Trustees serve without compensation." },
+  { k: "Officers", v: "President · Secretary · Treasurer", d: "Elected each year at the annual meeting for one-year terms, and serve without compensation." },
+  { k: "Annual meeting", v: "First Wednesday of December", d: "Or another date designated by the President with notice to the Trustees." },
+];
+---
+<Site title="Governance & by-laws" description="How Springrise Foundation, Inc. is organized and governed: legal status, tax-exempt determination, Board of Trustees and the full text of the by-laws.">
+  <PageHead kicker="Governance" title="How we're" accent="governed." lead="The formal details — our legal structure, tax-exempt status and the full by-laws adopted by the Board of Trustees. For anyone who wants to look under the hood.">
+    <a class="dl" href="/docs/springrise-foundation-bylaws.pdf" download>
+      <span class="dl__ic mono" aria-hidden="true">PDF</span>
+      <span><b>Download the by-laws</b><small>Official document · 6 pages</small></span>
+      <span aria-hidden="true">↓</span>
+    </a>
+  </PageHead>
+
+  <section class="section section--s">
+    <div class="wrap">
+      <dl class="gf">
+        {facts.map((f, i) => (
+          <div class="gf__item rv" id={f.id} style={`--d:${i * 0.05}s`}>
+            <dt class="mono">{f.k}</dt>
+            <dd><b>{f.v}</b><span>{f.d}</span></dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="section paper bl" aria-labelledby="bl-h">
+    <div class="bl__progress" aria-hidden="true"><i data-progress></i></div>
+    <div class="wrap bl__grid">
+      <nav class="bl__toc" aria-label="By-laws articles">
+        <p class="kicker">By-laws of {ORG.legal}</p>
+        <ol role="list">
+          {BYLAWS.map((a) => <li><a href={`#article-${a.num.toLowerCase()}`} data-toc={`article-${a.num.toLowerCase()}`}><span class="mono">{a.num}</span>{title(a.title)}</a></li>)}
+        </ol>
+        <a class="btn btn--sm btn--line" href="/docs/springrise-foundation-bylaws.pdf" download>Download PDF ↓</a>
+      </nav>
+      <div class="bl__doc" data-doc>
+        <header class="bl__head">
+          <p class="mono">By-Laws of</p>
+          <h2 class="t-2" id="bl-h">Springrise Foundation, Inc.</h2>
+          <p class="mono">A New Jersey Nonprofit Corporation</p>
+        </header>
+        {BYLAWS.map((a) => (
+          <article class="art" id={`article-${a.num.toLowerCase()}`}>
+            <h3><span class="mono">Article {a.num}</span>{title(a.title)}</h3>
+            {a.sections.map((s) => (
+              <p>{s.n !== null && <b class="art__n">{s.n}. {s.heading ? `${s.heading}.` : ""}</b>} {s.text}</p>
+            ))}
+          </article>
+        ))}
+        <p class="bl__foot small muted">Transcribed from the adopted by-laws. In any difference between this page and the signed document, the signed document governs.</p>
+      </div>
+    </div>
+  </section>
+</Site>
+
+<script>
+  const doc = document.querySelector<HTMLElement>("[data-doc]");
+  const bar = document.querySelector<HTMLElement>("[data-progress]");
+  const links = [...document.querySelectorAll<HTMLAnchorElement>("[data-toc]")];
+  if (doc && bar) {
+    const upd = () => {
+      const r = doc.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight * 0.6)));
+      bar.style.transform = `scaleX(${p})`;
+    };
+    addEventListener("scroll", upd, { passive: true }); upd();
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      links.forEach((l) => l.classList.toggle("on", l.dataset.toc === e.target.id));
+    }), { rootMargin: "-35% 0px -60% 0px" });
+    doc.querySelectorAll("article").forEach((a) => io.observe(a));
+  }
+</script>
+
+<style>
+  .dl { display: grid; grid-template-columns: auto 1fr auto; gap: 1rem; align-items: center; padding: 1.2rem 1.4rem; border-radius: var(--r); background: var(--shoot); color: var(--night); text-decoration: none; transition: transform 0.5s var(--ease); }
+  .dl:hover { transform: translateY(-4px); }
+  .dl__ic { display: grid; place-items: center; width: 3rem; height: 3.6rem; border-radius: 8px; background: var(--night); color: var(--shoot); font-size: 0.72rem; }
+  .dl b { display: block; font-size: 1.05rem; }
+  .dl small { color: rgb(16 15 26 / 0.7); }
+
+  .gf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; }
+  .gf__item { display: grid; gap: 0.9rem; align-content: start; padding: 1.6rem; border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); scroll-margin-top: 7rem; }
+  .gf__item dt { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+  .gf__item dd { display: grid; gap: 0.5rem; }
+  .gf__item b { font-family: var(--font-display); font-weight: 700; font-size: 1.45rem; letter-spacing: -0.03em; line-height: 1.12; }
+  .gf__item span { color: var(--text-muted); font-size: 0.95rem; }
+  .gf__item:target { outline: 2px solid var(--shoot-deep); }
+  @media (max-width: 1000px) { .gf { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .gf { grid-template-columns: 1fr; } }
+
+  .bl { position: relative; }
+  .bl__progress { position: sticky; top: 0; z-index: 5; height: 3px; margin-top: calc(var(--section) * -1); margin-bottom: var(--section); }
+  .bl__progress i { display: block; height: 100%; background: var(--shoot-deep); transform-origin: left; transform: scaleX(0); }
+  .bl__grid { display: grid; grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .bl__toc { position: sticky; top: 6.5rem; display: grid; gap: 1.2rem; justify-items: start; max-height: calc(100vh - 8rem); overflow-y: auto; }
+  .bl__toc ol { display: grid; gap: 0.1rem; }
+  .bl__toc a { display: grid; grid-template-columns: 2.6rem 1fr; gap: 0.4rem; padding: 0.45rem 0.6rem; border-radius: var(--r-xs); font-size: 0.9rem; text-decoration: none; color: var(--text-muted); transition: all 0.2s; }
+  .bl__toc a:hover { color: var(--night); background: var(--bone); }
+  .bl__toc a.on { color: var(--night); background: var(--bone-2); font-weight: 600; }
+  .bl__toc .mono { font-size: 0.75rem; padding-top: 0.12rem; }
+  .bl__doc { max-width: 46rem; }
+  .bl__head { display: grid; gap: 0.4rem; justify-items: center; text-align: center; padding-bottom: 2.5rem; margin-bottom: 1rem; border-bottom: 1.5px solid var(--night); }
+  .bl__head .mono { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
+  .art { padding-block: 2rem; border-bottom: 1px solid var(--line); scroll-margin-top: 6rem; }
+  .art h3 { display: grid; gap: 0.35rem; font-family: var(--font-display); font-weight: 700; font-size: 1.55rem; letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 1.1rem; }
+  .art h3 .mono { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--shoot-ink); }
+  .art p { color: #2c2a3d; line-height: 1.72; }
+  .art p + p { margin-top: 0.9rem; }
+  .art__n { font-weight: 700; color: var(--night); }
+  .bl__foot { margin-top: 2rem; }
+  @media (max-width: 900px) { .bl__grid { grid-template-columns: 1fr; } .bl__toc { position: static; max-height: none; } }
+</style>

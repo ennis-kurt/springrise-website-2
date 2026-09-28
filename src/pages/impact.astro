@@ -1,0 +1,212 @@
+---
+import Site from "../layouts/Site.astro";
+import PageHead from "../components/PageHead.astro";
+import AidRing from "../components/viz/AidRing.astro";
+import DollarGrid from "../components/viz/DollarGrid.astro";
+import ReachDots from "../components/viz/ReachDots.astro";
+import YearBars from "../components/viz/YearBars.astro";
+import { FINANCE, ORG, REACH } from "../lib/facts";
+
+const F = FINANCE;
+const pct = (a: number, b: number) => ((b - a) / a) * 100;
+const money = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+const rows = [
+  { k: "Total contributions & donations", v: F.contributions },
+  { k: "Scholarships paid", v: F.scholarships },
+  { k: "Operating & legal expenses", v: F.operations },
+  { k: "Net operating income", v: F.netIncome, note: true },
+];
+const flows = F.years.map((y, i) => {
+  const parts = [
+    { k: "Scholarships", v: F.scholarships[i], c: "shoot" },
+    { k: "Operations & legal", v: F.operations[i], c: "lilac" },
+    { k: "Net surplus", v: F.netIncome[i], c: "dawn" },
+  ];
+  const sum = parts.reduce((n, p) => n + p.v, 0);
+  return { y, parts: parts.map((p) => ({ ...p, w: (p.v / sum) * 100 })) };
+});
+const [y24, y25] = REACH.students;
+---
+<Site title="Impact & financials" description="How Springrise Foundation's support has grown — students reached, scholarships paid and how every dollar is used, FY 2024 to FY 2025.">
+  <PageHead kicker="Impact & financials" title="Every dollar," accent="accounted for." lead="We're small, lean and growing — and we think donors and students deserve to see exactly how. Here is what FY 2024 and FY 2025 looked like." />
+
+  <section class="section section--s">
+    <div class="wrap kpis">
+      {[
+        { n: F.contributions[1], pre: "$", d: 0, cap: "given in FY 2025", ch: pct(F.contributions[0], F.contributions[1]) },
+        { n: F.scholarships[1], pre: "$", d: 0, cap: "paid in scholarships", ch: pct(F.scholarships[0], F.scholarships[1]) },
+        { n: y25.count, pre: "", d: 0, cap: `scholars supported in ${y25.year}`, ch: REACH.growth * 100 },
+        { n: 97.1, pre: "", suf: "%", d: 1, cap: "of spending went straight to students", ch: null },
+      ].map((k, i) => (
+        <article class="kpi rv" style={`--d:${i * 0.06}s`}>
+          <p class="kpi__n"><span data-count={k.n} data-prefix={k.pre} data-suffix={k.suf ?? ""} data-decimals={k.d}>0</span></p>
+          <p class="kpi__cap">{k.cap}</p>
+          {k.ch !== null && <p class="kpi__ch mono">▲ {k.ch.toFixed(1)}% vs FY 2024</p>}
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section night flow" aria-labelledby="flow-h">
+    <div class="wrap">
+      <div class="head-row">
+        <div>
+          <p class="kicker rv">Where giving went</p>
+          <h2 class="t-1 rv" id="flow-h">A year of giving,<br /><span class="hl">put to work.</span></h2>
+        </div>
+        <div class="seg rv" role="tablist" aria-label="Fiscal year" data-seg>
+          {F.years.map((y, i) => <button role="tab" type="button" aria-selected={i === 1 ? "true" : "false"} data-y={i}>{y}</button>)}
+        </div>
+      </div>
+
+      <div class="flow__viz rv" data-flow>
+        {flows.map((f, i) => (
+          <div class="flow__year" data-year={i} hidden={i !== 1}>
+            <div class="flow__bar" role="img" aria-label={`${f.y}: ${f.parts.map((p) => `${p.k} ${money(p.v)}`).join(", ")}`}>
+              {f.parts.map((p) => <span class:list={["flow__seg", `flow__seg--${p.c}`]} style={`--w:${p.w}%`}><b class="mono">{p.w >= 8 ? `${p.w.toFixed(1)}%` : ""}</b></span>)}
+            </div>
+            <ul class="flow__legend" role="list">
+              {f.parts.map((p) => (
+                <li><i class:list={["sw", `sw--${p.c}`]}></i><span>{p.k}</span><b class="mono">{money(p.v)}</b></li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p class="flow__note small muted rv">{F.note} Proportions shown are of scholarships, operations and net surplus combined.</p>
+    </div>
+  </section>
+
+  <section class="section" id="financials" aria-labelledby="fin-h">
+    <div class="wrap fin">
+      <div class="fin__head">
+        <p class="kicker rv">Financial performance summary</p>
+        <h2 class="t-2 rv" id="fin-h">FY 2024 → FY 2025</h2>
+        <p class="muted rv">Figures in U.S. dollars from Springrise Foundation's financial summary. {ORG.legal} is a 501(c)(3) public charity, EIN {ORG.ein}.</p>
+      </div>
+      <div class="table-wrap rv">
+        <table class="fin__table">
+          <caption class="sr-only">Springrise Foundation financial performance, FY 2024 and FY 2025</caption>
+          <thead><tr><th scope="col">Account</th><th scope="col">FY 2024</th><th scope="col">FY 2025</th><th scope="col">Change</th></tr></thead>
+          <tbody>
+            {rows.map((r) => {
+              const c = pct(r.v[0], r.v[1]);
+              return (
+                <tr>
+                  <th scope="row">{r.k}</th>
+                  <td class="mono">{money(r.v[0])}</td>
+                  <td class="mono">{money(r.v[1])}</td>
+                  <td><span class:list={["delta mono", c < 0 ? "delta--down" : "delta--up"]}>{c >= 0 ? "+" : ""}{c.toFixed(1)}%{r.note ? "*" : ""}</span></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted rv">* {F.note}</p>
+    </div>
+  </section>
+
+  <section class="section night grid-bg" aria-labelledby="eff-h">
+    <div class="wrap eff">
+      <div class="eff__text">
+        <p class="kicker rv">Mission efficiency</p>
+        <h2 class="t-1 rv" id="eff-h">97¢ of every<br /><span class="hl">dollar</span> reaches<br />a student.</h2>
+        <p class="lead rv">Of FY 2025 spending, {money(F.scholarships[1])} went to scholarships and {money(F.operations[1])} covered lean operations and legal costs. Trustees serve without compensation, as our by-laws require.</p>
+        <a class="link rv" href="/governance#article-iv">Read Article IV of the by-laws →</a>
+      </div>
+      <div class="eff__viz rv" style="--d:.1s">
+        <AidRing size={320} />
+        <DollarGrid />
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="reach-h">
+    <div class="wrap reach-sec">
+      <div>
+        <p class="kicker rv">Reach</p>
+        <h2 class="t-1 rv" id="reach-h">From {y24.count} to <span class="hl">{y25.count}</span> scholars.</h2>
+        <p class="lead rv">A {(REACH.growth * 100).toFixed(1)}% increase in students supported in a single year — and scholarship dollars grew even faster, up {pct(F.scholarships[0], F.scholarships[1]).toFixed(1)}%.</p>
+      </div>
+      <div class="reach-card night rv">
+        <ReachDots />
+        <YearBars label="Scholarships paid" values={F.scholarships} tone="shoot" />
+      </div>
+    </div>
+  </section>
+</Site>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-seg]").forEach((seg) => {
+    const tabs = [...seg.querySelectorAll<HTMLButtonElement>("button")];
+    const years = [...document.querySelectorAll<HTMLElement>("[data-year]")];
+    const show = (i: number) => {
+      tabs.forEach((t, j) => t.setAttribute("aria-selected", String(i === j)));
+      years.forEach((y, j) => {
+        y.hidden = i !== j;
+        if (i === j) { y.classList.remove("go"); void y.offsetWidth; y.classList.add("go"); }
+      });
+    };
+    tabs.forEach((t, i) => t.addEventListener("click", () => show(i)));
+    const flow = document.querySelector("[data-flow]");
+    flow?.addEventListener("inview", () => show(1));
+    new IntersectionObserver(([e], o) => { if (e.isIntersecting) { show(1); o.disconnect(); } }, { threshold: 0.3 }).observe(flow!);
+  });
+</script>
+
+<style>
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.8rem; }
+  .kpi { display: grid; gap: 0.5rem; align-content: start; padding: clamp(1.4rem, 2.5vw, 2rem); border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); }
+  .kpi__n { font-family: var(--font-display); font-weight: 750; font-size: clamp(2.2rem, 1.4rem + 2.4vw, 3.6rem); letter-spacing: -0.05em; line-height: 1; }
+  .kpi__cap { color: var(--text-muted); }
+  .kpi__ch { justify-self: start; font-size: 0.74rem; padding: 0.3rem 0.6rem; border-radius: var(--r-pill); background: var(--night); color: var(--shoot); }
+  @media (max-width: 1000px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .kpis { grid-template-columns: 1fr; } }
+
+  .seg { display: inline-flex; padding: 0.3rem; border-radius: var(--r-pill); background: var(--night-2); border: 1px solid var(--night-line); }
+  .seg button { padding: 0.65rem 1.2rem; border-radius: var(--r-pill); font-family: var(--font-mono); font-size: 0.82rem; color: var(--night-muted); transition: all 0.3s var(--ease); }
+  .seg button[aria-selected="true"] { background: var(--shoot); color: var(--night); }
+  .flow__viz { display: grid; }
+  .flow__bar { display: flex; height: clamp(5rem, 9vw, 8rem); border-radius: var(--r); overflow: hidden; gap: 4px; }
+  .flow__seg { position: relative; flex: 0 0 auto; width: 0; display: flex; align-items: flex-end; padding: 0.9rem; transition: width 1.4s var(--ease); }
+  .flow__year.go .flow__seg { width: var(--w); }
+  .flow__seg b { font-size: 0.85rem; color: var(--night); font-weight: 600; }
+  .flow__seg--shoot { background: var(--shoot); }
+  .flow__seg--lilac { background: var(--lilac); }
+  .flow__seg--dawn { background: var(--dawn); }
+  .flow__legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.4rem; }
+  .flow__legend li { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.7rem; align-items: center; padding: 1rem 1.1rem; border-radius: var(--r-sm); border: 1px solid var(--night-line); }
+  .flow__legend b { grid-column: 2; font-size: 1.15rem; font-weight: 500; color: var(--bone); }
+  .flow__legend span { color: var(--night-muted); font-size: 0.92rem; }
+  .sw { width: 0.8rem; height: 0.8rem; border-radius: 3px; }
+  .sw--shoot { background: var(--shoot); } .sw--lilac { background: var(--lilac); } .sw--dawn { background: var(--dawn); }
+  .flow__note { margin-top: 1.4rem; max-width: 46rem; }
+  @media (max-width: 760px) { .flow__legend { grid-template-columns: 1fr; } }
+
+  .fin { display: grid; gap: 1.6rem; }
+  .fin__head { display: grid; gap: 0.9rem; max-width: 46rem; }
+  .table-wrap { overflow-x: auto; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--paper); }
+  .fin__table { width: 100%; border-collapse: collapse; min-width: 40rem; }
+  .fin__table th, .fin__table td { padding: 1.15rem 1.5rem; text-align: right; border-bottom: 1px solid var(--line); }
+  .fin__table th:first-child { text-align: left; }
+  .fin__table thead th { font-family: var(--font-mono); font-weight: 500; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); background: var(--bone); }
+  .fin__table tbody th { font-weight: 600; }
+  .fin__table tbody tr:last-child > * { border-bottom: 0; }
+  .fin__table tbody tr:hover { background: var(--bone); }
+  .delta { display: inline-block; padding: 0.25rem 0.6rem; border-radius: var(--r-pill); font-size: 0.82rem; }
+  .delta--up { background: var(--night); color: var(--shoot); }
+  .delta--down { background: var(--bone-2); color: var(--dawn-deep); }
+
+  .eff { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .eff__text { display: grid; gap: 1.3rem; justify-items: start; }
+  .eff__text .link { color: var(--shoot); }
+  .eff__viz { display: grid; grid-template-columns: auto auto; gap: 2.5rem; align-items: center; justify-content: center; }
+  @media (max-width: 1100px) { .eff { grid-template-columns: 1fr; } .eff__viz { justify-content: start; } }
+  @media (max-width: 700px) { .eff__viz { grid-template-columns: 1fr; } }
+
+  .reach-sec { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .reach-sec > div:first-child { display: grid; gap: 1.2rem; }
+  .reach-card { display: grid; gap: 2.2rem; padding: clamp(1.5rem, 3vw, 2.5rem); border-radius: var(--r-lg); }
+  @media (max-width: 960px) { .reach-sec { grid-template-columns: 1fr; } }
+</style>

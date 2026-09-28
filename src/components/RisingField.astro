@@ -1,0 +1,174 @@
+---
+// Generative, data-driven hero art. Each stem is one scholar Springrise has supported.
+// `groups` → [{ count, color, label }]. Stems grow in, sway, and lean toward the pointer like plants to light.
+interface Group { count: number; color: string; label: string; weight?: number }
+interface Props { groups: Group[]; class?: string; density?: number }
+const { groups, class: cls = "", density = 1 } = Astro.props;
+---
+<div class:list={["field", cls]}>
+  <canvas data-field data-groups={JSON.stringify(groups)} data-density={density} aria-hidden="true"></canvas>
+</div>
+
+<style>
+  .field { position: absolute; inset: 0; pointer-events: none; }
+  .field canvas { width: 100%; height: 100%; }
+</style>
+
+<script>
+  type Group = { count: number; color: string; label: string; weight?: number };
+  type Stem = { x: number; h: number; lean: number; phase: number; speed: number; width: number; color: string; alpha: number; delay: number; leaf: number; glow: number };
+  type Mote = { x: number; y: number; r: number; v: number; drift: number; a: number };
+
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function rng(seed: number) {
+    return () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+  }
+
+  document.querySelectorAll<HTMLCanvasElement>("canvas[data-field]").forEach((canvas) => {
+    const ctx = canvas.getContext("2d")!;
+    const groups: Group[] = JSON.parse(canvas.dataset.groups || "[]");
+    const density = Number(canvas.dataset.density || 1);
+    let W = 0, H = 0, dpr = 1;
+    let stems: Stem[] = [];
+    let motes: Mote[] = [];
+    let t0 = performance.now();
+    let pointer = { x: -1, y: -1, on: false };
+    let lean = 0; // smoothed pointer influence
+    let running = true;
+
+    function build() {
+      const rand = rng(20250625);
+      const all: Stem[] = [];
+      const total = groups.reduce((n, g) => n + g.count, 0);
+      // Distribute stems in shuffled slots across the width so groups interleave like a real meadow.
+      const slots = Array.from({ length: total }, (_, i) => i).sort(() => rand() - 0.5);
+      let k = 0;
+      groups.forEach((g, gi) => {
+        for (let i = 0; i < g.count; i++) {
+          const slot = slots[k++];
+          const x = ((slot + 0.5 + (rand() - 0.5) * 0.8) / total) * W;
+          // keep a calmer zone behind the headline (left) and let the field rise to the right
+          const zone = W > 900 ? 0.5 + 0.5 * Math.min(1, Math.max(0, (x / W - 0.25) / 0.45)) : 0.6;
+          const tall = (g.weight ?? 1) * (0.38 + rand() * 0.42) * zone;
+          all.push({
+            x, h: H * Math.min(0.84, tall), lean: (rand() - 0.5) * 0.18, phase: rand() * Math.PI * 2,
+            speed: 0.35 + rand() * 0.45, width: (gi === 0 ? 2.2 : 1.6) * (0.8 + rand() * 0.5), color: g.color,
+            alpha: gi === 0 ? 1 : 0.72, delay: 250 + slot * 38 + rand() * 300, leaf: 0.55 + rand() * 0.3, glow: gi === 0 ? 1 : 0.5,
+          });
+        }
+      });
+      stems = all.sort((a, b) => a.alpha - b.alpha); // draw dimmer first
+      motes = Array.from({ length: Math.round(46 * density * (W / 1400 + 0.3)) }, () => ({
+        x: rand() * W, y: rand() * H, r: 0.6 + rand() * 1.8, v: 6 + rand() * 18, drift: (rand() - 0.5) * 12, a: 0.15 + rand() * 0.45,
+      }));
+    }
+
+    function resize() {
+      const r = canvas.getBoundingClientRect();
+      dpr = Math.min(2, devicePixelRatio || 1);
+      W = r.width; H = r.height;
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      build();
+      if (reduce) draw(performance.now() + 1e6);
+    }
+
+    function draw(now: number) {
+      const t = (now - t0) / 1000;
+      ctx.clearRect(0, 0, W, H);
+
+      // soft horizon glow
+      const g = ctx.createRadialGradient(W * 0.5, H * 1.05, 0, W * 0.5, H * 1.05, Math.max(W, H) * 0.75);
+      g.addColorStop(0, "rgba(197,240,74,0.16)");
+      g.addColorStop(0.4, "rgba(169,156,255,0.06)");
+      g.addColorStop(1, "rgba(16,15,26,0)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+      // drifting motes (pollen)
+      for (const m of motes) {
+        if (!reduce) {
+          m.y -= m.v / 60; m.x += Math.sin(t * 0.6 + m.r * 3) * 0.15 + m.drift / 600;
+          if (m.y < -4) { m.y = H + 4; m.x = Math.random() * W; }
+        }
+        ctx.globalAlpha = m.a * (0.4 + 0.6 * (m.y / H));
+        ctx.fillStyle = "#f3f0e8";
+        ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      // pointer lean (plants turn toward light)
+      const targetLean = pointer.on ? (pointer.x / W - 0.5) * 2 : 0;
+      lean += (targetLean - lean) * 0.04;
+
+      for (const s of stems) {
+        const age = Math.max(0, (now - t0 - s.delay) / 1600);
+        const grow = reduce ? 1 : 1 - Math.pow(1 - Math.min(1, age), 3);
+        if (grow <= 0) continue;
+        const h = s.h * grow;
+        const near = pointer.on ? Math.max(0, 1 - Math.abs(pointer.x - s.x) / (W * 0.18)) : 0;
+        const sway = reduce ? 0 : Math.sin(t * s.speed + s.phase) * 0.06 + Math.sin(t * s.speed * 2.3 + s.phase) * 0.02;
+        const bend = (s.lean + sway + lean * 0.22 + near * lean * 0.18) * h;
+        const tipX = s.x + bend, tipY = H - h;
+        const cx = s.x + bend * 0.15, cy = H - h * 0.55;
+
+        const grad = ctx.createLinearGradient(0, H, 0, tipY);
+        grad.addColorStop(0, "rgba(16,15,26,0)");
+        grad.addColorStop(0.35, hexA(s.color, 0.25 * s.alpha));
+        grad.addColorStop(1, hexA(s.color, s.alpha));
+        ctx.strokeStyle = grad; ctx.lineWidth = s.width; ctx.lineCap = "round";
+        ctx.beginPath(); ctx.moveTo(s.x, H + 2); ctx.quadraticCurveTo(cx, cy, tipX, tipY); ctx.stroke();
+
+        // leaves at a point along the stem
+        const lt = s.leaf;
+        const lx = (1 - lt) * (1 - lt) * s.x + 2 * (1 - lt) * lt * cx + lt * lt * tipX;
+        const ly = (1 - lt) * (1 - lt) * H + 2 * (1 - lt) * lt * cy + lt * lt * tipY;
+        const leafSize = Math.min(16, 5 + h * 0.03) * grow;
+        ctx.fillStyle = hexA(s.color, 0.55 * s.alpha);
+        leaf(lx, ly, leafSize, -0.9 + bend / h);
+        leaf(lx, ly, leafSize * 0.8, Math.PI + 0.9 + bend / h);
+
+        // glowing bud at the tip
+        const pulse = reduce ? 1 : 0.8 + 0.2 * Math.sin(t * 2 + s.phase);
+        const glowR = (6 + near * 10) * s.glow * pulse;
+        const rg = ctx.createRadialGradient(tipX, tipY, 0, tipX, tipY, glowR * 3);
+        rg.addColorStop(0, hexA(s.color, 0.55 * s.alpha));
+        rg.addColorStop(1, hexA(s.color, 0));
+        ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(tipX, tipY, glowR * 3, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = hexA(s.color, s.alpha);
+        ctx.beginPath(); ctx.arc(tipX, tipY, s.width * 1.6 + near * 1.5, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    function leaf(x: number, y: number, size: number, angle: number) {
+      ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+      ctx.beginPath(); ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(size * 0.55, -size * 0.45, size, 0);
+      ctx.quadraticCurveTo(size * 0.55, size * 0.45, 0, 0);
+      ctx.fill(); ctx.restore();
+    }
+
+    function hexA(hex: string, a: number) {
+      const n = parseInt(hex.slice(1), 16);
+      return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+    }
+
+    function loop(now: number) {
+      if (running) draw(now);
+      requestAnimationFrame(loop);
+    }
+
+    const host = canvas.closest("section") ?? canvas.parentElement!;
+    host.addEventListener("pointermove", (e) => {
+      const r = canvas.getBoundingClientRect();
+      pointer = { x: e.clientX - r.left, y: e.clientY - r.top, on: true };
+    });
+    host.addEventListener("pointerleave", () => (pointer.on = false));
+    new ResizeObserver(resize).observe(canvas);
+    new IntersectionObserver(([e]) => (running = e.isIntersecting)).observe(canvas);
+    document.addEventListener("visibilitychange", () => (running = !document.hidden));
+    resize();
+    t0 = performance.now();
+    if (!reduce) requestAnimationFrame(loop);
+  });
+</script>

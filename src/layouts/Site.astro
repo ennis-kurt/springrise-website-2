@@ -1,0 +1,53 @@
+---
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
+import "../styles/site.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { siteData, type SiteData } from "../lib/public";
+import { ORG } from "../lib/facts";
+
+interface Props { title?: string; description?: string; site?: SiteData; noindex?: boolean; theme?: string }
+const { title, description = ORG.summary, noindex = false, theme = "#100f1a" } = Astro.props;
+const site = Astro.props.site ?? (await siteData());
+const full = title ? `${title} · Springrise Foundation` : "Springrise Foundation · Room to rise";
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+const og = new URL("/og.png", Astro.site ?? Astro.url).href;
+const ld = {
+  "@context": "https://schema.org", "@type": "NGO", name: ORG.name, legalName: ORG.legal, url: "https://springrise.org",
+  taxID: ORG.ein, nonprofitStatus: "Nonprofit501c3", email: ORG.email.info, telephone: "+1-973-804-9082",
+  address: { "@type": "PostalAddress", postOfficeBoxNumber: "55", addressLocality: "Denville", addressRegion: "NJ", postalCode: "07834", addressCountry: "US" },
+  description: ORG.summary,
+};
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{full}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content={theme} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Springrise Foundation" />
+    <meta property="og:title" content={full} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    <script is:inline>document.documentElement.classList.replace("no-js", "js");</script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header spotlight={site.spotlight} />
+    <main id="main"><slot /></main>
+    <Footer spotlight={site.spotlight} />
+    <script>import "../scripts/runtime.ts";</script>
+  </body>
+</html>

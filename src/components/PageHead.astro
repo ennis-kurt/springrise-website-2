@@ -1,0 +1,26 @@
+---
+// Interior page opener: night band with a split-reveal headline. Optional right-hand slot.
+import Split from "./Split.astro";
+interface Props { kicker: string; title: string; accent?: string; lead?: string; tone?: "night" | "bone" }
+const { kicker, title, accent, lead, tone = "night" } = Astro.props;
+const hasSide = Astro.slots.has("default");
+---
+<section class:list={["ph", tone === "night" ? "night grid-bg" : "ph--bone"]}>
+  <div class:list={["wrap ph__grid", hasSide && "ph__grid--side"]}>
+    <div class="ph__text">
+      <p class="kicker rv">{kicker}</p>
+      <h1 class="t-hero"><Split text={title} />{accent && <> <Split text={accent} class="hl" start={title.split(" ").length} /></>}</h1>
+      {lead && <p class="lead rv" style="--d:.3s">{lead}</p>}
+    </div>
+    {hasSide && <div class="ph__side rv" style="--d:.2s"><slot /></div>}
+  </div>
+</section>
+
+<style>
+  .ph { padding-top: clamp(8rem, 13vw, 11.5rem); padding-bottom: clamp(3.5rem, 7vw, 6.5rem); overflow: hidden; }
+  .ph--bone { background: var(--bone); }
+  .ph__grid { display: grid; gap: 2rem; }
+  .ph__grid--side { grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.85fr); align-items: end; gap: clamp(2rem, 5vw, 5rem); }
+  .ph__text { display: grid; gap: 1.5rem; max-width: 64rem; }
+  @media (max-width: 960px) { .ph__grid--side { grid-template-columns: 1fr; } }
+</style>

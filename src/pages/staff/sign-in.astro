@@ -1,0 +1,48 @@
+---
+import StaffLayout from "../../layouts/StaffLayout.astro";
+import { passwordConfigured, safeNext, setSessionCookie, signIn } from "../../lib/server/auth";
+import { clientIp } from "../../lib/server/http";
+
+const next = safeNext(Astro.url.searchParams.get("next"));
+if (Astro.locals.staff && Astro.request.method === "GET") return Astro.redirect(next, 303);
+
+let error = Astro.url.searchParams.get("error")?.slice(0, 200) ?? "";
+const signedOut = Astro.url.searchParams.has("signedOut");
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData().catch(() => null);
+  const password = String(form?.get("password") ?? "");
+  const target = safeNext(String(form?.get("next") ?? next));
+  const r = await signIn(password, clientIp(Astro.request));
+  if (r.ok) {
+    setSessionCookie(Astro.cookies, r.token, Astro.url);
+    return Astro.redirect(target, 303);
+  }
+  error = r.error;
+  Astro.response.status = r.status;
+}
+const configured = passwordConfigured();
+---
+<StaffLayout title="Sign in" bare>
+  <div class="signin">
+    <div class="brand" style="padding:0">
+      <span class="wordmark">springrise</span>
+      <span class="brand-tag">Staff</span>
+    </div>
+    <h1>Sign in</h1>
+    <p>The staff workspace for scholarship seasons, applications and messages.</p>
+    {error && <div class="alert alert--error" role="alert">{error}</div>}
+    {!error && signedOut && <div class="alert alert--ok" role="status">You're signed out.</div>}
+    {!configured && !error && (
+      <div class="alert alert--error" role="alert">Sign-in is disabled until an ADMIN_PASSWORD of at least 16 characters is configured.</div>
+    )}
+    <form method="post" class="form">
+      <input type="hidden" name="next" value={next} />
+      <label class="field">
+        <span class="lab">Staff password</span>
+        <input type="password" name="password" autocomplete="current-password" required autofocus />
+      </label>
+      <button class="btn btn--primary" type="submit">Sign in</button>
+    </form>
+  </div>
+</StaffLayout>

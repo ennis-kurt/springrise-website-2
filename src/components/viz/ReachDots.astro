@@ -1,0 +1,39 @@
+---
+// Students reached per year, one figure per student.
+import { REACH } from "../../lib/facts";
+const max = Math.max(...REACH.students.map((s) => s.count));
+---
+<figure class="reach" data-inview>
+  {REACH.students.map((row, r) => (
+    <div class="reach__row">
+      <span class="reach__year mono">{row.year}</span>
+      <div class="reach__dots" role="img" aria-label={`${row.count} students supported in ${row.year}`}>
+        {Array.from({ length: max }, (_, i) => (
+          <span class:list={["p", i < row.count ? (r === REACH.students.length - 1 ? "p--now" : "p--then") : "p--empty"]} style={`--i:${i + r * 6}`}>
+            <svg viewBox="0 0 12 20" aria-hidden="true"><circle cx="6" cy="4" r="3.4" /><path d="M1 19.5c0-5 1.8-9.2 5-9.2s5 4.2 5 9.2Z" /></svg>
+          </span>
+        ))}
+      </div>
+      <span class="reach__n"><b>{row.count}</b> students</span>
+    </div>
+  ))}
+</figure>
+
+<style>
+  .reach { margin: 0; display: grid; gap: 1.1rem; }
+  .reach__row { display: grid; grid-template-columns: 3.4rem 1fr auto; gap: 1rem; align-items: center; }
+  .reach__year { font-size: 0.8rem; color: var(--night-muted); }
+  .reach__dots { display: grid; grid-template-columns: repeat(25, minmax(0, 1fr)); gap: 3px; }
+  .p svg { width: 100%; height: auto; fill: currentColor; }
+  .p { color: var(--night-3); transform: translateY(30%); opacity: 0; transition: transform 0.7s var(--ease), opacity 0.5s, color 0.5s; transition-delay: calc(var(--i) * 35ms); }
+  .reach.in .p { transform: none; opacity: 1; }
+  .reach.in .p--now { color: var(--shoot); }
+  .reach.in .p--then { color: var(--lilac); }
+  .reach.in .p--empty { color: var(--night-3); opacity: 0.6; }
+  .reach__n { font-size: 0.92rem; color: var(--night-muted); white-space: nowrap; }
+  .reach__n b { font-family: var(--font-display); font-size: 1.6rem; color: var(--bone); letter-spacing: -0.03em; margin-right: 0.2rem; }
+  @media (max-width: 560px) {
+    .reach__row { grid-template-columns: 1fr auto; }
+    .reach__year { grid-column: 1 / -1; }
+  }
+</style>

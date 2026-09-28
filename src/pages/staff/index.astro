@@ -1,0 +1,134 @@
+---
+import StaffLayout from "../../layouts/StaffLayout.astro";
+import StageBadge from "../../components/staff/StageBadge.astro";
+import SeasonBadge from "../../components/staff/SeasonBadge.astro";
+import { env } from "cloudflare:workers";
+import { STAGES, daysFrom, phaseOf, spotlight, type Stage } from "../../lib/season";
+import {
+  countSubscribers, countUnhandledInquiries, publishedSeasons, stageCounts,
+  type ApplicationRow, type InquiryRow,
+} from "../../lib/server/db";
+import { money } from "../../lib/server/format";
+import { formatEt } from "../../lib/server/time";
+
+const season = spotlight(await publishedSeasons());
+const phase = season ? phaseOf(season) : null;
+const [counts, latest, inquiries, openInquiries, subscribers] = await Promise.all([
+  season ? stageCounts(season.slug) : Promise.resolve({} as Record<string, number>),
+  env.DB.prepare(
+    `SELECT a.*, s.title AS season_title FROM applications a JOIN seasons s ON s.slug = a.season_slug
+     ORDER BY a.created_at DESC LIMIT 8`,
+  ).all<ApplicationRow & { season_title: string }>().then((r) => r.results),
+  env.DB.prepare("SELECT * FROM inquiries WHERE handled = 0 ORDER BY created_at DESC LIMIT 5").all<InquiryRow>().then((r) => r.results),
+  countUnhandledInquiries(),
+  countSubscribers(),
+]);
+const total = Object.values(counts).reduce((a, b) => a + b, 0);
+const days = season && phase === "open" ? daysFrom(season.closes_at) : season && phase === "upcoming" ? daysFrom(season.opens_at) : 0;
+---
+<StaffLayout title="Overview" active="overview">
+  <header class="page-head">
+    <div>
+      <span class="kicker">Overview</span>
+      <h1>Good to see you.</h1>
+      <p>Everything happening across the foundation's inbox and scholarship seasons.</p>
+    </div>
+    <div class="actions">
+      <a class="btn btn--primary" href="/staff/seasons/new">Announce a new season</a>
+    </div>
+  </header>
+
+  <section class="card" aria-labelledby="spot-h">
+    {season ? (
+      <>
+        <div class="spot">
+          <div>
+            <div class="actions" style="margin-bottom:10px"><span class="label">Spotlight season</span><SeasonBadge season={season} /></div>
+            <h2 id="spot-h" class="spot-title">{season.title}</h2>
+            <p class="muted" style="margin:6px 0 0">
+              {formatEt(season.opens_at)} – {formatEt(season.closes_at)}
+            </p>
+          </div>
+          <div class="stat" style="text-align:right">
+            {phase === "open" && (<><span class="countdown num">{days}</span><span class="label">{days === 1 ? "day left" : "days left"}</span></>)}
+            {phase === "upcoming" && (<><span class="countdown num">{days}</span><span class="label">{days === 1 ? "day until opening" : "days until opening"}</span></>)}
+            {phase === "closed" && (<><span class="countdown num">{total}</span><span class="label">applications received</span></>)}
+          </div>
+        </div>
+        <div class="stage-grid">
+          <a class="stage-cell" href={`/staff/applications?season=${season.slug}`}>
+            <span class="label">All</span><strong class="num">{total}</strong>
+          </a>
+          {(Object.keys(STAGES) as Stage[]).map((st) => (
+            <a class="stage-cell" href={`/staff/applications?season=${season.slug}&stage=${st}`}>
+              <StageBadge stage={st} /><strong class="num">{counts[st] ?? 0}</strong>
+            </a>
+          ))}
+        </div>
+        <div class="actions" style="margin-top:18px">
+          <a class="btn btn--ghost btn--small" href={`/staff/seasons/${season.slug}`}>Edit season</a>
+          <a class="btn btn--ghost btn--small" href={`/scholarships/${season.slug}`}>View public page</a>
+        </div>
+      </>
+    ) : (
+      <div class="empty">
+        <h2 id="spot-h">No published season</h2>
+        <p>Publish a season to open applications and show it on the website.</p>
+        <a class="btn btn--primary" href="/staff/seasons/new">Create a season</a>
+      </div>
+    )}
+  </section>
+
+  <div class="grid grid-main" style="margin-top:20px">
+    <section class="card" aria-labelledby="latest-h">
+      <div class="card-head">
+        <h2 id="latest-h">Latest applications</h2>
+        <a href="/staff/applications">All applications →</a>
+      </div>
+      {latest.length ? (
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th scope="col">Applicant</th><th scope="col">Code</th><th scope="col">Stage</th><th scope="col" class="r">Tuition</th><th scope="col">Submitted</th></tr></thead>
+            <tbody>
+              {latest.map((a) => (
+                <tr>
+                  <td><a class="row-link" href={`/staff/applications/${a.id}`}>{a.first_name} {a.last_name}</a><span class="sub">{a.season_title}</span></td>
+                  <td class="mono">{a.code}</td>
+                  <td><StageBadge stage={a.stage} /></td>
+                  <td class="r mono num">{money(a.tuition_cents)}</td>
+                  <td class="muted">{formatEt(a.created_at, false)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : <p class="empty">No applications yet.</p>}
+    </section>
+
+    <div class="stack">
+      <section class="card" aria-labelledby="inq-h">
+        <div class="card-head">
+          <h2 id="inq-h">Unhandled inquiries <span class="muted num">({openInquiries})</span></h2>
+          <a href="/staff/inquiries">Inbox →</a>
+        </div>
+        {inquiries.length ? (
+          <ul class="files">
+            {inquiries.map((i) => (
+              <li>
+                <a class="file" href="/staff/inquiries">
+                  <span><span class="name">{i.name}</span><span class="sub muted" style="display:block;font-size:.82rem">{i.message.slice(0, 80)}{i.message.length > 80 ? "…" : ""}</span></span>
+                  <span class="badge">{i.reason}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : <p class="muted" style="margin:0">Inbox zero. Nothing waiting.</p>}
+      </section>
+      <section class="card stat" aria-labelledby="sub-h">
+        <span class="label" id="sub-h">Subscribers</span>
+        <span class="stat-value num">{subscribers.toLocaleString("en-US")}</span>
+        <a href="/staff/subscribers" style="font-size:.875rem">View list →</a>
+      </section>
+    </div>
+  </div>
+</StaffLayout>

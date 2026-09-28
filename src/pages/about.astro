@@ -1,0 +1,124 @@
+---
+import Site from "../layouts/Site.astro";
+import PageHead from "../components/PageHead.astro";
+import PillarGlyph from "../components/PillarGlyph.astro";
+import InquiryForm from "../components/InquiryForm.astro";
+import { COMMUNITY, FINANCE, ORG, PILLARS } from "../lib/facts";
+
+const principles = [
+  { t: "Paid to schools, not students", b: "Every scholarship goes directly to an accredited college or university as tuition — so support lands exactly where it's needed." },
+  { t: "The whole person, reviewed", b: "Grades matter, and so do need, resilience, leadership and service. The Board reads each application as a story, not a score." },
+  { t: `Lean by design`, b: `In FY 2025, ${(FINANCE.directAid * 100).toFixed(1)}% of spending went directly to students. Operations and legal costs were the rest.` },
+  { t: "Trustees who aren't paid", b: "Our by-laws require that trustees and officers serve without compensation. Nothing of the foundation benefits any insider." },
+];
+---
+<Site title="About" description={ORG.summary}>
+  <PageHead kicker="About Springrise" title="A foundation for" accent="the long climb." lead="Springrise Foundation, Inc. is a New Jersey nonprofit supporting academic success and career impact for students of Turkish descent in U.S. higher education." />
+
+  <section class="section">
+    <div class="wrap purpose">
+      <p class="kicker rv">Our purpose</p>
+      <blockquote class="purpose__q rv">
+        <p>“Empowering students of Turkish descent to become <span class="hl">self-confident,</span> socially conscious, <span class="hl">life-long learners.</span>”</p>
+      </blockquote>
+      <p class="purpose__src muted rv">Our institutional purpose, set out in <a href="/governance#article-i">Article I of our by-laws</a>: to support students in higher education in their pursuit of academic success, and to help them pursue impactful careers of their own choosing — through mentorship, academic support, scholarships and other resources.</p>
+    </div>
+  </section>
+
+  <section class="section night grid-bg" aria-labelledby="who-h">
+    <div class="wrap who">
+      <div>
+        <p class="kicker rv">Who we serve</p>
+        <h2 class="t-1 rv" id="who-h">Students with more<br /><span class="hl">promise</span> than resources.</h2>
+      </div>
+      <ol class="who__list" role="list">
+        {COMMUNITY.map((c, i) => <li class="rv" style={`--d:${i * 0.08}s`}><span class="mono">{String(i + 1).padStart(2, "0")} · {c.k}</span><p>{c.v}</p></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="work-h">
+    <div class="wrap">
+      <div class="head-row">
+        <div>
+          <p class="kicker rv">What we do</p>
+          <h2 class="t-1 rv" id="work-h">Three pillars.</h2>
+        </div>
+        <p class="lead rv">Each one answers a different barrier between a capable student and the career they're capable of.</p>
+      </div>
+      <ol class="pl" role="list">
+        {PILLARS.map((p, i) => (
+          <li class="pl__row rv pillar" id={p.key}>
+            <span class="pl__n mono">0{i + 1}</span>
+            <h3 class="t-2">{p.title}</h3>
+            <div class="pl__txt"><p class="lead">{p.line}</p><p class="muted">{p.detail}</p></div>
+            <PillarGlyph kind={p.key} />
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section bone-2" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="head-row">
+        <div>
+          <p class="kicker rv">How we work</p>
+          <h2 class="t-1 rv" id="how-h">Principles we<br />don't bend.</h2>
+        </div>
+      </div>
+      <ul class="pr" role="list">
+        {principles.map((p, i) => <li class="rv" style={`--d:${i * 0.06}s`}><span class="pr__mark" aria-hidden="true"></span><h3 class="t-3">{p.t}</h3><p class="muted">{p.b}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="gov-h">
+    <div class="wrap gov">
+      <div class="gov__card night rv">
+        <p class="kicker">Governance</p>
+        <h2 class="t-2" id="gov-h">Organized under New Jersey law. Recognized by the IRS.</h2>
+        <p class="muted">A New Jersey nonprofit corporation governed by a Board of Trustees under formal by-laws, and a 501(c)(3) public charity since {ORG.exemptSince} (EIN {ORG.ein}).</p>
+        <a class="btn btn--shoot" href="/governance">Governance & by-laws <span class="arr">↗</span></a>
+      </div>
+      <div class="gov__form rv" style="--d:.1s">
+        <h2 class="t-3">Say hello</h2>
+        <p class="muted">Questions, ideas, introductions — we read everything.</p>
+        <InquiryForm id="about" />
+      </div>
+    </div>
+  </section>
+</Site>
+
+<style>
+  .purpose { display: grid; gap: 1.8rem; }
+  .purpose__q p { font-family: var(--font-display); font-weight: 650; font-size: clamp(2rem, 1rem + 3.8vw, 4.8rem); line-height: 1.02; letter-spacing: -0.045em; max-width: 20ch; }
+  .purpose__src { max-width: 44rem; }
+  .purpose__src a { color: var(--lilac-deep); }
+  .who { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: end; }
+  .who__list li { display: grid; gap: 0.5rem; padding: 1.6rem 0; border-top: 1px solid var(--night-line-strong); }
+  .who__list .mono { font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--shoot); }
+  .who__list p { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.9rem); letter-spacing: -0.025em; line-height: 1.2; }
+  @media (max-width: 900px) { .who { grid-template-columns: 1fr; } }
+
+  .pl { border-top: 1.5px solid var(--night); }
+  .pl__row { display: grid; grid-template-columns: 4rem minmax(0, 0.8fr) minmax(0, 1.2fr) 12rem; gap: 2rem; align-items: center; padding: clamp(1.6rem, 3vw, 2.6rem) 0; border-bottom: 1px solid var(--line-strong); scroll-margin-top: 7rem; background: none !important; color: inherit !important; }
+  .pl__n { font-size: 0.8rem; color: var(--text-muted); }
+  .pl__txt { display: grid; gap: 0.6rem; }
+  .pl__row :global(.glyph) { color: var(--night); }
+  @media (max-width: 1000px) { .pl__row { grid-template-columns: 3rem 1fr; } .pl__txt { grid-column: 2; } .pl__row :global(.glyph) { display: none; } }
+
+  .pr { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.8rem; }
+  .pr li { display: grid; gap: 0.8rem; align-content: start; padding: 1.6rem; border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); }
+  .pr__mark { width: 2.4rem; height: 2.4rem; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--shoot), var(--shoot-deep)); margin-bottom: 1.6rem; }
+  .pr li:nth-child(2) .pr__mark { background: radial-gradient(circle at 35% 35%, var(--lilac), var(--lilac-deep)); }
+  .pr li:nth-child(3) .pr__mark { background: radial-gradient(circle at 35% 35%, #ffb09c, var(--dawn)); }
+  .pr li:nth-child(4) .pr__mark { background: var(--night); }
+  @media (max-width: 1000px) { .pr { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .pr { grid-template-columns: 1fr; } }
+
+  .gov { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
+  .gov__card { display: grid; gap: 1.2rem; justify-items: start; padding: clamp(1.8rem, 4vw, 3rem); border-radius: var(--r-lg); }
+  .gov__form { display: grid; gap: 0.8rem; }
+  @media (max-width: 900px) { .gov { grid-template-columns: 1fr; } }
+</style>

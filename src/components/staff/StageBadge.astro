@@ -1,0 +1,6 @@
+---
+import { STAGES, type Stage } from "../../lib/season";
+interface Props { stage: Stage }
+const { stage } = Astro.props;
+---
+<span class={`badge badge--${stage}`}>{STAGES[stage] ?? stage}</span>

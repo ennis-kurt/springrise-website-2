@@ -1,0 +1,50 @@
+---
+import Site from "../../../layouts/Site.astro";
+import Apply from "../../../components/apply/Apply.tsx";
+import { seasonForRequest, siteData } from "../../../lib/public";
+import { formatDateTime } from "../../../lib/season";
+import { DOCUMENTS, FILE_LIMIT, LEVELS, ORG, TOTAL_LIMIT } from "../../../lib/facts";
+import "../../../styles/apply.css";
+
+const site = await siteData();
+const { season: s } = await seasonForRequest(Astro.params.slug!, Astro.request, site);
+if (!s) return Astro.rewrite("/404");
+const open = s.phase === "open" && s.status === "published";
+const show = open || Astro.url.searchParams.has("preview");
+---
+<Site title={`Apply · ${s.title}`} description={`Apply for the ${s.title}.`} site={site} noindex>
+  <section class="ap-page night">
+    <div class="wrap">
+      <header class="ap-page__head">
+        <a class="ap-back" href={`/scholarships/${s.slug}`}>← {s.term} {s.year} details</a>
+        <h1 class="t-1">Apply for <span class="hl">{s.term} {s.year}</span></h1>
+        {show && <p class="lead">Five short chapters. Everything saves as you go.</p>}
+      </header>
+      {show ? (
+        <Apply client:load
+          season={{ slug: s.slug, title: s.title, term: s.term, year: s.year, deadline: formatDateTime(s.closes_at) }}
+          docs={DOCUMENTS.map((d) => ({ ...d }))} levels={[...LEVELS]} preview={!open} fileLimit={FILE_LIMIT} totalLimit={TOTAL_LIMIT} />
+      ) : (
+        <div class="ap-closed">
+          <span class="chip"><span class:list={["pulse", `pulse--${s.phase}`]}></span>{s.phase === "upcoming" ? "Not open yet" : "Closed"}</span>
+          <h2 class="t-2">{s.phase === "upcoming" ? <>Applications open <span class="hl">{formatDateTime(s.opens_at)}.</span></> : <>This season has <span class="hl">closed.</span></>}</h2>
+          <p class="lead">{s.phase === "upcoming" ? "You can explore every step of the form now and get your documents ready." : <>Need to send more documents for an application you submitted? Email <a href={`mailto:${ORG.email.scholarship}`}>{ORG.email.scholarship}</a> with your reference.</>}</p>
+          <div class="ap-closed__cta">
+            <a class="btn btn--shoot" href={`/scholarships/${s.slug}/apply?preview=1`}>Preview the form <span class="arr">→</span></a>
+            <a class="btn btn--line-night" href="/scholarships">All scholarships</a>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+</Site>
+
+<style>
+  .ap-page { padding-top: clamp(7.5rem, 11vw, 9.5rem); padding-bottom: clamp(4rem, 8vw, 7rem); min-height: 100svh; }
+  .ap-page__head { display: grid; gap: 1rem; max-width: 52rem; margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+  .ap-back { font-size: 0.9rem; color: var(--night-muted); text-decoration: none; }
+  .ap-back:hover { color: var(--shoot); }
+  .ap-closed { display: grid; gap: 1.3rem; justify-items: start; max-width: 46rem; padding: clamp(2rem, 4vw, 3.4rem); border-radius: var(--r-lg); border: 1px solid var(--night-line-strong); background: var(--night-2); }
+  .ap-closed a:not(.btn) { color: var(--shoot); }
+  .ap-closed__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+</style>

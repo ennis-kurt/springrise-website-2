@@ -1,0 +1,23 @@
+---
+import Site from "../layouts/Site.astro";
+import RisingField from "../components/RisingField.astro";
+---
+<Site title="Not found" noindex>
+  <section class="nf night">
+    <RisingField groups={[{ count: 3, color: "#c5f04a", label: "", weight: 0.9 }]} density={0.6} />
+    <div class="wrap nf__in">
+      <p class="kicker">Error 404</p>
+      <h1 class="t-giant">Still<br /><span class="hl">growing.</span></h1>
+      <p class="lead">This page doesn't exist — or hasn't sprouted yet.</p>
+      <div class="nf__cta">
+        <a class="btn btn--shoot btn--lg" href="/">Back home <span class="arr">↗</span></a>
+        <a class="btn btn--line-night btn--lg" href="/scholarships">Scholarships</a>
+      </div>
+    </div>
+  </section>
+</Site>
+<style>
+  .nf { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: hidden; }
+  .nf__in { position: relative; display: grid; gap: 1.5rem; padding-block: 8rem 4rem; }
+  .nf__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+</style>

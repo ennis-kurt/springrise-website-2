@@ -1,0 +1,30 @@
+---
+// "Where every dollar goes": 100 cents, lit one by one — 97 to students, 3 to operations.
+import { FINANCE } from "../../lib/facts";
+const aid = FINANCE.scholarships[1], ops = FINANCE.operations[1];
+const cents = Math.round((aid / (aid + ops)) * 100); // 97
+const cells = Array.from({ length: 100 }, (_, i) => i < cents);
+---
+<figure class="dollar" data-inview>
+  <div class="dollar__grid" role="img" aria-label={`Of every dollar spent in FY 2025, ${cents} cents went directly to students and ${100 - cents} cents to operations and legal.`}>
+    {cells.map((aidCell, i) => <span class:list={["c", aidCell ? "c--aid" : "c--ops"]} style={`--i:${i}`}></span>)}
+  </div>
+  <figcaption class="dollar__legend">
+    <span><i class="sw sw--aid"></i><b>{cents}¢</b> scholarships</span>
+    <span><i class="sw sw--ops"></i><b>{100 - cents}¢</b> operations & legal</span>
+  </figcaption>
+</figure>
+
+<style>
+  .dollar { margin: 0; display: grid; gap: 1.2rem; }
+  .dollar__grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; max-width: 17rem; }
+  .c { aspect-ratio: 1; border-radius: 30%; background: var(--night-3); transform: scale(0.4); opacity: 0.4; transition: transform 0.5s var(--ease), background-color 0.4s, opacity 0.4s; transition-delay: calc(var(--i) * 14ms); }
+  .dollar.in .c { transform: scale(1); opacity: 1; }
+  .dollar.in .c--aid { background: var(--shoot); }
+  .dollar.in .c--ops { background: var(--lilac); transition-delay: calc(var(--i) * 14ms + 0.2s); }
+  .c:hover { transform: scale(1.25) !important; transition-delay: 0s; }
+  .dollar__legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1.6rem; font-size: 0.92rem; color: var(--night-muted); }
+  .dollar__legend b { color: var(--bone); font-family: var(--font-mono); font-weight: 600; margin-right: 0.3rem; }
+  .sw { display: inline-block; width: 0.75rem; height: 0.75rem; border-radius: 3px; margin-right: 0.5rem; vertical-align: -1px; }
+  .sw--aid { background: var(--shoot); } .sw--ops { background: var(--lilac); }
+</style>

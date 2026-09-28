@@ -1,0 +1,42 @@
+---
+import StaffLayout from "../../../layouts/StaffLayout.astro";
+import SeasonFields from "../../../components/staff/SeasonFields.astro";
+import Alert from "../../../components/staff/Alert.astro";
+import { createSeason, emptyForm, formFromData, FormError, validateSeason, type SeasonForm } from "../../../lib/server/seasons";
+
+let values: SeasonForm = emptyForm();
+let error = "";
+let errorField = "";
+
+if (Astro.request.method === "POST") {
+  const fd = await Astro.request.formData();
+  values = formFromData(fd);
+  try {
+    const v = validateSeason(values);
+    await createSeason(v);
+    return Astro.redirect(`/staff/seasons/${v.slug}?saved=created`, 303);
+  } catch (err) {
+    if (!(err instanceof FormError)) throw err;
+    error = err.message;
+    errorField = err.field;
+    Astro.response.status = 400;
+  }
+}
+---
+<StaffLayout title="New season" active="seasons">
+  <header class="page-head">
+    <div>
+      <a class="crumb" href="/staff/seasons">← Seasons</a>
+      <h1>New season</h1>
+      <p>Start as a draft, preview the public page, then publish when dates and wording are final.</p>
+    </div>
+  </header>
+  <Alert error={error} />
+  <form method="post" class="card form">
+    <SeasonFields values={values} errorField={errorField} />
+    <div class="actions">
+      <button class="btn btn--primary" type="submit">Create season</button>
+      <a class="btn btn--ghost" href="/staff/seasons">Cancel</a>
+    </div>
+  </form>
+</StaffLayout>

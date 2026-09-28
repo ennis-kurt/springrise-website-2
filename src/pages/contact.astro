@@ -1,0 +1,48 @@
+---
+import Site from "../layouts/Site.astro";
+import PageHead from "../components/PageHead.astro";
+import InquiryForm from "../components/InquiryForm.astro";
+import { ORG } from "../lib/facts";
+const q = Astro.url.searchParams;
+const reason = q.get("about") ?? "general";
+const channels = [
+  { k: "General", v: ORG.email.info, href: `mailto:${ORG.email.info}`, note: "Questions, partnerships, press" },
+  { k: "Scholarships", v: ORG.email.scholarship, href: `mailto:${ORG.email.scholarship}`, note: "Applications, documents, status" },
+  { k: "Giving", v: ORG.email.giving, href: `mailto:${ORG.email.giving}`, note: "Transfers, checks, matching" },
+  { k: "Phone", v: ORG.phone, href: ORG.phoneHref, note: "Leave a message and we'll call back" },
+];
+---
+<Site title="Contact" description="Contact Springrise Foundation — scholarships, giving, mentoring and partnerships.">
+  <PageHead kicker="Contact" title="We'd love to" accent="hear from you." lead="Write to the right inbox below, or send a message and it'll reach the right person. We aim to reply within a few business days." />
+  <section class="section">
+    <div class="wrap ct">
+      <div class="ct__channels">
+        {channels.map((c, i) => (
+          <a class="ch rv" href={c.href} style={`--d:${i * 0.05}s`}>
+            <span class="mono">{c.k}</span><b>{c.v}</b><span class="muted small">{c.note}</span><span class="ch__arr" aria-hidden="true">↗</span>
+          </a>
+        ))}
+        <div class="ch ch--mail rv"><span class="mono">Mail</span><b>{ORG.legal}</b><span class="muted small">{ORG.address[0]} · {ORG.address[1]}</span></div>
+      </div>
+      <div class="rv" style="--d:.1s">
+        {q.has("sent") && <p class="note note--ok" role="status">Thank you — your message has been sent.</p>}
+        {q.get("error") && <p class="note note--err" role="alert">{q.get("error")}</p>}
+        <InquiryForm id="contact" reason={reason} />
+      </div>
+    </div>
+  </section>
+</Site>
+
+<style>
+  .ct { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .ct__channels { display: grid; gap: 0.6rem; }
+  .ch { position: relative; display: grid; gap: 0.3rem; padding: 1.3rem 1.5rem; border-radius: var(--r); background: var(--paper); border: 1px solid var(--line); text-decoration: none; transition: background-color 0.3s, color 0.3s, transform 0.5s var(--ease); }
+  .ch:not(.ch--mail):hover { background: var(--night); color: var(--bone); transform: translateX(6px); }
+  .ch:not(.ch--mail):hover .muted { color: var(--night-muted); }
+  .ch .mono { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+  .ch:hover .mono { color: var(--shoot); }
+  .ch b { font-family: var(--font-display); font-weight: 650; font-size: 1.35rem; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+  .ch__arr { position: absolute; top: 1.2rem; right: 1.3rem; }
+  .ct .note { margin-bottom: 1rem; }
+  @media (max-width: 900px) { .ct { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,52 @@
+---
+// Unsubscribe from season announcements. GET only shows a confirm button,
+// so link scanners never unsubscribe anyone; the POST does the deletion.
+import Site from "../layouts/Site.astro";
+import { env } from "cloudflare:workers";
+import { verifyUnsubscribe } from "../lib/server/mail";
+
+const e = (Astro.url.searchParams.get("e") ?? "").trim().toLowerCase().slice(0, 254);
+const t = (Astro.url.searchParams.get("t") ?? "").trim().slice(0, 64);
+const valid = await verifyUnsubscribe(e, t);
+let done = false;
+
+if (Astro.request.method === "POST" && valid) {
+  await env.DB.prepare("DELETE FROM subscribers WHERE email = ?1").bind(e).run();
+  done = true;
+}
+if (!valid) Astro.response.status = 400;
+Astro.response.headers.set("Cache-Control", "no-store");
+Astro.response.headers.set("X-Robots-Tag", "noindex");
+---
+<Site title="Unsubscribe" noindex>
+  <section class="section">
+    <div class="wrap wrap--text unsub">
+      <p class="kicker">Season updates</p>
+      {done ? (
+        <>
+          <h1 class="t-2">You're unsubscribed.</h1>
+          <p class="lead" data-state="done"><span class="mono">{e}</span> won't receive season announcements any more. You can sign up again any time on the scholarships page.</p>
+          <p><a class="btn" href="/scholarships">Back to scholarships</a></p>
+        </>
+      ) : valid ? (
+        <>
+          <h1 class="t-2">Stop season emails?</h1>
+          <p class="lead">We'll stop sending scholarship season announcements to <span class="mono">{e}</span>.</p>
+          <form method="post">
+            <button class="btn" type="submit" data-action="confirm-unsubscribe">Unsubscribe</button>
+          </form>
+        </>
+      ) : (
+        <>
+          <h1 class="t-2">This link doesn't work.</h1>
+          <p class="lead">The unsubscribe link is incomplete or has expired. Copy the full link from the email, or write to <a href="mailto:info@springrise.org">info@springrise.org</a> and we'll remove you by hand.</p>
+        </>
+      )}
+    </div>
+  </section>
+</Site>
+<style>
+  .unsub { padding-block: clamp(3rem, 8vw, 7rem); }
+  .unsub h1 { margin: 0.4em 0 0.5em; }
+  .unsub form { margin-top: 1.5rem; }
+</style>

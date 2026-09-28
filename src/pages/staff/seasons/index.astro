@@ -1,0 +1,42 @@
+---
+import StaffLayout from "../../../layouts/StaffLayout.astro";
+import SeasonBadge from "../../../components/staff/SeasonBadge.astro";
+import Alert from "../../../components/staff/Alert.astro";
+import { allSeasonsWithCounts } from "../../../lib/server/db";
+import { formatEt } from "../../../lib/server/time";
+
+const seasons = await allSeasonsWithCounts();
+const deleted = Astro.url.searchParams.get("deleted");
+---
+<StaffLayout title="Seasons" active="seasons">
+  <header class="page-head">
+    <div>
+      <span class="kicker">Seasons</span>
+      <h1>Scholarship seasons</h1>
+      <p>Each season is one application window for one semester. Drafts are visible only to staff.</p>
+    </div>
+    <a class="btn btn--primary" href="/staff/seasons/new">New season</a>
+  </header>
+  <Alert ok={deleted ? `Deleted the draft “${deleted}”.` : null} />
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th scope="col">Season</th><th scope="col">Status</th><th scope="col">Opens (ET)</th><th scope="col">Closes (ET)</th><th scope="col" class="r">Applications</th><th scope="col"><span class="sr-only">Actions</span></th></tr>
+      </thead>
+      <tbody>
+        {seasons.map((s) => (
+          <tr>
+            <td><a class="row-link" href={`/staff/seasons/${s.slug}`}>{s.title}</a><span class="sub mono">{s.slug}</span></td>
+            <td><SeasonBadge season={s} /></td>
+            <td class="muted">{formatEt(s.opens_at) || "—"}</td>
+            <td class="muted">{formatEt(s.closes_at) || "—"}</td>
+            <td class="r num">
+              {s.applications > 0 ? <a href={`/staff/applications?season=${s.slug}`}>{s.applications}</a> : <span class="faint">0</span>}
+            </td>
+            <td class="r"><a class="btn btn--ghost btn--small" href={`/staff/seasons/${s.slug}`}>Edit</a></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</StaffLayout>

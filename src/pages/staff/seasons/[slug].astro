@@ -1,0 +1,142 @@
+---
+import StaffLayout from "../../../layouts/StaffLayout.astro";
+import SeasonFields from "../../../components/staff/SeasonFields.astro";
+import SeasonBadge from "../../../components/staff/SeasonBadge.astro";
+import Alert from "../../../components/staff/Alert.astro";
+import { env } from "cloudflare:workers";
+import { phaseOf } from "../../../lib/season";
+import { countApplications, countSubscribers, getSeason, nowIso } from "../../../lib/server/db";
+import { announceSeason, emailEnabled } from "../../../lib/server/mail";
+import { formFromData, formFromSeason, FormError, updateSeason, validateSeason, type SeasonForm } from "../../../lib/server/seasons";
+import { formatEt } from "../../../lib/server/time";
+
+const slug = Astro.params.slug ?? "";
+const season = await getSeason(slug);
+if (!season) return new Response("Season not found", { status: 404, headers: { "Content-Type": "text/plain" } });
+
+let values: SeasonForm = formFromSeason(season);
+let error = "";
+let errorField = "";
+const saved = Astro.url.searchParams.get("saved");
+let notice = saved === "created" ? "Season created." : saved === "1" ? "Changes saved." : "";
+const sentParam = Astro.url.searchParams.get("announced");
+if (sentParam) notice = `Announcement sent to ${Number(sentParam).toLocaleString("en-US")} subscribers.`;
+
+const applications = await countApplications(slug);
+
+if (Astro.request.method === "POST") {
+  const fd = await Astro.request.formData();
+  const action = String(fd.get("action") ?? "save");
+  if (action === "save") {
+    values = formFromData(fd);
+    try {
+      const v = validateSeason(values);
+      await updateSeason(slug, v);
+      return Astro.redirect(`/staff/seasons/${v.slug}?saved=1`, 303);
+    } catch (err) {
+      if (!(err instanceof FormError)) throw err;
+      error = err.message;
+      errorField = err.field;
+      Astro.response.status = 400;
+    }
+  } else if (action === "delete") {
+    if (season.status !== "draft" || applications > 0) {
+      error = "Only draft seasons without applications can be deleted.";
+      Astro.response.status = 400;
+    } else {
+      await env.DB.prepare("DELETE FROM seasons WHERE slug = ?1 AND status = 'draft'").bind(slug).run();
+      return Astro.redirect(`/staff/seasons?deleted=${encodeURIComponent(season.title)}`, 303);
+    }
+  } else if (action === "announce") {
+    if (!emailEnabled()) {
+      error = "Email isn't configured, so nothing was sent.";
+    } else if (season.status !== "published" || phaseOf(season) === "closed") {
+      error = "Only published seasons that haven't closed can be announced.";
+    } else if (fd.get("confirm") !== "yes") {
+      error = "Tick the confirmation box to send the announcement.";
+    } else {
+      const { results } = await env.DB.prepare("SELECT email FROM subscribers ORDER BY created_at").all<{ email: string }>();
+      const r = await announceSeason(season, results.map((x) => x.email));
+      if ("sent" in r && r.sent > 0) {
+        await env.DB.prepare("UPDATE seasons SET announced_at = ?1, announced_to = ?2 WHERE slug = ?3").bind(nowIso(), r.sent, slug).run();
+        return Astro.redirect(`/staff/seasons/${slug}?announced=${r.sent}`, 303);
+      }
+      error = results.length ? "The email provider didn't accept the announcement. Please try again later." : "There are no subscribers yet.";
+    }
+    if (error) Astro.response.status = 400;
+  }
+}
+
+const phase = phaseOf(season);
+const canAnnounce = season.status === "published" && phase !== "closed";
+const subscribers = canAnnounce ? await countSubscribers() : 0;
+const mailOn = emailEnabled();
+---
+<StaffLayout title={season.title} active="seasons">
+  <header class="page-head">
+    <div>
+      <a class="crumb" href="/staff/seasons">← Seasons</a>
+      <div class="actions" style="margin-bottom:8px"><SeasonBadge season={season} /><span class="mono muted">{season.slug}</span></div>
+      <h1>{season.title}</h1>
+      <p>{applications.toLocaleString("en-US")} {applications === 1 ? "application" : "applications"} · last updated {formatEt(season.updated_at)}</p>
+    </div>
+    <div class="actions">
+      <a class="btn btn--ghost" href={`/scholarships/${season.slug}`} target="_blank" rel="noopener">View public page ↗</a>
+      {applications > 0 && <a class="btn btn--ghost" href={`/staff/applications?season=${season.slug}`}>Applications</a>}
+    </div>
+  </header>
+  <Alert error={error} ok={notice} />
+
+  <div class="grid grid-main">
+    <form method="post" class="card form">
+      <input type="hidden" name="action" value="save" />
+      <SeasonFields values={values} errorField={errorField} slugLocked={applications > 0} />
+      <div class="actions">
+        <button class="btn btn--primary" type="submit">Save changes</button>
+        <a class="btn btn--ghost" href="/staff/seasons">Cancel</a>
+      </div>
+    </form>
+
+    <div class="stack">
+      {canAnnounce && (
+        <section class="card" aria-labelledby="announce-h">
+          <h2 id="announce-h">Email subscribers</h2>
+          <p class="muted">Send this season's headline, announcement and dates to everyone on the list, with a link to the public page and a one-click unsubscribe.</p>
+          <dl class="dl" style="margin:14px 0 18px">
+            <dt>Subscribers</dt><dd class="num">{subscribers.toLocaleString("en-US")}</dd>
+            <dt>Last announced</dt><dd>{season.announced_at ? `${formatEt(season.announced_at)} to ${season.announced_to.toLocaleString("en-US")}` : "Never"}</dd>
+          </dl>
+          {mailOn ? (
+            <form method="post" class="form" onsubmit={`return confirm(${JSON.stringify(`Email ${subscribers} subscribers about ${season.title}?`)})`}>
+              <input type="hidden" name="action" value="announce" />
+              <label class="check"><input type="checkbox" name="confirm" value="yes" required /> <span>I've reviewed the public page. Send to {subscribers.toLocaleString("en-US")} {subscribers === 1 ? "person" : "people"}.</span></label>
+              <button class="btn btn--primary" type="submit" disabled={subscribers === 0}>{season.announced_at ? "Send again" : "Send announcement"}</button>
+            </form>
+          ) : (
+            <>
+              <button class="btn btn--primary" type="button" disabled aria-describedby="mail-off">Send announcement</button>
+              <p class="hint" id="mail-off" style="margin-top:10px">Email isn't configured. Set <span class="mono">RESEND_API_KEY</span> (and <span class="mono">EMAIL_FROM</span>) in Cloudflare to enable announcements.</p>
+            </>
+          )}
+        </section>
+      )}
+      <section class="card" aria-labelledby="facts-h">
+        <h2 id="facts-h" style="margin-bottom:12px">At a glance</h2>
+        <dl class="dl">
+          <dt>Opens</dt><dd>{formatEt(season.opens_at) || "—"}</dd>
+          <dt>Closes</dt><dd>{formatEt(season.closes_at) || "—"}</dd>
+          <dt>Decisions</dt><dd>{formatEt(season.decision_at) || "—"}</dd>
+          <dt>Created</dt><dd>{formatEt(season.created_at)}</dd>
+        </dl>
+      </section>
+      {season.status === "draft" && applications === 0 && (
+        <form method="post" class="card" onsubmit="return confirm('Delete this draft season? This cannot be undone.')">
+          <input type="hidden" name="action" value="delete" />
+          <h2 style="margin-bottom:8px">Delete draft</h2>
+          <p class="muted" style="margin:0 0 14px">Drafts without applications can be removed.</p>
+          <button class="btn btn--danger btn--small" type="submit">Delete this draft</button>
+        </form>
+      )}
+    </div>
+  </div>
+</StaffLayout>

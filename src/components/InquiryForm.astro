@@ -1,0 +1,44 @@
+---
+// Contact / interest form. Posts to /api/contact (JSON via runtime.ts; plain POST without JS).
+interface Props { reason?: string; reasons?: { v: string; label: string }[]; ok?: string; submit?: string; night?: boolean; id?: string; placeholder?: string }
+const ALL = [
+  { v: "general", label: "A general question" },
+  { v: "scholarship", label: "Scholarships" },
+  { v: "giving", label: "Giving & donations" },
+  { v: "mentor", label: "Becoming a mentor" },
+  { v: "internships", label: "Internships" },
+  { v: "board", label: "Joining the Board" },
+  { v: "partnership", label: "A partnership" },
+];
+const { reason = "general", reasons = ALL, ok = "Thank you — we'll be in touch soon.", submit = "Send", night = false, id = "inq", placeholder = "How can we help?" } = Astro.props;
+---
+<form class:list={["inq", night && "night inq--night"]} action="/api/contact" method="post" data-form data-ok={ok}>
+  <div class="trap" aria-hidden="true"><label>Company <input name="company" tabindex="-1" autocomplete="off" /></label></div>
+  <div class="inq__row">
+    <div class="field"><label for={`${id}-name`}>Name</label><input class="input" id={`${id}-name`} name="name" required autocomplete="name" maxlength="200" /></div>
+    <div class="field"><label for={`${id}-email`}>Email</label><input class="input" id={`${id}-email`} name="email" type="email" required autocomplete="email" maxlength="200" /></div>
+  </div>
+  <div class="inq__row">
+    <div class="field"><label for={`${id}-phone`}>Phone <small class="opt">optional</small></label><input class="input" id={`${id}-phone`} name="phone" type="tel" autocomplete="tel" maxlength="40" /></div>
+    <div class="field">
+      <label for={`${id}-reason`}>About</label>
+      <select class="select" id={`${id}-reason`} name="reason">
+        {reasons.map((r) => <option value={r.v} selected={r.v === reason}>{r.label}</option>)}
+      </select>
+    </div>
+  </div>
+  <div class="field"><label for={`${id}-msg`}>Message</label><textarea class="textarea" id={`${id}-msg`} name="message" required minlength="10" maxlength="5000" placeholder={placeholder}></textarea></div>
+  <div class="inq__foot">
+    <button class="btn btn--lg" type="submit">{submit} <span class="arr">→</span></button>
+    <p class="form-msg" data-msg role="status" aria-live="polite"></p>
+  </div>
+</form>
+
+<style>
+  .inq { display: grid; gap: 1.1rem; padding: clamp(1.5rem, 3vw, 2.4rem); border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow); }
+  .inq--night { background: var(--night-2); border-color: var(--night-line); box-shadow: none; }
+  .inq--night .btn { --bg: var(--shoot); --fg: var(--night); }
+  .inq__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; align-items: start; }
+  .inq__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.4rem; }
+  @media (max-width: 600px) { .inq__row { grid-template-columns: 1fr; } }
+</style>

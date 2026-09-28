@@ -1,0 +1,69 @@
+---
+// Big, live season panel: open (countdown to deadline), upcoming (countdown to opening) or closed (alerts sign-up).
+import { formatDateTime, formatDate } from "../lib/season";
+import type { LiveSeason } from "../lib/public";
+interface Props { season: LiveSeason | null; compact?: boolean }
+const { season: s, compact = false } = Astro.props;
+const target = s?.phase === "open" ? s.closes_at : s?.phase === "upcoming" ? s.opens_at : null;
+---
+<article class:list={["spot", `spot--${s?.phase ?? "closed"}`, compact && "spot--compact"]}>
+  <header class="spot__top">
+    <span class="chip"><span class:list={["pulse", `pulse--${s?.phase ?? "closed"}`]}></span>
+      {s?.phase === "open" ? "Applications open" : s?.phase === "upcoming" ? "Opening soon" : "Between seasons"}
+    </span>
+    {s && <span class="mono spot__season">{s.term} {s.year}</span>}
+  </header>
+
+  <h3 class="spot__title">
+    {s?.phase === "open" && <>The {s.term} {s.year} scholarship is <span class="hl">open.</span></>}
+    {s?.phase === "upcoming" && <>{s.term} {s.year} opens <span class="hl">{formatDate(s.opens_at, { year: undefined })}.</span></>}
+    {(!s || s.phase === "closed") && <>The next season is <span class="hl">on its way.</span></>}
+  </h3>
+
+  {target && (
+    <div class="spot__clock" data-countdown={target} role="timer" aria-label={s?.phase === "open" ? `Closes ${formatDateTime(target)}` : `Opens ${formatDateTime(target)}`}>
+      <div><b data-d>—</b><span>days</span></div>
+      <div><b data-h>—</b><span>hours</span></div>
+      <div><b data-m>—</b><span>min</span></div>
+      <div><b data-s>—</b><span>sec</span></div>
+    </div>
+  )}
+
+  <p class="spot__meta">
+    {s?.phase === "open" && <>Deadline {formatDateTime(s.closes_at)}. One application covers one semester.</>}
+    {s?.phase === "upcoming" && <>Applications close {formatDateTime(s.closes_at)}. Start gathering your documents now.</>}
+    {(!s || s.phase === "closed") && <>We open applications every Spring and Fall. Leave your email and we'll tell you the moment the next one opens.</>}
+  </p>
+
+  <div class="spot__actions">
+    {s?.phase === "open" && <><a class="btn btn--shoot btn--lg" href={`/scholarships/${s.slug}/apply`} data-magnetic>Start your application <span class="arr">↗</span></a><a class="btn btn--line-night" href={`/scholarships/${s.slug}`}>Season details</a></>}
+    {s?.phase === "upcoming" && <><a class="btn btn--shoot btn--lg" href={`/scholarships/${s.slug}`} data-magnetic>See what you'll need <span class="arr">↗</span></a><a class="btn btn--line-night" href="#alert-email">Remind me</a></>}
+    {(!s || s.phase === "closed") && <><a class="btn btn--shoot btn--lg" href="#alert-email" data-magnetic>Get season alerts <span class="arr">↗</span></a><a class="btn btn--line-night" href="/scholarships#eligibility">Check eligibility</a></>}
+  </div>
+</article>
+
+<style>
+  .spot {
+    position: relative; overflow: hidden; display: grid; gap: 1.6rem; padding: clamp(1.8rem, 4vw, 3.4rem);
+    border-radius: var(--r-lg); background: var(--night); color: var(--bone); isolation: isolate;
+  }
+  .spot::before {
+    content: ""; position: absolute; inset: auto -20% -60% auto; width: 80%; aspect-ratio: 1; border-radius: 50%; z-index: -1;
+    background: radial-gradient(circle, rgb(197 240 74 / 0.22), transparent 62%);
+  }
+  .spot--upcoming::before { background: radial-gradient(circle, rgb(255 118 88 / 0.22), transparent 62%); }
+  .spot--closed::before { background: radial-gradient(circle, rgb(169 156 255 / 0.22), transparent 62%); }
+  .spot__top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .spot__season { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--night-muted); }
+  .spot__title { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-2); line-height: 1; letter-spacing: -0.04em; max-width: 14em; }
+  .spot--upcoming .hl { color: var(--dawn); }
+  .spot--closed .hl { color: var(--lilac); }
+  .spot__clock { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.6rem; max-width: 34rem; }
+  .spot__clock div { display: grid; gap: 0.2rem; padding: 0.9rem 1rem; border-radius: var(--r-sm); background: rgb(243 240 232 / 0.06); border: 1px solid var(--night-line); }
+  .spot__clock b { font-family: var(--font-mono); font-weight: 500; font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2.5rem); letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .spot__clock span { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--night-muted); }
+  .spot__meta { color: var(--night-muted); max-width: 36rem; }
+  .spot__actions { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .spot--compact .spot__title { font-size: var(--fs-3); }
+  @media (max-width: 480px) { .spot__clock div { padding: 0.7rem 0.6rem; } }
+</style>

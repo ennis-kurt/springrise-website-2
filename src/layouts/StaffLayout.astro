@@ -1,0 +1,66 @@
+---
+import "@fontsource-variable/bricolage-grotesque";
+import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
+import "../styles/tokens.css";
+import "../styles/staff.css";
+
+interface Props {
+  title: string;
+  active?: "overview" | "seasons" | "applications" | "inquiries" | "subscribers";
+  bare?: boolean;
+}
+const { title, active, bare = false } = Astro.props;
+const nav = [
+  { key: "overview", href: "/staff", label: "Overview" },
+  { key: "seasons", href: "/staff/seasons", label: "Seasons" },
+  { key: "applications", href: "/staff/applications", label: "Applications" },
+  { key: "inquiries", href: "/staff/inquiries", label: "Inquiries" },
+  { key: "subscribers", href: "/staff/subscribers", label: "Subscribers" },
+] as const;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="light" />
+    <title>{title} · Springrise staff</title>
+  </head>
+  <body class:list={["staff", { "staff--bare": bare }]}>
+    <a class="skip" href="#main">Skip to content</a>
+    {
+      bare ? (
+        <main id="main" class="bare-main">
+          <slot />
+        </main>
+      ) : (
+        <div class="shell">
+          <aside class="side" aria-label="Staff navigation">
+            <a class="brand" href="/staff">
+              <span class="wordmark">springrise</span>
+              <span class="brand-tag">Staff</span>
+            </a>
+            <nav class="nav">
+              {nav.map((n) => (
+                <a href={n.href} class:list={["nav-link", { "is-active": active === n.key }]} aria-current={active === n.key ? "page" : undefined}>
+                  {n.label}
+                </a>
+              ))}
+            </nav>
+            <div class="side-foot">
+              <a class="side-link" href="/" target="_blank" rel="noopener">View website ↗</a>
+              <form method="post" action="/api/staff/sign-out">
+                <button class="side-link side-button" type="submit">Sign out</button>
+              </form>
+            </div>
+          </aside>
+          <main id="main" class="main">
+            <slot />
+          </main>
+        </div>
+      )
+    }
+  </body>
+</html>

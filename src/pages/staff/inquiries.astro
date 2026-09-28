@@ -1,0 +1,75 @@
+---
+import StaffLayout from "../../layouts/StaffLayout.astro";
+import { env } from "cloudflare:workers";
+import type { InquiryRow } from "../../lib/server/db";
+import { formatEt } from "../../lib/server/time";
+
+const TOPICS: Record<string, string> = {
+  general: "General", scholarship: "Scholarship", giving: "Giving", mentor: "Mentoring", board: "Board",
+  internships: "Internships", partnership: "Partnership",
+};
+const raw = Astro.url.searchParams.get("show");
+const show = raw === "handled" || raw === "all" ? raw : "open";
+
+if (Astro.request.method === "POST") {
+  const fd = await Astro.request.formData();
+  const id = String(fd.get("id") ?? "");
+  const handled = fd.get("handled") === "1" ? 1 : 0;
+  await env.DB.prepare("UPDATE inquiries SET handled = ?1 WHERE id = ?2").bind(handled, id).run();
+  return Astro.redirect(`/staff/inquiries?show=${show}`, 303);
+}
+
+const where = show === "handled" ? "WHERE handled = 1" : show === "open" ? "WHERE handled = 0" : "";
+const [{ results }, counts] = await Promise.all([
+  env.DB.prepare(`SELECT * FROM inquiries ${where} ORDER BY created_at DESC LIMIT 200`).all<InquiryRow>(),
+  env.DB.prepare("SELECT SUM(handled = 0) AS open, SUM(handled = 1) AS done FROM inquiries").first<{ open: number | null; done: number | null }>(),
+]);
+const tabs = [
+  { key: "open", label: `Unhandled (${counts?.open ?? 0})` },
+  { key: "handled", label: `Handled (${counts?.done ?? 0})` },
+  { key: "all", label: "All" },
+];
+const reply = (i: InquiryRow) =>
+  `mailto:${i.email}?subject=${encodeURIComponent("Re: your message to Springrise Foundation")}&body=${encodeURIComponent(
+    `\n\n—\nOn ${formatEt(i.created_at)}, ${i.name} wrote:\n> ${i.message.split("\n").join("\n> ")}`.slice(0, 1500),
+  )}`;
+---
+<StaffLayout title="Inquiries" active="inquiries">
+  <header class="page-head">
+    <div>
+      <span class="kicker">Inquiries</span>
+      <h1>Messages from the website</h1>
+      <p>Contact-form messages. Reply by email, then mark them handled.</p>
+    </div>
+    <a class="btn btn--ghost" href={`/api/staff/export/inquiries.csv?show=${show}`} download>Export CSV</a>
+  </header>
+  <nav class="actions" aria-label="Filter" style="margin-bottom:18px">
+    {tabs.map((t) => (
+      <a class:list={["btn btn--small", show === t.key ? "btn--primary" : "btn--ghost"]} href={`/staff/inquiries?show=${t.key}`} aria-current={show === t.key ? "page" : undefined}>{t.label}</a>
+    ))}
+  </nav>
+  <section class="card">
+    {results.length ? results.map((i) => (
+      <article class="inquiry">
+        <div class="inquiry-meta">
+          <strong style="color:var(--night);font-size:1rem">{i.name}</strong>
+          <span class="badge">{TOPICS[i.reason] ?? i.reason}</span>
+          {i.handled ? <span class="badge badge--awarded">Handled</span> : null}
+          <span>{formatEt(i.created_at)}</span>
+        </div>
+        <p class="inquiry-msg">{i.message}</p>
+        <div class="inquiry-meta">
+          <a href={`mailto:${i.email}`}>{i.email}</a>
+          {i.phone && <a href={`tel:${i.phone.replace(/[^\d+]/g, "")}`}>{i.phone}</a>}
+          <span style="flex:1" />
+          <a class="btn btn--ghost btn--small" href={reply(i)}>Reply</a>
+          <form method="post">
+            <input type="hidden" name="id" value={i.id} />
+            <input type="hidden" name="handled" value={i.handled ? "0" : "1"} />
+            <button class:list={["btn btn--small", i.handled ? "btn--ghost" : "btn--primary"]} type="submit">{i.handled ? "Mark unhandled" : "Mark handled"}</button>
+          </form>
+        </div>
+      </article>
+    )) : <p class="empty">{show === "open" ? "Nothing waiting. Every message has been handled." : "No messages here."}</p>}
+  </section>
+</StaffLayout>

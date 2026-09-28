@@ -1,0 +1,8 @@
+---
+// Splits text into masked words that rise into place when revealed.
+// Use inside a heading: <h1 class="t-hero"><Split text="Room to" /> <Split text="rise." class="hl" /></h1>
+interface Props { text: string; class?: string; delay?: number; start?: number }
+const { text, class: cls, delay = 0, start = 0 } = Astro.props;
+const words = text.split(/\s+/).filter(Boolean);
+---
+<span class:list={["split", cls]} style={`--d:${delay}s`}>{words.map((w, i) => (<><span class="w"><span style={`--i:${i + start}`}>{w}</span></span>{i < words.length - 1 ? " " : ""}</>))}</span>

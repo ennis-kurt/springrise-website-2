@@ -1,0 +1,68 @@
+/*
+  Springrise — "Rising Field" design tokens.
+  Night grounds, bone paper, and three growth accents:
+  shoot (new growth), dawn (warmth), lilac (data).
+*/
+:root {
+  --night: #100f1a;
+  --night-2: #19182a;
+  --night-3: #262438;
+  --night-line: rgb(243 240 232 / 0.12);
+  --night-line-strong: rgb(243 240 232 / 0.24);
+  --night-muted: rgb(243 240 232 / 0.66);
+
+  --bone: #f3f0e8;
+  --bone-2: #e8e3d6;
+  --paper: #fbfaf6;
+  --line: rgb(16 15 26 / 0.12);
+  --line-strong: rgb(16 15 26 / 0.26);
+
+  --shoot: #c5f04a;
+  --shoot-deep: #7ea615;
+  --shoot-ink: #3e5406;
+  --dawn: #ff7658;
+  --dawn-deep: #c7401f;
+  --lilac: #a99cff;
+  --lilac-deep: #5b4bd6;
+
+  --text: var(--night);
+  --text-muted: #55526a;
+  --text-faint: #6a677e;
+
+  --success: #1e7a4c;
+  --success-bg: #e2f5e9;
+  --warning: #8a5300;
+  --warning-bg: #fdf0d3;
+  --danger: #b42318;
+  --danger-bg: #fde6e3;
+
+  --font-display: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --fs-giant: clamp(4rem, 1rem + 11.5vw, 13.5rem);
+  --fs-hero: clamp(3.1rem, 1.2rem + 6.6vw, 8.4rem);
+  --fs-1: clamp(2.6rem, 1.4rem + 4.2vw, 5.4rem);
+  --fs-2: clamp(2.05rem, 1.3rem + 2.6vw, 3.7rem);
+  --fs-3: clamp(1.4rem, 1.15rem + 0.9vw, 1.95rem);
+  --fs-lead: clamp(1.12rem, 1.02rem + 0.42vw, 1.4rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9375rem;
+  --fs-micro: 0.72rem;
+
+  --gutter: clamp(1rem, 0.4rem + 2.6vw, 3rem);
+  --max: 1400px;
+  --section: clamp(5rem, 3rem + 8vw, 11rem);
+
+  --r-xs: 8px;
+  --r-sm: 14px;
+  --r: 22px;
+  --r-lg: 36px;
+  --r-pill: 999px;
+
+  --shadow: 0 1px 2px rgb(16 15 26 / 0.05), 0 24px 48px -24px rgb(16 15 26 / 0.28);
+  --shadow-lg: 0 40px 90px -30px rgb(16 15 26 / 0.45);
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.7, 0, 0.3, 1);
+}

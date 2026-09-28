@@ -1,0 +1,111 @@
+---
+import Wordmark from "./Wordmark.astro";
+import { ORG } from "../lib/facts";
+import type { LiveSeason } from "../lib/public";
+interface Props { spotlight: LiveSeason | null }
+const { spotlight: s } = Astro.props;
+const letters = "springrise".split("");
+---
+<footer class="ftr night" id="footer">
+  <div class="wrap">
+    <div class="ftr__top">
+      <div class="ftr__signup">
+        <p class="kicker">Season alerts</p>
+        <h2 class="t-2">Hear the moment<br /><span class="hl">applications open.</span></h2>
+        <form class="signup" action="/api/subscribe" method="post" data-form data-ok="You're on the list — we'll write when the next season opens.">
+          <input type="hidden" name="source" value="footer" />
+          <div class="trap" aria-hidden="true"><label>Company <input name="company" tabindex="-1" autocomplete="off" /></label></div>
+          <label class="sr-only" for="alert-email">Email address</label>
+          <input id="alert-email" class="input" type="email" name="email" required autocomplete="email" placeholder="Your email" />
+          <button class="btn btn--shoot" type="submit">Notify me</button>
+          <p class="form-msg" data-msg role="status" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div class="ftr__cols">
+        <nav aria-label="Explore">
+          <p class="kicker kicker--plain">Explore</p>
+          <ul role="list">
+            <li><a href="/scholarships">Scholarships</a></li>
+            <li><a href="/impact">Impact</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/get-involved">Get involved</a></li>
+            <li><a href="/give">Give</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="For students">
+          <p class="kicker kicker--plain">For students</p>
+          <ul role="list">
+            {s && <li><a href={`/scholarships/${s.slug}`}>{s.term} {s.year} season</a></li>}
+            <li><a href="/scholarships#eligibility">Eligibility</a></li>
+            <li><a href="/scholarships#documents">What you'll need</a></li>
+            <li><a href="/scholarships/status">Check your status</a></li>
+            <li><a href="/scholarships#questions">Questions</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Organization">
+          <p class="kicker kicker--plain">Organization</p>
+          <ul role="list">
+            <li><a href="/governance">Governance & by-laws</a></li>
+            <li><a href="/impact#financials">Financial summary</a></li>
+            <li><a href="/governance#tax-status">Tax-exempt status</a></li>
+            <li><a href="/privacy">Privacy</a></li>
+          </ul>
+        </nav>
+        <div>
+          <p class="kicker kicker--plain">Reach us</p>
+          <address>
+            <a href={`mailto:${ORG.email.info}`}>{ORG.email.info}</a>
+            <a href={`mailto:${ORG.email.scholarship}`}>{ORG.email.scholarship}</a>
+            <a href={ORG.phoneHref}>{ORG.phone}</a>
+            <span>{ORG.address[0]}<br />{ORG.address[1]}</span>
+          </address>
+        </div>
+      </div>
+    </div>
+
+    <div class="ftr__legal">
+      <Wordmark tone="bone" size={26} />
+      <p>© {new Date().getFullYear()} {ORG.legal} · New Jersey nonprofit corporation · 501(c)(3) public charity · EIN {ORG.ein}. Contributions are tax-deductible under IRC §170.</p>
+      <p class="ftr__links"><a href="/governance">By-laws</a><a href="/privacy">Privacy</a><a href="/staff">Staff</a></p>
+    </div>
+  </div>
+
+  <div class="ftr__giant rv" aria-hidden="true">
+    {letters.map((l, i) => <span style={`--i:${i}`}>{l}</span>)}
+  </div>
+</footer>
+
+<style>
+  .ftr { position: relative; overflow: hidden; padding-top: clamp(4.5rem, 9vw, 8rem); }
+  .ftr__top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: clamp(3rem, 6vw, 7rem); }
+  .ftr__signup { display: grid; gap: 1.4rem; align-content: start; }
+  .signup { display: flex; flex-wrap: wrap; gap: 0.7rem; max-width: 32rem; margin-top: 0.8rem; }
+  .signup .input { flex: 1 1 15rem; border-radius: var(--r-pill); padding-inline: 1.4rem; }
+  .signup .form-msg { flex-basis: 100%; }
+  .ftr__cols { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.35fr); gap: 2rem; }
+  .ftr__cols .kicker { margin-bottom: 1.1rem; color: rgb(243 240 232 / 0.5); }
+  .ftr__cols ul { display: grid; gap: 0.6rem; }
+  .ftr__cols a { text-decoration: none; color: rgb(243 240 232 / 0.88); transition: color 0.2s; }
+  .ftr__cols a:hover { color: var(--shoot); }
+  address { font-style: normal; display: grid; gap: 0.55rem; font-size: 0.94rem; overflow-wrap: anywhere; }
+  address span { color: var(--night-muted); line-height: 1.5; }
+  .ftr__legal { display: grid; grid-template-columns: auto 1fr auto; gap: 1.5rem; align-items: center; margin-top: clamp(4rem, 7vw, 6rem); padding-top: 1.6rem; border-top: 1px solid var(--night-line); font-size: 0.84rem; color: var(--night-muted); }
+  .ftr__links { display: flex; gap: 1.4rem; }
+  .ftr__links a { text-decoration: none; }
+  .ftr__links a:hover { color: var(--bone); }
+  .ftr__giant {
+    display: flex; justify-content: center; margin-top: 2.5rem; overflow: hidden; line-height: 0.76; height: clamp(5rem, 19vw, 20rem);
+    font-family: var(--font-display); font-weight: 800; font-size: clamp(5rem, 21.5vw, 24rem); letter-spacing: -0.07em;
+    color: var(--night-2); user-select: none; opacity: 1; transform: none;
+  }
+  .ftr__giant span { display: inline-block; transform: translateY(60%); transition: transform 1.4s var(--ease), color 0.5s; transition-delay: calc(var(--i) * 55ms); }
+  .ftr__giant.in span { transform: translateY(8%); }
+  .ftr__giant span:hover { color: var(--shoot); transform: translateY(0); transition-delay: 0s; transition-duration: 0.5s; }
+  @media (max-width: 1100px) { .ftr__top { grid-template-columns: 1fr; } }
+  @media (max-width: 700px) {
+    .ftr__cols { grid-template-columns: 1fr 1fr; }
+    .ftr__legal { grid-template-columns: 1fr; }
+  }
+</style>

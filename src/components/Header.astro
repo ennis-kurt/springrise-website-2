@@ -1,0 +1,110 @@
+---
+import Wordmark from "./Wordmark.astro";
+import { NAV, ORG } from "../lib/facts";
+import { shortDate } from "../lib/season";
+import type { LiveSeason } from "../lib/public";
+interface Props { spotlight: LiveSeason | null }
+const { spotlight: s } = Astro.props;
+const path = Astro.url.pathname;
+const status = !s
+  ? { phase: "closed", text: "Scholarships", href: "/scholarships" }
+  : s.phase === "open"
+    ? { phase: "open", text: `${s.term} ${s.year} · Apply now`, href: `/scholarships/${s.slug}` }
+    : s.phase === "upcoming"
+      ? { phase: "upcoming", text: `${s.term} ${s.year} · Opens ${shortDate(s.opens_at)}`, href: `/scholarships/${s.slug}` }
+      : { phase: "closed", text: "Applications closed", href: "/scholarships" };
+---
+<header class="hdr" data-hdr>
+  <div class="hdr__pill">
+    <a href="/" class="hdr__brand" aria-label="Springrise Foundation home"><Wordmark tone="bone" /></a>
+    <nav aria-label="Main" class="hdr__nav">
+      <ul role="list">
+        {NAV.map((n) => <li><a href={n.href} aria-current={path.startsWith(n.href) ? "page" : undefined}>{n.label}</a></li>)}
+      </ul>
+    </nav>
+    <div class="hdr__end">
+      <a class="hdr__status" href={status.href}><span class:list={["pulse", `pulse--${status.phase}`]}></span>{status.text}</a>
+      <a class="btn btn--shoot btn--sm hdr__give" href="/give">Give</a>
+      <button class="hdr__menu" type="button" aria-expanded="false" aria-controls="menu" data-menu-open>
+        <span class="sr-only">Menu</span><i></i><i></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="menu night" id="menu" hidden data-menu role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="menu__top">
+    <Wordmark tone="bone" />
+    <button class="menu__close" type="button" data-menu-close><span class="sr-only">Close menu</span>✕</button>
+  </div>
+  <nav aria-label="Menu">
+    <ol role="list" class="menu__list">
+      <li><a href="/"><span class="mono">00</span>Home</a></li>
+      {NAV.map((n, i) => <li><a href={n.href}><span class="mono">0{i + 1}</span>{n.label}</a></li>)}
+      <li><a href="/give"><span class="mono">0{NAV.length + 1}</span>Give</a></li>
+      <li><a href="/contact"><span class="mono">0{NAV.length + 2}</span>Contact</a></li>
+    </ol>
+  </nav>
+  <div class="menu__foot">
+    <a class="hdr__status" href={status.href}><span class:list={["pulse", `pulse--${status.phase}`]}></span>{status.text}</a>
+    <a href={`mailto:${ORG.email.info}`}>{ORG.email.info}</a>
+  </div>
+</div>
+
+<style>
+  .hdr { position: fixed; inset: 0.85rem 0 auto; z-index: 60; pointer-events: none; padding-inline: var(--gutter); transition: transform 0.6s var(--ease); }
+  .hdr.is-away { transform: translateY(-140%); }
+  .hdr__pill {
+    pointer-events: auto; max-width: var(--max); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 1.25rem;
+    padding: 0.5rem 0.55rem 0.5rem 1.1rem; border-radius: var(--r-pill); color: var(--bone);
+    background: rgb(16 15 26 / 0.78); backdrop-filter: blur(18px) saturate(1.6); -webkit-backdrop-filter: blur(18px) saturate(1.6);
+    box-shadow: 0 0 0 1px rgb(243 240 232 / 0.08), 0 20px 40px -24px rgb(0 0 0 / 0.6);
+  }
+  .hdr__brand { text-decoration: none; }
+  .hdr__nav ul { display: flex; gap: 0.2rem; }
+  .hdr__nav a { display: block; padding: 0.55rem 0.95rem; border-radius: var(--r-pill); font-size: 0.93rem; font-weight: 500; text-decoration: none; color: rgb(243 240 232 / 0.82); transition: background-color 0.25s, color 0.25s; }
+  .hdr__nav a:hover { background: rgb(243 240 232 / 0.09); color: var(--bone); }
+  .hdr__nav a[aria-current="page"] { background: rgb(243 240 232 / 0.12); color: var(--bone); }
+  .hdr__end { display: flex; align-items: center; gap: 0.5rem; }
+  .hdr__status { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.9rem; border-radius: var(--r-pill); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; color: rgb(243 240 232 / 0.85); border: 1px solid rgb(243 240 232 / 0.16); white-space: nowrap; transition: border-color 0.25s; }
+  .hdr__status:hover { border-color: var(--shoot); color: var(--bone); }
+  .hdr__menu { display: none; width: 2.6rem; height: 2.6rem; border-radius: 50%; background: rgb(243 240 232 / 0.1); position: relative; }
+  .hdr__menu i { position: absolute; left: 30%; right: 30%; height: 1.5px; background: var(--bone); border-radius: 2px; }
+  .hdr__menu i:first-of-type { top: 42%; } .hdr__menu i:last-of-type { top: 58%; }
+  @media (max-width: 1060px) { .hdr__nav { display: none; } .hdr__menu { display: block; } }
+  @media (max-width: 640px) { .hdr__end .hdr__status { display: none; } }
+
+  .menu { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; padding: 1.2rem var(--gutter) 2rem; overflow-y: auto; animation: menu-in 0.6s var(--ease); }
+  @keyframes menu-in { from { clip-path: inset(0 0 100% 0 round 0 0 40px 40px); } to { clip-path: inset(0 0 0 0); } }
+  .menu__top { display: flex; justify-content: space-between; align-items: center; }
+  .menu__close { width: 2.8rem; height: 2.8rem; border-radius: 50%; background: rgb(243 240 232 / 0.1); color: var(--bone); font-size: 1.1rem; }
+  .menu nav { flex: 1; display: flex; align-items: center; padding-block: 2rem; }
+  .menu__list a { display: flex; align-items: baseline; gap: 1rem; font-family: var(--font-display); font-weight: 700; font-size: clamp(2.4rem, 10vw, 4.4rem); letter-spacing: -0.045em; line-height: 1.1; text-decoration: none; transition: color 0.2s, transform 0.4s var(--ease); }
+  .menu__list a:hover { color: var(--shoot); transform: translateX(0.4rem); }
+  .menu__list .mono { font-size: 0.8rem; font-weight: 400; letter-spacing: 0.1em; color: var(--night-muted); }
+  .menu__foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: center; color: var(--night-muted); font-size: 0.95rem; }
+  .menu__foot a:not(.hdr__status) { text-decoration: none; }
+</style>
+
+<script>
+  const hdr = document.querySelector<HTMLElement>("[data-hdr]")!;
+  let last = scrollY;
+  addEventListener("scroll", () => {
+    const y = scrollY;
+    hdr.classList.toggle("is-away", y > 400 && y > last + 4);
+    if (y < last - 4 || y < 400) hdr.classList.remove("is-away");
+    last = y;
+  }, { passive: true });
+  const menu = document.querySelector<HTMLElement>("[data-menu]")!;
+  const open = document.querySelector<HTMLButtonElement>("[data-menu-open]")!;
+  const close = document.querySelector<HTMLButtonElement>("[data-menu-close]")!;
+  const set = (on: boolean) => {
+    menu.hidden = !on; open.setAttribute("aria-expanded", String(on));
+    document.documentElement.style.overflow = on ? "hidden" : "";
+    (on ? close : open).focus();
+  };
+  open.addEventListener("click", () => set(true));
+  close.addEventListener("click", () => set(false));
+  menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => set(false)));
+  addEventListener("keydown", (e) => { if (e.key === "Escape" && !menu.hidden) set(false); });
+</script>

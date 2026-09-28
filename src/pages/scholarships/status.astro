@@ -1,0 +1,101 @@
+---
+import Site from "../../layouts/Site.astro";
+import PageHead from "../../components/PageHead.astro";
+import { STAGES } from "../../lib/season";
+const explain: Record<string, string> = {
+  received: "We have your application. Review begins after the season's deadline.",
+  in_review: "The Board is reviewing applications for this season now.",
+  more_info: "We need something from you — please check your email, or write to scholarship@springrise.org with your reference.",
+  awarded: "Congratulations — you've been awarded a scholarship. We'll be in touch about next steps with your school.",
+  declined: "You weren't selected this season. We hope you'll apply again next season.",
+  withdrawn: "This application has been withdrawn.",
+};
+const stages = Object.keys(STAGES);
+---
+<Site title="Application status" description="Check the status of your Springrise scholarship application." noindex>
+  <PageHead kicker="Scholarships" title="Where does my" accent="application stand?" lead="Enter the reference from your confirmation and the email you applied with. We only show your application's stage — never its contents." />
+
+  <section class="section st">
+    <div class="wrap st__grid">
+      <form class="st__form" data-status>
+        <div class="field">
+          <label for="st-code">Reference</label>
+          <input id="st-code" class="input mono st__code" name="code" required autocomplete="off" placeholder="S27-XXXX-XX" spellcheck="false" />
+        </div>
+        <div class="field">
+          <label for="st-email">Email you applied with</label>
+          <input id="st-email" class="input" type="email" name="email" required autocomplete="email" />
+        </div>
+        <button class="btn btn--lg" type="submit">Check status <span class="arr">→</span></button>
+        <p class="form-msg" data-msg role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="st__result" data-result hidden>
+        <p class="kicker" data-season></p>
+        <h2 class="t-2" data-stage></h2>
+        <p class="lead" data-explain></p>
+        <ol class="st__track" role="list" aria-label="Stages">
+          {["received", "in_review", "awarded"].map((k) => <li data-k={k}><span></span>{STAGES[k as keyof typeof STAGES]}</li>)}
+        </ol>
+        <p class="small muted" data-when></p>
+      </div>
+
+      <aside class="st__aside" data-aside>
+        <p class="kicker">What the stages mean</p>
+        <dl>{stages.map((k) => <div><dt>{STAGES[k as keyof typeof STAGES]}</dt><dd>{explain[k]}</dd></div>)}</dl>
+      </aside>
+    </div>
+  </section>
+  <script type="application/json" id="stage-copy" set:html={JSON.stringify({ labels: STAGES, explain })}></script>
+</Site>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-status]")!;
+  const msg = form.querySelector<HTMLElement>("[data-msg]")!;
+  const out = document.querySelector<HTMLElement>("[data-result]")!;
+  const aside = document.querySelector<HTMLElement>("[data-aside]")!;
+  const copy = JSON.parse(document.getElementById("stage-copy")!.textContent!) as { labels: Record<string, string>; explain: Record<string, string> };
+  const order = ["received", "in_review", "awarded"];
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.className = "form-msg"; msg.textContent = "Looking…";
+    const body = Object.fromEntries(new FormData(form));
+    try {
+      const res = await fetch("/api/status", { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(body) });
+      const data = (await res.json().catch(() => ({}))) as Record<string, string>;
+      if (!res.ok) throw new Error(data.error || "We couldn't find an application with those details.");
+      msg.textContent = "";
+      out.querySelector("[data-season]")!.textContent = data.season;
+      out.querySelector("[data-stage]")!.textContent = data.stageLabel || copy.labels[data.stage];
+      out.querySelector("[data-explain]")!.textContent = copy.explain[data.stage] ?? "";
+      const at = (iso: string) => new Date(iso).toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "long", timeStyle: "short" });
+      out.querySelector("[data-when]")!.textContent = `Submitted ${at(data.submittedAt)} ET · last updated ${at(data.updatedAt)} ET`;
+      const reached = data.stage === "declined" || data.stage === "withdrawn" ? 1 : data.stage === "more_info" ? 1 : order.indexOf(data.stage);
+      out.querySelectorAll<HTMLElement>("[data-k]").forEach((li, i) => li.classList.toggle("on", i <= reached));
+      out.hidden = false; aside.hidden = true;
+      out.scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch (err) {
+      msg.textContent = (err as Error).message; msg.classList.add("is-err");
+    }
+  });
+</script>
+
+<style>
+  .st__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .st__form { display: grid; gap: 1.2rem; padding: clamp(1.5rem, 3vw, 2.4rem); border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow); }
+  .st__code { text-transform: uppercase; letter-spacing: 0.08em; font-size: 1.15rem; }
+  .st__result { display: grid; gap: 1.2rem; padding: clamp(1.8rem, 4vw, 3rem); border-radius: var(--r-lg); background: var(--night); color: var(--bone); }
+  .st__result .kicker { color: var(--shoot); }
+  .st__result .lead { color: var(--night-muted); }
+  .st__track { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 0.6rem; }
+  .st__track li { display: grid; gap: 0.6rem; font-size: 0.85rem; color: var(--night-muted); }
+  .st__track span { height: 6px; border-radius: 6px; background: var(--night-3); }
+  .st__track li.on { color: var(--bone); }
+  .st__track li.on span { background: var(--shoot); }
+  .st__aside dl { display: grid; margin-top: 1.2rem; border-top: 1.5px solid var(--night); }
+  .st__aside div { display: grid; grid-template-columns: 11rem 1fr; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line-strong); }
+  .st__aside dt { font-weight: 700; }
+  .st__aside dd { color: var(--text-muted); }
+  @media (max-width: 900px) { .st__grid { grid-template-columns: 1fr; } }
+  @media (max-width: 520px) { .st__aside div { grid-template-columns: 1fr; gap: 0.2rem; } }
+</style>
