@@ -5,15 +5,15 @@ import { STAGES } from "../../lib/season";
 const explain: Record<string, string> = {
   received: "We have your application. Review begins after the season's deadline.",
   in_review: "The Board is reviewing applications for this season now.",
-  more_info: "We need something from you — please check your email, or write to scholarship@springrise.org with your reference.",
-  awarded: "Congratulations — you've been awarded a scholarship. We'll be in touch about next steps with your school.",
+  more_info: "We need something from you. Please check your email, or write to scholarship@springrise.org with your reference.",
+  awarded: "Congratulations! You've been awarded a scholarship. We'll be in touch about next steps with your school.",
   declined: "You weren't selected this season. We hope you'll apply again next season.",
   withdrawn: "This application has been withdrawn.",
 };
 const stages = Object.keys(STAGES);
 ---
 <Site title="Application status" description="Check the status of your Springrise scholarship application." noindex>
-  <PageHead kicker="Scholarships" title="Where does my" accent="application stand?" lead="Enter the reference from your confirmation and the email you applied with. We only show your application's stage — never its contents." />
+  <PageHead kicker="Scholarships" title="Where does my" accent="application stand?" lead="Enter the reference from your confirmation and the email you applied with. We only show your application's stage, never its contents." />
 
   <section class="section st">
     <div class="wrap st__grid">
@@ -94,7 +94,7 @@ const stages = Object.keys(STAGES);
   .st__track li.on span { background: var(--shoot); }
   .st__aside dl { display: grid; margin-top: 1.2rem; border-top: 1.5px solid var(--night); }
   .st__aside div { display: grid; grid-template-columns: 11rem 1fr; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line-strong); }
-  .st__aside dt { font-weight: 700; }
+  .st__aside dt { font-weight: 560; }
   .st__aside dd { color: var(--text-muted); }
   @media (max-width: 900px) { .st__grid { grid-template-columns: 1fr; } }
   @media (max-width: 520px) { .st__aside div { grid-template-columns: 1fr; gap: 0.2rem; } }

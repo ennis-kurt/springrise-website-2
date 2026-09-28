@@ -5,7 +5,7 @@ import { STATUSES, TERMS } from "../../lib/server/seasons";
 interface Props { values: SeasonForm; errorField?: string; slugLocked?: boolean }
 const { values: v, errorField, slugLocked = false } = Astro.props;
 const inv = (f: string) => (errorField === f ? "true" : undefined);
-const statusLabel = { draft: "Draft — only staff can see it", published: "Published — live on the website", archived: "Archived — past season" };
+const statusLabel = { draft: "Draft: only staff can see it", published: "Published: live on the website", archived: "Archived: past season" };
 ---
 <fieldset class="plain form">
   <div class="form-row">

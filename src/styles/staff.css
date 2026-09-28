@@ -106,13 +106,13 @@
 }
 .badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.7; }
 .badge--received { background: var(--bone-2); color: var(--night); }
-.badge--in_review { background: rgb(169 156 255 / 0.22); color: var(--lilac-deep); }
+.badge--in_review { background: rgb(127 159 92 / 0.22); color: var(--lilac-deep); }
 .badge--more_info { background: var(--warning-bg); color: var(--warning); }
 .badge--awarded { background: var(--success-bg); color: var(--success); }
 .badge--declined { background: var(--danger-bg); color: var(--danger); }
 .badge--withdrawn { background: transparent; color: var(--text-faint); border-color: var(--line); }
-.badge--open { background: rgb(197 240 74 / 0.4); color: var(--shoot-ink); }
-.badge--upcoming { background: rgb(169 156 255 / 0.22); color: var(--lilac-deep); }
+.badge--open { background: rgb(240 180 76 / 0.4); color: var(--shoot-ink); }
+.badge--upcoming { background: rgb(127 159 92 / 0.22); color: var(--lilac-deep); }
 .badge--closed { background: var(--bone-2); color: var(--text-muted); }
 .badge--draft { background: var(--warning-bg); color: var(--warning); }
 .badge--archived { background: transparent; color: var(--text-faint); border-color: var(--line); }
@@ -121,11 +121,11 @@
 .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--paper); }
 .card .table-wrap { border: 0; border-radius: 0; margin: 0 -24px -24px; background: none; }
 .table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-.table th { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); white-space: nowrap; background: rgb(16 15 26 / 0.02); }
+.table th { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); white-space: nowrap; background: rgb(43 35 32 / 0.02); }
 .table td { padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
 .table tr:last-child td { border-bottom: 0; }
 .table tbody tr { transition: background 0.12s; }
-.table tbody tr:hover { background: rgb(197 240 74 / 0.12); }
+.table tbody tr:hover { background: rgb(240 180 76 / 0.12); }
 .table .r { text-align: right; }
 .table td.mono { white-space: nowrap; }
 .table a.row-link { text-decoration: none; font-weight: 600; }

@@ -1,4 +1,4 @@
-# Springrise Foundation — website
+# Springrise Foundation website
 
 The website and scholarship platform for **Springrise Foundation, Inc.**, a New Jersey nonprofit and 501(c)(3) public
 charity (EIN 93-2396404). It supports students of Turkish descent in U.S. higher education with scholarships,
@@ -8,16 +8,18 @@ internships and mentorship.
 
 ## Design: "Rising Field"
 
-- **The signature visual is live data.** The home page hero is a generative canvas with one glowing stem per scholar
-  the foundation has supported: 25 chartreuse stems for 2025 and 19 lilac stems for 2024. The stems grow in, sway,
-  and lean toward the cursor like plants turning to light. Quieter versions of the field open every interior page.
+- **The signature visual is live data.** The home page hero is a generative canvas with one stem per scholar the
+  foundation has supported: 25 clay stems for 2025 and 19 leaf-green stems for 2024. The stems grow in, sway gently
+  and lean toward the cursor like plants turning to light. All pointer motion is eased every frame, so nothing snaps.
+  Quieter versions of the field open every interior page.
 - **The mark** is a growth curve that turns into a leaf, reading as both a chart line and a new shoot.
-- **Palette:** night `#100f1a` and bone `#f3f0e8` grounds, with three growth accents: shoot `#c5f04a`, dawn `#ff7658`
-  and lilac `#a99cff`.
-- **Type:** Bricolage Grotesque for display, Inter for text and JetBrains Mono for figures. All fonts are self-hosted.
+- **Palette:** warm and hand-made rather than corporate. Paper `#fffcf6` and bone `#f7f1e7` grounds, espresso
+  `#2b2320` for dark sections, with clay `#b4502d`, marigold `#f0b44c` and leaf `#7f9f5c` accents.
+- **Type:** Fraunces (a soft, warm serif) for headings and Inter for text, on a calm, moderate scale. All fonts are
+  self-hosted.
 - **Motion and interaction:**
   - headlines revealed word by word, and a purpose statement that lights up as you scroll;
-  - pillar cards that expand and draw their own glyphs;
+  - pillar cards that lift and warm up on hover;
   - count-up figures, an animated direct-aid ring, and a 100-cent grid showing where each dollar goes;
   - reach dots, fiscal-year bars and an FY2024/FY2025 toggle that re-flows how giving was used;
   - an interactive gift picker, live countdowns to a season's opening or deadline, a by-laws reader with reading

@@ -25,12 +25,12 @@ const r = 44, c = 2 * Math.PI * r;
   .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
   .ring circle { fill: none; stroke-width: 9; }
   .ring__track { stroke: var(--night-line); }
-  .ring__aid { stroke: var(--shoot); stroke-linecap: round; stroke-dasharray: var(--c); stroke-dashoffset: var(--c); transition: stroke-dashoffset 2.2s var(--ease) 0.2s; filter: drop-shadow(0 0 10px rgb(197 240 74 / 0.35)); }
+  .ring__aid { stroke: var(--shoot); stroke-linecap: round; stroke-dasharray: var(--c); stroke-dashoffset: var(--c); transition: stroke-dashoffset 2.2s var(--ease) 0.2s;  }
   .ring__ops { stroke: var(--lilac); stroke-dasharray: calc(var(--c) * (1 - var(--share)) - 2) var(--c); stroke-dashoffset: calc(var(--c) * -1 * var(--share) - 1); opacity: 0; transition: opacity 0.6s 2.1s; }
   .ring.in .ring__aid { stroke-dashoffset: calc(var(--c) * (1 - var(--share) + 0.004)); }
   .ring.in .ring__ops { opacity: 1; }
   .ring__center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
-  .ring__num { font-family: var(--font-display); font-weight: 750; font-size: calc(var(--size) * 0.23); letter-spacing: -0.05em; line-height: 0.9; }
+  .ring__num { font-family: var(--font-display); font-weight: 560; font-size: calc(var(--size) * 0.23); letter-spacing: -0.015em; line-height: 0.9; }
   .ring__num small { font-size: 0.45em; margin-left: 0.04em; }
   .ring__cap { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--night-muted); margin-top: 0.6rem; }
   @media (max-width: 480px) { .ring__num { font-size: 4.2rem; } }

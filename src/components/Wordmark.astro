@@ -1,5 +1,5 @@
 ---
-// The Springrise mark: a growth curve that becomes a leaf — rising data and a new shoot in one line.
+// The Springrise mark: a growth curve that becomes a leaf: rising data and a new shoot in one line.
 interface Props { size?: number; tone?: "night" | "bone"; withName?: boolean; class?: string }
 const { size = 30, tone = "night", withName = true, class: cls = "" } = Astro.props;
 ---
@@ -15,16 +15,17 @@ const { size = 30, tone = "night", withName = true, class: cls = "" } = Astro.pr
 
 <style>
   .wm { display: inline-flex; align-items: center; gap: 0.55rem; line-height: 1; }
-  .wm__tile { fill: var(--night); }
-  .wm__stem { fill: none; stroke: var(--shoot); stroke-width: 2.7; stroke-linecap: round; }
-  .wm__leaf { fill: var(--shoot); }
-  .wm__seed { fill: var(--dawn); }
+  .wm__tile { fill: var(--shoot-deep); }
+  .wm__stem { fill: none; stroke: #fffcf6; stroke-width: 2.7; stroke-linecap: round; }
+  .wm__leaf { fill: #fffcf6; }
+  .wm__seed { fill: var(--shoot); }
   .wm--bone .wm__tile { fill: var(--shoot); }
   .wm--bone .wm__stem { stroke: var(--night); }
+  .wm--bone .wm__seed { fill: var(--paper); }
   .wm--bone .wm__leaf { fill: var(--night); }
   .wm__name {
-    font-family: var(--font-display); font-weight: 750; font-size: 1.45rem; letter-spacing: -0.055em;
-    font-variation-settings: "opsz" 48;
+    font-family: var(--font-display); font-weight: 600; font-size: 1.45rem; letter-spacing: -0.01em;
+    font-variation-settings: "SOFT" 80;
   }
   .wm--bone .wm__name { color: var(--bone); }
   .wm__mark { transition: transform 0.6s var(--ease); flex: none; }

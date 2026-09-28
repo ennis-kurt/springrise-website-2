@@ -73,7 +73,7 @@ const docLabel = Object.fromEntries(DOCUMENTS.map((d) => [d.key, d.label]));
 const order = DOCUMENTS.map((d) => d.key as string);
 files.sort((x, y) => order.indexOf(x.kind) - order.indexOf(y.kind));
 const kb = (n: number) => (n < 1024 * 1024 ? `${Math.max(1, Math.round(n / 1024))} KB` : `${(n / 1024 / 1024).toFixed(1)} MB`);
-const date = (v: string | undefined) => (v ? formatDate(`${v}T12:00:00Z`) : "—");
+const date = (v: string | undefined) => (v ? formatDate(`${v}T12:00:00Z`) : "–");
 const mailto = `mailto:${app.email}?subject=${encodeURIComponent(`Your Springrise application ${app.code}`)}`;
 const address = [a.address1, a.address2, [a.city, a.state, a.postalCode].filter(Boolean).join(", "), a.country].filter(Boolean);
 const mailOn = emailEnabled();
@@ -110,7 +110,7 @@ const mailOn = emailEnabled();
         <dl class="dl">
           <dt>School</dt><dd>{app.school}</dd>
           <dt>Level</dt><dd>{app.level}</dd>
-          <dt>Major</dt><dd>{a.major || "—"}</dd>
+          <dt>Major</dt><dd>{a.major || "Not given"}</dd>
           <dt>Tuition owed</dt><dd class="mono num">{money(app.tuition_cents)}</dd>
           <dt>Tuition due</dt><dd>{date(a.tuitionDueDate)}</dd>
         </dl>
@@ -122,7 +122,7 @@ const mailOn = emailEnabled();
           {[1, 2].map((n) => (
             <dl class="dl">
               <dt>Reference {n}</dt><dd><strong>{a[`ref${n}Name`]}</strong></dd>
-              <dt>Relation</dt><dd>{a[`ref${n}Relation`] || "—"}</dd>
+              <dt>Relation</dt><dd>{a[`ref${n}Relation`] || "–"}</dd>
               <dt>Email</dt><dd><a href={`mailto:${a[`ref${n}Email`]}`}>{a[`ref${n}Email`]}</a></dd>
               <dt>Phone</dt><dd>{a[`ref${n}Phone`]}</dd>
             </dl>
@@ -149,7 +149,7 @@ const mailOn = emailEnabled();
       <section class="card" aria-labelledby="h-note">
         <h2 id="h-note" style="margin-bottom:12px">Note from the applicant</h2>
         {a.note ? <p class="prose-note">{a.note}</p> : <p class="muted" style="margin:0">No note.</p>}
-        <p class="hint" style="margin:14px 0 0">Consent to terms: {a.consent === "yes" ? "Yes" : "—"}</p>
+        <p class="hint" style="margin:14px 0 0">Consent to terms: {a.consent === "yes" ? "Yes" : "No"}</p>
       </section>
     </div>
 

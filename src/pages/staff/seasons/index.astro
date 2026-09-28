@@ -28,8 +28,8 @@ const deleted = Astro.url.searchParams.get("deleted");
           <tr>
             <td><a class="row-link" href={`/staff/seasons/${s.slug}`}>{s.title}</a><span class="sub mono">{s.slug}</span></td>
             <td><SeasonBadge season={s} /></td>
-            <td class="muted">{formatEt(s.opens_at) || "—"}</td>
-            <td class="muted">{formatEt(s.closes_at) || "—"}</td>
+            <td class="muted">{formatEt(s.opens_at) || "–"}</td>
+            <td class="muted">{formatEt(s.closes_at) || "–"}</td>
             <td class="r num">
               {s.applications > 0 ? <a href={`/staff/applications?season=${s.slug}`}>{s.applications}</a> : <span class="faint">0</span>}
             </td>

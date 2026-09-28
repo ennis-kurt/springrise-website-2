@@ -16,7 +16,7 @@ const status = !s
 ---
 <header class="hdr" data-hdr>
   <div class="hdr__pill">
-    <a href="/" class="hdr__brand" aria-label="Springrise Foundation home"><Wordmark tone="bone" /></a>
+    <a href="/" class="hdr__brand" aria-label="Springrise Foundation home"><Wordmark /></a>
     <nav aria-label="Main" class="hdr__nav">
       <ul role="list">
         {NAV.map((n) => <li><a href={n.href} aria-current={path.startsWith(n.href) ? "page" : undefined}>{n.label}</a></li>)}
@@ -56,20 +56,21 @@ const status = !s
   .hdr.is-away { transform: translateY(-140%); }
   .hdr__pill {
     pointer-events: auto; max-width: var(--max); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 1.25rem;
-    padding: 0.5rem 0.55rem 0.5rem 1.1rem; border-radius: var(--r-pill); color: var(--bone);
-    background: rgb(16 15 26 / 0.78); backdrop-filter: blur(18px) saturate(1.6); -webkit-backdrop-filter: blur(18px) saturate(1.6);
-    box-shadow: 0 0 0 1px rgb(243 240 232 / 0.08), 0 20px 40px -24px rgb(0 0 0 / 0.6);
+    padding: 0.45rem 0.5rem 0.45rem 1rem; border-radius: var(--r-pill); color: var(--text);
+    background: rgb(255 252 246 / 0.88); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    box-shadow: 0 0 0 1px var(--line), 0 16px 34px -24px rgb(43 35 32 / 0.45);
   }
   .hdr__brand { text-decoration: none; }
   .hdr__nav ul { display: flex; gap: 0.2rem; }
-  .hdr__nav a { display: block; padding: 0.55rem 0.95rem; border-radius: var(--r-pill); font-size: 0.93rem; font-weight: 500; text-decoration: none; color: rgb(243 240 232 / 0.82); transition: background-color 0.25s, color 0.25s; }
-  .hdr__nav a:hover { background: rgb(243 240 232 / 0.09); color: var(--bone); }
-  .hdr__nav a[aria-current="page"] { background: rgb(243 240 232 / 0.12); color: var(--bone); }
+  .hdr__nav a { display: block; padding: 0.55rem 0.95rem; border-radius: var(--r-pill); font-size: 0.93rem; font-weight: 500; text-decoration: none; color: var(--text-muted); transition: background-color 0.25s, color 0.25s; }
+  .hdr__nav a:hover { background: var(--bone-2); color: var(--text); }
+  .hdr__nav a[aria-current="page"] { background: var(--bone-2); color: var(--text); }
   .hdr__end { display: flex; align-items: center; gap: 0.5rem; }
-  .hdr__status { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.9rem; border-radius: var(--r-pill); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; color: rgb(243 240 232 / 0.85); border: 1px solid rgb(243 240 232 / 0.16); white-space: nowrap; transition: border-color 0.25s; }
-  .hdr__status:hover { border-color: var(--shoot); color: var(--bone); }
-  .hdr__menu { display: none; width: 2.6rem; height: 2.6rem; border-radius: 50%; background: rgb(243 240 232 / 0.1); position: relative; }
-  .hdr__menu i { position: absolute; left: 30%; right: 30%; height: 1.5px; background: var(--bone); border-radius: 2px; }
+  .hdr__status { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.9rem; border-radius: var(--r-pill); font-size: 0.8rem; font-weight: 600; text-decoration: none; color: var(--text); border: 1px solid var(--line-strong); white-space: nowrap; transition: border-color 0.25s; }
+  .hdr__status:hover { border-color: var(--shoot-deep); }
+  .menu .hdr__status { color: var(--bone); border-color: var(--night-line-strong); }
+  .hdr__menu { display: none; width: 2.6rem; height: 2.6rem; border-radius: 50%; background: var(--bone-2); position: relative; }
+  .hdr__menu i { position: absolute; left: 30%; right: 30%; height: 1.5px; background: var(--text); border-radius: 2px; }
   .hdr__menu i:first-of-type { top: 42%; } .hdr__menu i:last-of-type { top: 58%; }
   @media (max-width: 1060px) { .hdr__nav { display: none; } .hdr__menu { display: block; } }
   @media (max-width: 640px) { .hdr__end .hdr__status { display: none; } }
@@ -77,10 +78,11 @@ const status = !s
   .menu { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; padding: 1.2rem var(--gutter) 2rem; overflow-y: auto; animation: menu-in 0.6s var(--ease); }
   @keyframes menu-in { from { clip-path: inset(0 0 100% 0 round 0 0 40px 40px); } to { clip-path: inset(0 0 0 0); } }
   .menu__top { display: flex; justify-content: space-between; align-items: center; }
-  .menu__close { width: 2.8rem; height: 2.8rem; border-radius: 50%; background: rgb(243 240 232 / 0.1); color: var(--bone); font-size: 1.1rem; }
+  .menu__close { width: 2.8rem; height: 2.8rem; border-radius: 50%; background: rgb(250 244 234 / 0.1); color: var(--bone); font-size: 1.1rem; }
   .menu nav { flex: 1; display: flex; align-items: center; padding-block: 2rem; }
-  .menu__list a { display: flex; align-items: baseline; gap: 1rem; font-family: var(--font-display); font-weight: 700; font-size: clamp(2.4rem, 10vw, 4.4rem); letter-spacing: -0.045em; line-height: 1.1; text-decoration: none; transition: color 0.2s, transform 0.4s var(--ease); }
+  .menu__list a { display: flex; align-items: baseline; gap: 1rem; font-family: var(--font-display); font-weight: 560; font-size: clamp(1.8rem, 7vw, 2.8rem); letter-spacing: -0.015em; line-height: 1.1; text-decoration: none; transition: color 0.2s, transform 0.4s var(--ease); }
   .menu__list a:hover { color: var(--shoot); transform: translateX(0.4rem); }
+  .menu__list a { font-weight: 500 !important; letter-spacing: -0.01em !important; }
   .menu__list .mono { font-size: 0.8rem; font-weight: 400; letter-spacing: 0.1em; color: var(--night-muted); }
   .menu__foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: center; color: var(--night-muted); font-size: 0.95rem; }
   .menu__foot a:not(.hdr__status) { text-decoration: none; }

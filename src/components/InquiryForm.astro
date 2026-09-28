@@ -10,7 +10,7 @@ const ALL = [
   { v: "board", label: "Joining the Board" },
   { v: "partnership", label: "A partnership" },
 ];
-const { reason = "general", reasons = ALL, ok = "Thank you — we'll be in touch soon.", submit = "Send", night = false, id = "inq", placeholder = "How can we help?" } = Astro.props;
+const { reason = "general", reasons = ALL, ok = "Thank you! We'll be in touch soon.", submit = "Send", night = false, id = "inq", placeholder = "How can we help?" } = Astro.props;
 ---
 <form class:list={["inq", night && "night inq--night"]} action="/api/contact" method="post" data-form data-ok={ok}>
   <div class="trap" aria-hidden="true"><label>Company <input name="company" tabindex="-1" autocomplete="off" /></label></div>

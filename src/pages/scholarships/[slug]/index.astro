@@ -16,9 +16,9 @@ const label = s.phase === "open" ? "Applications open" : s.phase === "upcoming" 
 const target = s.phase === "open" ? s.closes_at : s.phase === "upcoming" ? s.opens_at : null;
 ---
 <Site title={s.title} description={s.headline || s.title} site={site} noindex={preview}>
-  {preview && <div class="preview-bar"><div class="wrap"><b>Staff preview</b> — this season is a <b>{s.status}</b> and isn't visible to the public. <a href={`/staff/seasons/${s.slug}`}>Edit season →</a></div></div>}
+  {preview && <div class="preview-bar"><div class="wrap"><b>Staff preview.</b> This season is a <b>{s.status}</b> and isn't visible to the public. <a href={`/staff/seasons/${s.slug}`}>Edit season →</a></div></div>}
 
-  <section class="ss night grid-bg">
+  <section class="ss">
     <div class="wrap">
       <nav class="crumbs rv" aria-label="Breadcrumb"><a href="/scholarships">Scholarships</a><span aria-hidden="true">/</span><span aria-current="page">{s.term} {s.year}</span></nav>
       <div class="ss__grid">
@@ -42,8 +42,8 @@ const target = s.phase === "open" ? s.closes_at : s.phase === "upcoming" ? s.ope
           )}
           <div class="ss__cta">
             {s.phase === "open" && <a class="btn btn--shoot btn--lg" href={`/scholarships/${s.slug}/apply`} data-magnetic>Start your application <span class="arr">↗</span></a>}
-            {s.phase === "upcoming" && <><a class="btn btn--shoot btn--lg" href="#alert-email">Remind me when it opens</a><a class="btn btn--line-night btn--lg" href={`/scholarships/${s.slug}/apply?preview=1`}>Preview the form</a></>}
-            {s.phase === "closed" && <><a class="btn btn--bone btn--lg" href="/scholarships">Current season</a><a class="btn btn--line-night btn--lg" href="/scholarships/status">Check a status</a></>}
+            {s.phase === "upcoming" && <><a class="btn btn--shoot btn--lg" href="#alert-email">Remind me when it opens</a><a class="btn btn--line btn--lg" href={`/scholarships/${s.slug}/apply?preview=1`}>Preview the form</a></>}
+            {s.phase === "closed" && <><a class="btn btn--lg" href="/scholarships">Current season</a><a class="btn btn--line btn--lg" href="/scholarships/status">Check a status</a></>}
           </div>
         </div>
       </div>
@@ -58,8 +58,8 @@ const target = s.phase === "open" ? s.closes_at : s.phase === "upcoming" ? s.ope
         {s.status === "archived" && <p class="muted">This season is part of our archive and is no longer accepting applications.</p>}
       </div>
       <dl class="facts rv" style="--d:.1s">
-        <div><dt>Opens</dt><dd>{s.opens_at ? formatDateTime(s.opens_at) : "—"}</dd></div>
-        <div><dt>Deadline</dt><dd>{s.closes_at ? formatDateTime(s.closes_at) : "—"}</dd></div>
+        <div><dt>Opens</dt><dd>{s.opens_at ? formatDateTime(s.opens_at) : "To be announced"}</dd></div>
+        <div><dt>Deadline</dt><dd>{s.closes_at ? formatDateTime(s.closes_at) : "To be announced"}</dd></div>
         {s.decision_at && <div><dt>Decisions</dt><dd>{formatDate(s.decision_at)}</dd></div>}
         <div><dt>Paid to</dt><dd>Your college or university</dd></div>
         <div><dt>Questions</dt><dd><a href={`mailto:${ORG.email.scholarship}`}>{ORG.email.scholarship}</a></dd></div>
@@ -72,25 +72,25 @@ const target = s.phase === "open" ? s.closes_at : s.phase === "upcoming" ? s.ope
 
 <style>
   .preview-bar { position: relative; z-index: 70; background: var(--dawn); color: var(--night); font-size: 0.92rem; padding: 0.7rem 0; margin-top: 5.2rem; }
-  .preview-bar a { font-weight: 700; margin-left: 0.5rem; }
-  .ss { padding-top: clamp(8rem, 12vw, 10.5rem); padding-bottom: clamp(3rem, 6vw, 5rem); }
-  .preview-bar + .ss { padding-top: 3rem; }
-  .crumbs { display: flex; gap: 0.6rem; font-size: 0.9rem; color: var(--night-muted); }
-  .crumbs a { text-decoration: none; } .crumbs a:hover { color: var(--shoot); }
+  .preview-bar a { font-weight: 560; margin-left: 0.5rem; }
+  .ss { background: linear-gradient(180deg, var(--paper), var(--bone)); border-bottom: 1px solid var(--line); padding-top: clamp(8rem, 12vw, 10.5rem); padding-bottom: clamp(3rem, 6vw, 5rem); }
+  .preview-bar + .ss { background: linear-gradient(180deg, var(--paper), var(--bone)); border-bottom: 1px solid var(--line); padding-top: 3rem; }
+  .crumbs { display: flex; gap: 0.6rem; font-size: 0.9rem; color: var(--text-muted); }
+  .crumbs a { text-decoration: none; } .crumbs a:hover { color: var(--shoot-deep); }
   .ss__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 5rem); align-items: end; margin-top: 2.5rem; }
   .ss__title { margin-top: 1.4rem; }
   .ss__side { display: grid; gap: 1.8rem; }
   .window { display: grid; gap: 0.8rem; }
-  .window__bar { position: relative; height: 8px; border-radius: 8px; background: var(--night-3); }
+  .window__bar { position: relative; height: 8px; border-radius: 8px; background: var(--bone-2); }
   .window__bar span { position: absolute; inset: 0 auto 0 0; width: var(--w); border-radius: inherit; background: linear-gradient(90deg, var(--lilac), var(--shoot)); }
-  .window__bar i { position: absolute; top: 50%; width: 20px; height: 20px; border-radius: 50%; background: var(--shoot); border: 4px solid var(--night); transform: translate(-50%, -50%); box-shadow: 0 0 20px var(--shoot); }
+  .window__bar i { position: absolute; top: 50%; width: 20px; height: 20px; border-radius: 50%; background: var(--shoot-deep); border: 4px solid var(--paper); transform: translate(-50%, -50%); box-shadow: var(--shadow); }
   .window__ends { display: flex; justify-content: space-between; font-size: 0.92rem; }
   .window__ends span { display: grid; } .window__ends span:last-child { text-align: right; }
-  .window__ends b { font-family: var(--font-mono); font-weight: 500; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--night-muted); }
+  .window__ends b { font-family: var(--font-mono); font-weight: 500; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
   .clock { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 1rem; }
-  .clock__lab { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--night-muted); }
-  .clock__v { font-family: var(--font-mono); font-size: clamp(1.3rem, 1rem + 1.2vw, 2rem); letter-spacing: -0.03em; color: var(--night-muted); }
-  .clock__v b { font-weight: 500; color: var(--bone); font-variant-numeric: tabular-nums; }
+  .clock__lab { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .clock__v { font-size: clamp(1.1rem, 1rem + 0.6vw, 1.5rem); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .clock__v b { font-weight: 600; color: var(--text); }
   .ss__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; }
   .ss__body { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
   .facts { display: grid; border-top: 1.5px solid var(--night); }

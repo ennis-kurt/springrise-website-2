@@ -67,7 +67,7 @@ document.querySelectorAll<HTMLFormElement>("form[data-form]").forEach((form) => 
         body: JSON.stringify(Object.fromEntries(new FormData(form))),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
-      if (!res.ok) throw new Error(data.error || "Something went wrong — please try again.");
+      if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
       if (msg) { msg.textContent = form.dataset.ok || "Thank you."; msg.classList.add("is-ok"); }
       form.reset();
     } catch (err) {
@@ -80,12 +80,26 @@ document.querySelectorAll<HTMLFormElement>("form[data-form]").forEach((form) => 
 
 /* Magnetic buttons: [data-magnetic] */
 if (!reduce && matchMedia("(pointer: fine)").matches) {
+  // The button drifts toward the pointer and settles back, eased every frame so it never snaps.
   document.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((el) => {
+    let tx = 0, ty = 0, x = 0, y = 0, raf = 0, last = 0;
+    const step = (t: number) => {
+      const dt = Math.min(0.05, (t - (last || t)) / 1000) || 1 / 60;
+      last = t;
+      const k = 1 - Math.pow(1 - 0.12, dt * 60);
+      x += (tx - x) * k; y += (ty - y) * k;
+      el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
+      if (Math.abs(tx - x) > 0.05 || Math.abs(ty - y) > 0.05) raf = requestAnimationFrame(step);
+      else { raf = 0; last = 0; if (!tx && !ty) el.style.transform = ""; }
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(step); };
     el.addEventListener("pointermove", (e) => {
       const r = el.getBoundingClientRect();
-      el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.18}px, ${(e.clientY - r.top - r.height / 2) * 0.28}px)`;
+      tx = (e.clientX - r.left - r.width / 2) * 0.14;
+      ty = (e.clientY - r.top - r.height / 2) * 0.2;
+      kick();
     });
-    el.addEventListener("pointerleave", () => (el.style.transform = ""));
+    el.addEventListener("pointerleave", () => { tx = 0; ty = 0; kick(); });
   });
 }
 

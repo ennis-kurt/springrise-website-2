@@ -11,7 +11,7 @@ const terms = lines(Astro.props.requirements).length ? lines(Astro.props.require
     <header class="req__head">
       <p class="kicker rv">Who can apply</p>
       <h2 class="t-1 rv" id="elig-h">Eligibility</h2>
-      <p class="muted rv">Criteria can shift with available funds and each year's objectives. Not sure you qualify? <a href="mailto:scholarship@springrise.org">Ask us</a> — we'd rather hear from you.</p>
+      <p class="muted rv">Criteria can shift with available funds and each year's objectives. Not sure you qualify? <a href="mailto:scholarship@springrise.org">Ask us</a>. We'd rather hear from you.</p>
     </header>
     <ol class="elig" role="list">
       {elig.map((e, i) => <li class="rv" style={`--d:${i * 0.04}s`}><span class="elig__n">{String(i + 1).padStart(2, "0")}</span><p>{e}</p></li>)}
@@ -24,7 +24,7 @@ const terms = lines(Astro.props.requirements).length ? lines(Astro.props.require
     <header class="req__head">
       <p class="kicker rv">Before you start</p>
       <h2 class="t-1 rv" id="docs-h">What you'll need</h2>
-      <p class="muted rv">Five PDFs, each up to {FILE_LIMIT / 1024 / 1024} MB, plus contact details for two references who aren't relatives. Tick them off as you go — we'll remember on this device.</p>
+      <p class="muted rv">Five PDFs, each up to {FILE_LIMIT / 1024 / 1024} MB, plus contact details for two references who aren't relatives. Tick them off as you go and we'll remember them on this device.</p>
       <p class="docs__progress rv mono" data-docs-progress>0 / 5 ready</p>
     </header>
     <ul class="docs" role="list" data-docs>
@@ -61,7 +61,7 @@ const terms = lines(Astro.props.requirements).length ? lines(Astro.props.require
   .req__head a { color: var(--lilac-deep); }
   .elig { border-top: 1.5px solid var(--night); }
   .elig li { display: grid; grid-template-columns: 4rem 1fr; gap: 1rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line-strong); font-size: 1.1rem; }
-  .elig__n { font-family: var(--font-display); font-weight: 700; font-size: 1.9rem; line-height: 1; letter-spacing: -0.04em; color: var(--shoot-deep); }
+  .elig__n { font-family: var(--font-display); font-weight: 560; font-size: 1.9rem; line-height: 1; letter-spacing: -0.015em; color: var(--shoot-deep); }
   .docs { display: grid; gap: 0.6rem; }
   .doc { display: grid; grid-template-columns: auto 1fr auto; gap: 1.1rem; align-items: center; padding: 1.15rem 1.3rem; border-radius: var(--r); background: var(--bone); border: 1.5px solid transparent; cursor: pointer; transition: border-color 0.25s, background-color 0.3s, transform 0.4s var(--ease); }
   .doc:hover { border-color: var(--night); }
@@ -97,7 +97,7 @@ const terms = lines(Astro.props.requirements).length ? lines(Astro.props.require
     const req = boxes.filter((b) => b.dataset.required === "1");
     const draw = () => {
       const n = req.filter((b) => b.checked).length;
-      out.textContent = n === req.length ? `All ${req.length} ready — you're set ✓` : `${n} / ${req.length} ready`;
+      out.textContent = n === req.length ? `All ${req.length} ready. You're set ✓` : `${n} / ${req.length} ready`;
     };
     boxes.forEach((b) => {
       b.checked = !!saved[b.dataset.doc!];

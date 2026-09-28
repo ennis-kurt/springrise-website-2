@@ -15,21 +15,21 @@ import { COMMUNITY, FINANCE, ORG, PILLARS, REACH } from "../lib/facts";
 const site = await siteData();
 const s = site.spotlight;
 const [y24, y25] = REACH.students;
-const purpose = "We exist to empower students of Turkish descent to become self-confident, socially conscious, life-long learners — and to pursue careers that matter to them.";
+const purpose = "We exist to empower students of Turkish descent to become self-confident, socially conscious, life-long learners, and to pursue careers that matter to them.";
 const ticker = ["Scholarships", "Internships", "Mentorship", "97.1% direct aid", "25 scholars in 2025", "Spring & Fall seasons", "501(c)(3) public charity"];
 const steps = [
   { t: "Announce", b: "Each Spring and Fall we open a new season and publish its dates and criteria here." },
-  { t: "Apply", b: "One guided online application — your details, your studies, two references and five PDFs." },
+  { t: "Apply", b: "One guided online application: your details, your studies, two references and five PDFs." },
   { t: "Review", b: "The Board reviews every application as a whole: academics, need, resilience, leadership, service." },
   { t: "Award", b: "Scholarships are paid directly to your college or university as tuition, one semester at a time." },
 ];
 ---
 <Site site={site}>
   <!-- HERO -->
-  <section class="hero night">
+  <section class="hero">
     <RisingField groups={[
-      { count: y25.count, color: "#c5f04a", label: `${y25.year}`, weight: 1.12 },
-      { count: y24.count, color: "#a99cff", label: `${y24.year}`, weight: 0.86 },
+      { count: y25.count, color: "#b4502d", weight: 1.12 },
+      { count: y24.count, color: "#7f9f5c", weight: 0.86 },
     ]} />
     <div class="hero__veil" aria-hidden="true"></div>
     <div class="wrap hero__inner">
@@ -39,14 +39,14 @@ const steps = [
       </h1>
       <div class="hero__foot">
         <p class="lead rv" style="--d:.35s">
-          Tuition scholarships, internships and mentorship for students of Turkish descent in U.S. higher education —
+          Tuition scholarships, internships and mentorship for students of Turkish descent in U.S. higher education,
           so talent, not circumstance, decides how far they go.
         </p>
         <div class="hero__cta rv" style="--d:.45s">
           {s?.phase === "open"
             ? <a class="btn btn--shoot btn--lg" href={`/scholarships/${s.slug}/apply`} data-magnetic>Apply for {s.term} {s.year} <span class="arr">↗</span></a>
             : <a class="btn btn--shoot btn--lg" href="/scholarships" data-magnetic>Scholarships <span class="arr">↗</span></a>}
-          <a class="btn btn--line-night btn--lg" href="/give">Fund a student</a>
+          <a class="btn btn--line btn--lg" href="/give">Fund a student</a>
         </div>
       </div>
       <p class="hero__legend rv" style="--d:.6s">
@@ -106,7 +106,7 @@ const steps = [
   </section>
 
   <!-- IMPACT -->
-  <section class="section night grid-bg impact" aria-labelledby="impact-h">
+  <section class="section night impact" aria-labelledby="impact-h">
     <div class="wrap">
       <div class="head-row">
         <div>
@@ -120,7 +120,7 @@ const steps = [
         <article class="tile tile--reach rv">
           <p class="kicker kicker--plain">Students reached</p>
           <p class="tile__big"><span data-count={y25.count}>0</span></p>
-          <p class="tile__cap">scholars supported in {y25.year} — <b class="hl">+{(REACH.growth * 100).toFixed(1)}%</b> more than {y24.year}.</p>
+          <p class="tile__cap">scholars supported in {y25.year}, <b class="hl">+{(REACH.growth * 100).toFixed(1)}%</b> more than {y24.year}.</p>
           <ReachDots />
         </article>
 
@@ -141,7 +141,7 @@ const steps = [
         <article class="tile tile--bars rv" style="--d:.08s">
           <YearBars label="Contributions & donations" values={FINANCE.contributions} tone="lilac" />
           <YearBars label="Scholarships paid to schools" values={FINANCE.scholarships} tone="shoot" />
-          <p class="small muted">Scholarship giving grew faster than giving itself — by design. {FINANCE.note}</p>
+          <p class="small muted">Scholarship giving grew faster than giving itself, by design. {FINANCE.note}</p>
         </article>
       </div>
     </div>
@@ -187,7 +187,7 @@ const steps = [
   </section>
 
   <!-- JOIN -->
-  <section class="section night join" aria-labelledby="join-h">
+  <section class="section bone-2 join" aria-labelledby="join-h">
     <div class="wrap">
       <div class="head-row">
         <div>
@@ -200,7 +200,7 @@ const steps = [
           { t: "Become a mentor", b: "Guide a student through the choices that shape a career.", href: "/get-involved#mentor" },
           { t: "Open an internship", b: "Help us coordinate real work experience in your field.", href: "/get-involved#internships" },
           { t: "Join the Board", b: "Shape the foundation's direction as a trustee.", href: "/get-involved#board" },
-          { t: "Become a donor", b: "Fund tuition directly — one semester at a time.", href: "/give" },
+          { t: "Become a donor", b: "Fund tuition directly, one semester at a time.", href: "/give" },
         ].map((j, i) => (
           <li class="rv" style={`--d:${i * 0.06}s`}>
             <a class="join__card" href={j.href}>
@@ -220,7 +220,7 @@ const steps = [
       <div class="give__left">
         <p class="kicker rv">Give</p>
         <h2 class="t-1 rv" id="give-h" style="--d:.06s">Choose what your gift <span class="hl-dawn">becomes.</span></h2>
-        <p class="lead rv" style="--d:.12s">Every scholarship is paid straight to a student's school. Springrise is a 501(c)(3) public charity — your gift is tax-deductible.</p>
+        <p class="lead rv" style="--d:.12s">Every scholarship is paid straight to a student's school. Springrise is a 501(c)(3) public charity, and your gift is tax-deductible.</p>
         <div class="give__ways rv" style="--d:.18s">
           <button class="way" type="button" data-copy={ORG.zelle.to}>
             <span class="mono">Zelle</span><b>{ORG.zelle.to}</b><span class="way__act" data-copy-label>Copy</span>
@@ -255,68 +255,63 @@ const steps = [
 
 <style>
   /* HERO */
-  .hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; overflow: hidden; padding-top: 7rem; }
-  .hero__veil { position: absolute; inset: 0; pointer-events: none; background:
-    radial-gradient(70% 55% at 18% 88%, rgb(16 15 26 / 0.92) 0%, rgb(16 15 26 / 0.6) 45%, rgb(16 15 26 / 0) 75%),
-    linear-gradient(0deg, rgb(16 15 26 / 0.75) 0%, rgb(16 15 26 / 0) 30%),
-    linear-gradient(180deg, rgb(16 15 26 / 0.55) 0%, rgb(16 15 26 / 0) 30%); }
+  .hero { position: relative; background: linear-gradient(180deg, var(--paper), var(--bone)); min-height: 92svh; display: flex; align-items: flex-end; overflow: hidden; padding-top: 7rem; }
+  .hero__veil { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 60% at 18% 78%, rgb(255 252 246 / 0.95) 0%, rgb(255 252 246 / 0.7) 45%, rgb(255 252 246 / 0) 75%), linear-gradient(0deg, rgb(247 241 231 / 0.85) 0%, rgb(247 241 231 / 0) 28%); }
   .hero__inner { position: relative; padding-bottom: clamp(2rem, 5vw, 3.5rem); display: grid; gap: clamp(1.2rem, 2.5vw, 2rem); }
   .hero__title { margin-top: 0.5rem; }
   .hero__foot { display: grid; grid-template-columns: minmax(0, 1.2fr) auto; gap: 2rem 4rem; align-items: end; }
-  .hero__foot .lead { color: rgb(243 240 232 / 0.8); }
+  .hero__foot .lead { color: var(--text-muted); }
   .hero__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; }
-  .hero__legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--night-line); font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; color: rgb(243 240 232 / 0.85); }
+  .hero__legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--line); font-size: 0.85rem; font-weight: 600; color: var(--text); }
   .hero__legend .muted { text-transform: none; letter-spacing: 0; font-family: var(--font-sans); font-size: 0.88rem; }
   .dot { display: inline-block; width: 0.55rem; height: 0.55rem; border-radius: 50%; margin-right: 0.55rem; vertical-align: 1px; }
-  .dot--now { background: var(--shoot); box-shadow: 0 0 12px var(--shoot); } .dot--then { background: var(--lilac); }
-  @media (max-width: 900px) { .hero__foot { grid-template-columns: 1fr; } .hero__veil { background: linear-gradient(0deg, rgb(16 15 26 / 0.55) 0%, rgb(16 15 26 / 0.78) 35%, rgb(16 15 26 / 0.5) 55%, rgb(16 15 26 / 0) 80%); } }
+  .dot--now { background: #b4502d; } .dot--then { background: #7f9f5c; }
+  @media (max-width: 900px) { .hero__foot { grid-template-columns: 1fr; } .hero__veil { background: linear-gradient(0deg, rgb(247 241 231 / 0.7) 0%, rgb(255 252 246 / 0.88) 40%, rgb(255 252 246 / 0.5) 60%, rgb(255 252 246 / 0) 82%); } }
 
   /* TICKER */
   .ticker { background: var(--shoot); color: var(--night); padding-block: 1.1rem; overflow: hidden; }
-  .ticker span { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.4rem, 1rem + 1.6vw, 2.4rem); letter-spacing: -0.035em; white-space: nowrap; }
+  .ticker span { font-family: var(--font-display); font-weight: 560; font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem); letter-spacing: -0.015em; white-space: nowrap; }
   .ticker svg { width: 1.3rem; height: 1.3rem; fill: var(--night); flex: none; }
 
   /* PURPOSE */
   .purpose__grid { display: grid; grid-template-columns: minmax(0, 0.28fr) minmax(0, 1fr); gap: 2rem clamp(2rem, 5vw, 5rem); }
   .purpose__side { display: grid; gap: 1rem; align-content: start; justify-items: start; padding-top: 0.8rem; }
-  .purpose__text { font-family: var(--font-display); font-weight: 650; font-size: clamp(2rem, 1rem + 3.6vw, 4.6rem); line-height: 1.04; letter-spacing: -0.04em; }
-  .purpose__text span { color: rgb(16 15 26 / 0.5); transition: color 0.35s; }
+  .purpose__text { font-family: var(--font-display); font-weight: 560; font-size: clamp(1.5rem, 1.15rem + 1.4vw, 2.4rem); line-height: 1.04; letter-spacing: -0.015em; }
+  .purpose__text span { color: rgb(43 35 32 / 0.5); transition: color 0.35s; }
   .purpose__text span.on { color: var(--night); }
   @media (max-width: 800px) { .purpose__grid { grid-template-columns: 1fr; } }
 
   /* PILLARS */
-  .pillar-row { display: flex; gap: 0.8rem; min-height: 32rem; }
+  .pillar-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; }
   .pillar {
-    position: relative; flex: 1 1 0; display: flex; flex-direction: column; gap: 0.9rem; padding: clamp(1.4rem, 2.5vw, 2.2rem);
-    border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); overflow: hidden; outline: none;
-    transition: flex-grow 0.8s var(--ease), background-color 0.5s, color 0.5s, transform 0.8s var(--ease), opacity 1.1s var(--ease);
+    position: relative; display: flex; flex-direction: column; gap: 0.9rem; min-height: 30rem; padding: clamp(1.4rem, 2.5vw, 2.2rem);
+    border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); outline: none;
+    transition: opacity 1.1s var(--ease), transform 0.9s var(--ease), background-color 0.9s var(--ease), border-color 0.9s var(--ease), box-shadow 0.9s var(--ease);
   }
-  .pillar:hover, .pillar:focus-visible { flex-grow: 1.7; background: var(--night); color: var(--bone); }
-  .pillar__n { font-size: 0.78rem; color: var(--text-faint); }
-  .pillar:hover .pillar__n, .pillar:focus-visible .pillar__n { color: var(--shoot); }
+  .pillar.in:hover, .pillar.in:focus-visible { transform: translateY(-6px); background: #fff8ee; border-color: rgb(180 80 45 / 0.35); box-shadow: 0 30px 50px -36px rgb(43 35 32 / 0.45); }
+  .pillar:focus-visible { outline: 2px solid var(--shoot-deep); outline-offset: 3px; }
+  .pillar__n { font-size: 0.78rem; color: var(--text-faint); transition: color 0.9s var(--ease); }
+  .pillar:hover .pillar__n, .pillar:focus-visible .pillar__n { color: var(--shoot-deep); }
   .pillar__t { margin-top: auto; }
   .pillar__line { font-size: 1.05rem; max-width: 26rem; }
-  .pillar__detail { max-width: 26rem; color: var(--night-muted); max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.8s var(--ease), opacity 0.6s; }
-  .pillar:hover .pillar__detail, .pillar:focus-visible .pillar__detail { max-height: 8rem; opacity: 1; }
+  .pillar__detail { max-width: 26rem; color: var(--text-muted); font-size: 0.95rem; }
   @media (max-width: 900px) {
-    .pillar-row { flex-direction: column; min-height: 0; }
-    .pillar { min-height: 0; overflow: visible; }
+    .pillar-row { grid-template-columns: 1fr; }
+    .pillar { min-height: 0; }
     .pillar__t { margin-top: 1rem; }
-    .pillar__detail { max-height: none; opacity: 1; color: var(--text-muted); }
-    .pillar:hover .pillar__detail { color: var(--night-muted); }
   }
 
   /* IMPACT */
   .impact__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1rem; }
-  .tile { background: rgb(25 24 42 / 0.86); border: 1px solid var(--night-line); border-radius: var(--r-lg); padding: clamp(1.4rem, 3vw, 2.4rem); display: grid; gap: 1.2rem; align-content: start; backdrop-filter: blur(6px); }
+  .tile { background: var(--night-2); border: 1px solid var(--night-line); border-radius: var(--r-lg); padding: clamp(1.4rem, 3vw, 2.4rem); display: grid; gap: 1.2rem; align-content: start; backdrop-filter: blur(6px); }
   .tile--reach { grid-column: span 7; }
   .tile--ring { grid-column: span 5; justify-items: center; text-align: center; }
   .tile--dollar { grid-column: span 5; }
   .tile--bars { grid-column: span 7; gap: 2rem; }
-  .tile__big { font-family: var(--font-display); font-weight: 800; font-size: clamp(6rem, 4rem + 8vw, 12rem); line-height: 0.8; letter-spacing: -0.07em; color: var(--shoot); }
+  .tile__big { font-family: var(--font-display); font-weight: 560; font-size: clamp(3.4rem, 2.6rem + 3vw, 5.2rem); line-height: 0.8; letter-spacing: -0.015em; color: var(--shoot); }
   .tile__cap { font-size: 1.1rem; max-width: 30rem; }
   .tile__quote--left { text-align: left; margin-inline: 0 !important; max-width: 24rem !important; }
-  .tile__quote { font-family: var(--font-display); font-weight: 650; font-size: var(--fs-3); letter-spacing: -0.025em; line-height: 1.15; margin-top: 0.6rem; max-width: 20rem; margin-inline: auto; }
+  .tile__quote { font-family: var(--font-display); font-weight: 560; font-size: var(--fs-3); letter-spacing: -0.025em; line-height: 1.15; margin-top: 0.6rem; max-width: 20rem; margin-inline: auto; }
   @media (max-width: 1000px) {
     .tile--reach, .tile--ring, .tile--dollar, .tile--bars { grid-column: 1 / -1; }
   }
@@ -327,7 +322,7 @@ const steps = [
   .who__list div { display: grid; grid-template-columns: 9rem 1fr; gap: 1.5rem; padding-block: 1.6rem; border-top: 1px solid var(--line-strong); }
   .who__list div:last-child { border-bottom: 1px solid var(--line-strong); }
   .who__list dt { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); padding-top: 0.45rem; }
-  .who__list dd { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.85rem); line-height: 1.2; letter-spacing: -0.025em; }
+  .who__list dd { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem); line-height: 1.2; letter-spacing: -0.025em; }
   @media (max-width: 900px) { .who__grid { grid-template-columns: 1fr; } }
   @media (max-width: 520px) { .who__list div { grid-template-columns: 1fr; gap: 0.4rem; } }
 
@@ -357,12 +352,11 @@ const steps = [
 
   /* JOIN */
   .join__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.8rem; }
-  .join__card { position: relative; display: grid; gap: 0.8rem; align-content: start; min-height: 17rem; padding: 1.6rem; border-radius: var(--r-lg); border: 1px solid var(--night-line-strong); text-decoration: none; transition: background-color 0.4s, color 0.4s, transform 0.5s var(--ease); }
-  .join__card:hover { background: var(--shoot); color: var(--night); transform: translateY(-6px); }
-  .join__card:hover .muted { color: rgb(16 15 26 / 0.75); }
-  .join__n { font-size: 0.76rem; color: var(--night-muted); margin-bottom: auto; }
-  .join__card .t-3 { margin-top: 4rem; }
-  .join__arr { position: absolute; top: 1.3rem; right: 1.4rem; font-size: 1.4rem; transition: transform 0.5s var(--ease); }
+  .join__card { position: relative; display: grid; gap: 0.8rem; align-content: start; min-height: 14rem; padding: 1.6rem; border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); text-decoration: none; transition: background-color 0.8s var(--ease), border-color 0.8s var(--ease), box-shadow 0.8s var(--ease), transform 0.8s var(--ease); }
+  .join__card:hover { background: #fff8ee; border-color: rgb(180 80 45 / 0.35); transform: translateY(-4px); box-shadow: 0 26px 44px -34px rgb(43 35 32 / 0.45); }
+  .join__n { font-size: 0.8rem; font-weight: 600; color: var(--shoot-ink); margin-bottom: auto; }
+  .join__card .t-3 { margin-top: 2.5rem; }
+  .join__arr { position: absolute; top: 1.3rem; right: 1.4rem; font-size: 1.4rem; color: var(--shoot-deep); transition: transform 0.8s var(--ease); }
   .join__card:hover .join__arr { transform: rotate(45deg); }
   @media (max-width: 1000px) { .join__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .join__grid { grid-template-columns: 1fr; } .join__card { min-height: 12rem; } .join__card .t-3 { margin-top: 2rem; } }

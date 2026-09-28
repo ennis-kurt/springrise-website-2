@@ -4,10 +4,10 @@ import PageHead from "../components/PageHead.astro";
 import InquiryForm from "../components/InquiryForm.astro";
 import { ORG } from "../lib/facts";
 const roles = [
-  { id: "mentor", tag: "Mentorship", t: "Become a mentor", b: "Share what you've learned — about courses, applications, first jobs, and the questions no syllabus answers — with a student on the path you once walked.", cta: "I'd like to mentor", reason: "mentor" },
-  { id: "internships", tag: "Internships", t: "Lead an internship committee", b: "Help us find, coordinate and secure professional internships for our students — or open a role at your own organization.", cta: "I can help with internships", reason: "internships" },
+  { id: "mentor", tag: "Mentorship", t: "Become a mentor", b: "Share what you've learned about courses, applications, first jobs and the questions no syllabus answers with a student on the path you once walked.", cta: "I'd like to mentor", reason: "mentor" },
+  { id: "internships", tag: "Internships", t: "Lead an internship committee", b: "Help us find, coordinate and secure professional internships for our students, or open a role at your own organization.", cta: "I can help with internships", reason: "internships" },
   { id: "board", tag: "Leadership", t: "Join the Board of Trustees", b: "Trustees set the foundation's direction and decide awards each season. They serve three-year terms, without compensation.", cta: "Tell me about the Board", reason: "board" },
-  { id: "donor", tag: "Giving", t: "Become a donor", b: "Fund tuition directly. Every scholarship dollar goes straight to a student's school — one semester at a time.", cta: "Ways to give", href: "/give" },
+  { id: "donor", tag: "Giving", t: "Become a donor", b: "Fund tuition directly. Every scholarship dollar goes straight to a student's school, one semester at a time.", cta: "Ways to give", href: "/give" },
   { id: "spread", tag: "Awareness", t: "Spread the word", b: "Know a student of Turkish descent at a U.S. college who could use support? Share our scholarship page with them.", cta: "Copy scholarship link", copy: "https://springrise.org/scholarships" },
   { id: "partner", tag: "Partnership", t: "Partner with us", b: "Schools, community organizations and companies: let's build training, mentorship and internship programs together.", cta: "Start a conversation", reason: "partnership" },
 ];
@@ -32,7 +32,7 @@ const roles = [
     </div>
   </section>
 
-  <section class="section night grid-bg" id="join" aria-labelledby="join-h">
+  <section class="section bone-2" id="join" aria-labelledby="join-h">
     <div class="wrap join">
       <div>
         <p class="kicker rv">Raise your hand</p>
@@ -40,7 +40,7 @@ const roles = [
         <p class="lead rv">We'll reply personally. Prefer email? <a href={`mailto:${ORG.email.info}?subject=Getting%20involved`}>{ORG.email.info}</a></p>
       </div>
       <div class="rv" style="--d:.1s">
-        <InquiryForm id="join" night reason="mentor" submit="Send" placeholder="A little about you, and how you'd like to be involved…" reasons={[
+        <InquiryForm id="join" reason="mentor" submit="Send" placeholder="A little about you, and how you'd like to be involved…" reasons={[
           { v: "mentor", label: "Mentoring students" }, { v: "internships", label: "Internships" }, { v: "board", label: "Joining the Board" },
           { v: "partnership", label: "A partnership" }, { v: "giving", label: "Giving" }, { v: "general", label: "Something else" },
         ]} />
@@ -66,11 +66,11 @@ const roles = [
   .role:target { outline: 2px solid var(--shoot-deep); }
   .role__tag { font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: auto; padding-bottom: 3rem; }
   .role .btn { margin-top: 0.4rem; }
-  .role__t { font-size: clamp(1.6rem, 1.2rem + 1vw, 2.2rem); font-weight: 700; letter-spacing: -0.035em; }
+  .role__t { font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.55rem); font-weight: 560; letter-spacing: -0.015em; }
   @media (max-width: 1000px) { .roles { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .roles { grid-template-columns: 1fr; } .role { min-height: 0; } }
   .join { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
   .join > div:first-child { display: grid; gap: 1.2rem; }
-  .join a:not(.btn) { color: var(--shoot); }
+  .join a:not(.btn) { color: var(--lilac-deep); }
   @media (max-width: 900px) { .join { grid-template-columns: 1fr; } }
 </style>

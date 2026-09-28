@@ -93,10 +93,10 @@ export function layout(b: Block): string {
         .join("")}</table>`
     : "";
   const button = b.button
-    ? `<p style="margin:24px 0"><a href="${escapeHtml(b.button.href)}" style="display:inline-block;background:#100f1a;color:#c5f04a;text-decoration:none;font-weight:600;padding:12px 22px;border-radius:999px">${escapeHtml(b.button.label)}</a></p>`
+    ? `<p style="margin:24px 0"><a href="${escapeHtml(b.button.href)}" style="display:inline-block;background:#2b2320;color:#f0b44c;text-decoration:none;font-weight:600;padding:12px 22px;border-radius:999px">${escapeHtml(b.button.label)}</a></p>`
     : "";
-  return `<!doctype html><html><body style="margin:0;padding:0;background:#f3f0e8">
-<div style="background:#f3f0e8;padding:32px 16px;font-family:${font};color:#100f1a">
+  return `<!doctype html><html><body style="margin:0;padding:0;background:#f7f1e7">
+<div style="background:#f7f1e7;padding:32px 16px;font-family:${font};color:#2b2320">
 <div style="max-width:560px;margin:0 auto;background:#fbfaf6;border:1px solid #ddd8ca;border-radius:18px;padding:32px">
 <p style="margin:0 0 24px;font-weight:700;font-size:20px;letter-spacing:-0.03em">springrise</p>
 <h1 style="margin:0 0 16px;font-size:22px;line-height:1.25">${escapeHtml(b.heading)}</h1>
@@ -117,7 +117,7 @@ function plain(b: Block): string {
     ...(b.facts ?? []).map(([k, v]) => `${k}: ${v}`),
     ...(b.button ? ["", `${b.button.label}: ${b.button.href}`] : []),
     "",
-    "—",
+    "--",
     b.footer ?? "Springrise Foundation, Inc. · P.O. Box 55, Denville, NJ 07834",
     ...(b.unsubscribe ? [`Unsubscribe: ${b.unsubscribe}`] : []),
   ].join("\n");
@@ -137,10 +137,10 @@ export interface SubmittedApp { id: string; code: string; firstName: string; las
 
 export function applicantConfirmation(a: SubmittedApp) {
   return send(
-    message(a.email, `We received your application — ${a.code}`, {
+    message(a.email, `We received your application (${a.code})`, {
       heading: `Thank you, ${a.firstName}. Your application is in.`,
       paragraphs: [
-        `We received your ${a.seasonTitle} application. Keep your reference code — you'll need it, with this email address, to check your status.`,
+        `We received your ${a.seasonTitle} application. Keep your reference code. You'll need it, with this email address, to check your status.`,
         "Please note: a submitted application is not an award. The Board reviews every application after the season closes, and we'll contact you by email.",
       ],
       facts: [

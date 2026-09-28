@@ -10,23 +10,23 @@ const site = await siteData();
 const { seasons, spotlight: s } = site;
 const hasNext = seasons.some((x) => x.phase !== "closed");
 const faq = [
-  { q: "When can I apply?", a: "Twice a year — one season for the Spring semester and one for the Fall. Each season has its own window, shown above. Join the season alerts at the bottom of this page and we'll write the moment the next one opens." },
+  { q: "When can I apply?", a: "Twice a year: one season for the Spring semester and one for the Fall. Each season has its own window, shown above. Join the season alerts at the bottom of this page and we'll write the moment the next one opens." },
   { q: "I'm finishing high school. Can I apply?", a: "Yes, once you've been accepted to an accredited U.S. college or university. Incoming first-year students need a cumulative high-school GPA of at least 3.5 (4.0 scale) and an SAT score of at least 1350." },
   { q: "My GPA is under 3.0. Is it worth applying?", a: "A lower GPA may be considered only in extremely limited circumstances, and only once per applicant. If that's you, explain your circumstances honestly in your personal statement." },
-  { q: "How much is an award?", a: "It depends on the season. The Board sets each award based on socioeconomic challenges, financial need, academics, tuition cost, references and community engagement — and on the funds available." },
-  { q: "Is the money paid to me?", a: "No — scholarships are paid directly to your institution as tuition. Request only the balance you still owe after other scholarships and grants, excluding housing, insurance and other fees." },
+  { q: "How much is an award?", a: "It depends on the season. The Board sets each award based on socioeconomic challenges, financial need, academics, tuition cost, references and community engagement, and on the funds available." },
+  { q: "Is the money paid to me?", a: "No. Scholarships are paid directly to your institution as tuition. Request only the balance you still owe after other scholarships and grants, excluding housing, insurance and other fees." },
   { q: "Do I need to reapply every semester?", a: "Yes. Each application covers one semester. Recipients keep making progress toward their degree, and a failed course can't be funded twice." },
   { q: "Can I save my application and finish later?", a: "Yes. The form saves your answers and your PDFs on your device as you go, so you can close the tab and return on the same browser." },
   { q: "What about internships and mentorship?", a: "Springrise also coordinates internship opportunities and pairs students with mentors. Tell us what you're looking for through the contact page and we'll be in touch." },
 ];
 ---
-<Site title="Scholarships" description="Seasonal tuition scholarships for students of Turkish descent at accredited U.S. colleges and universities — dates, eligibility, documents and how to apply." site={site}>
-  <section class="sch night grid-bg">
+<Site title="Scholarships" description="Seasonal tuition scholarships for students of Turkish descent at accredited U.S. colleges and universities: dates, eligibility, documents and how to apply." site={site}>
+  <section class="sch">
     <div class="wrap sch__grid">
       <div class="sch__text">
         <p class="kicker rv">Tuition scholarships · Spring & Fall</p>
         <h1 class="t-hero"><Split text="Tuition shouldn't" /> <Split text="decide your" start={2} /> <Split text="future." class="hl" start={4} /></h1>
-        <p class="lead rv" style="--d:.3s">Need-based awards for students of Turkish descent at accredited U.S. colleges and universities — paid directly to your school, one semester at a time.</p>
+        <p class="lead rv" style="--d:.3s">Need-based awards for students of Turkish descent at accredited U.S. colleges and universities, paid directly to your school, one semester at a time.</p>
         <nav class="sch__jump rv" style="--d:.4s" aria-label="On this page">
           <a href="#eligibility">Eligibility</a><a href="#documents">Documents</a><a href="#terms">Terms</a><a href="#questions">Questions</a><a href="/scholarships/status">Check status</a>
         </nav>
@@ -77,35 +77,35 @@ const faq = [
 </Site>
 
 <style>
-  .sch { padding-top: clamp(8rem, 12vw, 11rem); padding-bottom: clamp(3rem, 6vw, 5rem); overflow: hidden; }
+  .sch { background: linear-gradient(180deg, var(--paper), var(--bone)); padding-top: clamp(8rem, 12vw, 11rem); padding-bottom: clamp(3rem, 6vw, 5rem); overflow: hidden; }
   .sch__grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr); gap: clamp(2rem, 5vw, 5rem); align-items: end; }
   .sch__text { display: grid; gap: 1.5rem; }
   .sch__jump { display: flex; flex-wrap: wrap; gap: 0.45rem; }
-  .sch__jump a { padding: 0.5rem 0.95rem; border-radius: var(--r-pill); border: 1px solid var(--night-line-strong); font-size: 0.9rem; text-decoration: none; transition: all 0.25s; }
-  .sch__jump a:hover { background: var(--shoot); border-color: var(--shoot); color: var(--night); }
+  .sch__jump a { padding: 0.5rem 0.95rem; border-radius: var(--r-pill); border: 1px solid var(--line-strong); font-size: 0.9rem; text-decoration: none; transition: all 0.25s; }
+  .sch__jump a:hover { background: var(--night); border-color: var(--night); color: var(--paper); }
   @media (max-width: 1000px) { .sch__grid { grid-template-columns: 1fr; } }
 
   .track { margin-top: clamp(3rem, 6vw, 5rem); overflow-x: auto; scrollbar-width: none; }
   .track__line { position: relative; display: flex; min-width: max-content; padding-top: 0.6rem; }
-  .track__line::before { content: ""; position: absolute; left: 0; right: 0; top: calc(0.6rem + 7px); height: 1.5px; background: linear-gradient(90deg, var(--night-line-strong), var(--shoot)); }
+  .track__line::before { content: ""; position: absolute; left: 0; right: 0; top: calc(0.6rem + 7px); height: 1.5px; background: linear-gradient(90deg, var(--line-strong), var(--shoot-deep)); }
   .track__node { flex: 1 0 8.5rem; }
   .track__node a { position: relative; display: grid; gap: 0.35rem; padding-right: 1rem; text-decoration: none; }
-  .track__dot { width: 16px; height: 16px; border-radius: 50%; background: var(--night); border: 2px solid var(--night-line-strong); margin-bottom: 0.7rem; transition: transform 0.4s var(--ease); }
-  .track__node a:hover .track__dot { transform: scale(1.3); border-color: var(--shoot); }
-  .track__t { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; letter-spacing: -0.03em; }
-  .track__y { font-size: 0.75rem; color: var(--night-muted); }
-  .is-open .track__dot, .is-current.is-open .track__dot { background: var(--shoot); border-color: var(--shoot); box-shadow: 0 0 18px var(--shoot); }
+  .track__dot { width: 16px; height: 16px; border-radius: 50%; background: var(--paper); border: 2px solid var(--line-strong); margin-bottom: 0.7rem; transition: transform 0.4s var(--ease); }
+  .track__node a:hover .track__dot { transform: scale(1.3); border-color: var(--shoot-deep); }
+  .track__t { font-family: var(--font-display); font-weight: 500; font-size: 1.2rem; }
+  .track__y { font-size: 0.8rem; color: var(--text-muted); }
+  .is-open .track__dot, .is-current.is-open .track__dot { background: #5a9a3c; border-color: #5a9a3c; box-shadow: 0 0 0 5px rgb(90 154 60 / 0.18); }
   .is-upcoming .track__dot { background: var(--dawn); border-color: var(--dawn); }
-  .is-current .track__dot { border-color: var(--bone); }
-  .is-next .track__dot { border-style: dashed; border-color: var(--shoot); }
-  .is-next .track__y { color: var(--shoot); }
+  .is-current .track__dot { border-color: var(--night); }
+  .is-next .track__dot { border-style: dashed; border-color: var(--shoot-deep); }
+  .is-next .track__y { color: var(--shoot-deep); }
 
   .faq__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 6vw, 7rem); align-items: start; }
   .faq__grid header { position: sticky; top: 7rem; display: grid; gap: 1.1rem; }
   .faq__grid header a { color: var(--lilac-deep); }
   .faq__list { border-top: 1.5px solid var(--night); }
   .qa { border-bottom: 1px solid var(--line-strong); }
-  .qa summary { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.4rem 0; list-style: none; cursor: pointer; font-family: var(--font-display); font-weight: 650; font-size: clamp(1.2rem, 1rem + 0.7vw, 1.6rem); letter-spacing: -0.025em; line-height: 1.2; }
+  .qa summary { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.4rem 0; list-style: none; cursor: pointer; font-family: var(--font-display); font-weight: 560; font-size: clamp(1.08rem, 1rem + 0.35vw, 1.3rem); letter-spacing: -0.025em; line-height: 1.2; }
   .qa summary::-webkit-details-marker { display: none; }
   .qa summary i { position: relative; flex: none; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--paper); border: 1px solid var(--line-strong); transition: all 0.4s var(--ease); }
   .qa summary i::before, .qa summary i::after { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 2px; border-radius: 2px; background: currentColor; transform: translate(-50%, -50%); transition: transform 0.4s var(--ease); }

@@ -13,7 +13,7 @@ const open = s.phase === "open" && s.status === "published";
 const show = open || Astro.url.searchParams.has("preview");
 ---
 <Site title={`Apply · ${s.title}`} description={`Apply for the ${s.title}.`} site={site} noindex>
-  <section class="ap-page night">
+  <section class="ap-page">
     <div class="wrap">
       <header class="ap-page__head">
         <a class="ap-back" href={`/scholarships/${s.slug}`}>← {s.term} {s.year} details</a>
@@ -31,7 +31,7 @@ const show = open || Astro.url.searchParams.has("preview");
           <p class="lead">{s.phase === "upcoming" ? "You can explore every step of the form now and get your documents ready." : <>Need to send more documents for an application you submitted? Email <a href={`mailto:${ORG.email.scholarship}`}>{ORG.email.scholarship}</a> with your reference.</>}</p>
           <div class="ap-closed__cta">
             <a class="btn btn--shoot" href={`/scholarships/${s.slug}/apply?preview=1`}>Preview the form <span class="arr">→</span></a>
-            <a class="btn btn--line-night" href="/scholarships">All scholarships</a>
+            <a class="btn btn--line" href="/scholarships">All scholarships</a>
           </div>
         </div>
       )}
@@ -40,11 +40,11 @@ const show = open || Astro.url.searchParams.has("preview");
 </Site>
 
 <style>
-  .ap-page { padding-top: clamp(7.5rem, 11vw, 9.5rem); padding-bottom: clamp(4rem, 8vw, 7rem); min-height: 100svh; }
+  .ap-page { background: linear-gradient(180deg, var(--paper), var(--bone)); padding-top: clamp(7.5rem, 11vw, 9.5rem); padding-bottom: clamp(4rem, 8vw, 7rem); min-height: 100svh; }
   .ap-page__head { display: grid; gap: 1rem; max-width: 52rem; margin-bottom: clamp(2rem, 4vw, 3.5rem); }
-  .ap-back { font-size: 0.9rem; color: var(--night-muted); text-decoration: none; }
-  .ap-back:hover { color: var(--shoot); }
-  .ap-closed { display: grid; gap: 1.3rem; justify-items: start; max-width: 46rem; padding: clamp(2rem, 4vw, 3.4rem); border-radius: var(--r-lg); border: 1px solid var(--night-line-strong); background: var(--night-2); }
-  .ap-closed a:not(.btn) { color: var(--shoot); }
+  .ap-back { font-size: 0.9rem; color: var(--text-muted); text-decoration: none; }
+  .ap-back:hover { color: var(--shoot-deep); }
+  .ap-closed { display: grid; gap: 1.3rem; justify-items: start; max-width: 46rem; padding: clamp(2rem, 4vw, 3.4rem); border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--paper); box-shadow: var(--shadow); }
+  .ap-closed a:not(.btn) { color: var(--lilac-deep); }
   .ap-closed__cta { display: flex; flex-wrap: wrap; gap: 0.7rem; }
 </style>

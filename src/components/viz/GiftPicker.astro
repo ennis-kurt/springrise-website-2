@@ -29,24 +29,24 @@ const max = Math.max(...GIFTS.map((g) => g.amount));
   .gift__tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
   .gift__tier {
     display: grid; gap: 0.35rem; justify-items: start; padding: 1.1rem 1rem; min-width: 0; border-radius: var(--r); text-align: left;
-    border: 1.5px solid var(--line-strong); background: var(--paper); transition: background-color 0.3s, border-color 0.3s, transform 0.4s var(--ease);
+    border: 1.5px solid var(--line-strong); background: var(--paper); transition: background-color 0.6s var(--ease), border-color 0.6s var(--ease), color 0.6s var(--ease), transform 0.7s var(--ease);
   }
   .gift__tier:hover { transform: translateY(-3px); border-color: var(--night); }
   .gift__tier[aria-checked="true"] { background: var(--night); color: var(--bone); border-color: var(--night); }
-  .gift__amt { font-family: var(--font-display); font-weight: 750; font-size: clamp(1.25rem, 6.4cqi, 2.4rem); letter-spacing: -0.04em; line-height: 1; }
+  .gift__amt { font-family: var(--font-display); font-weight: 560; font-size: clamp(1.15rem, 5.4cqi, 1.9rem); letter-spacing: -0.015em; line-height: 1; }
   .gift__lab { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
   .gift__tier[aria-checked="true"] .gift__lab { color: var(--shoot); opacity: 1; }
   .gift__out { display: grid; gap: 1rem; }
   .gift__meter { position: relative; height: 3.2rem; border-radius: var(--r-sm); background: var(--bone-2); overflow: hidden; }
   .gift__fill { position: absolute; inset: 0 auto 0 0; width: var(--w); background: linear-gradient(90deg, var(--shoot-deep), var(--shoot)); border-radius: inherit; transition: width 0.9s var(--ease); }
   .gift__ticks { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(12, 1fr); }
-  .gift__ticks i { border-right: 1px solid rgb(16 15 26 / 0.12); }
+  .gift__ticks i { border-right: 1px solid rgb(43 35 32 / 0.12); }
   .gift__line { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-3); letter-spacing: -0.025em; line-height: 1.15; min-height: 2.3em; }
   .gift--night .gift__tier { background: transparent; border-color: var(--night-line-strong); color: var(--bone); }
   .gift--night .gift__tier[aria-checked="true"] { background: var(--shoot); color: var(--night); border-color: var(--shoot); }
   .gift--night .gift__tier[aria-checked="true"] .gift__lab { color: var(--night); }
   .gift--night .gift__meter { background: var(--night-3); }
-  .gift--night .gift__ticks i { border-color: rgb(243 240 232 / 0.08); }
+  .gift--night .gift__ticks i { border-color: rgb(250 244 234 / 0.08); }
   @container (max-width: 340px) { .gift__tiers { grid-template-columns: 1fr; } .gift__amt { font-size: 1.8rem; } }
 </style>
 

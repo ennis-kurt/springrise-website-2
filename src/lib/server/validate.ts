@@ -22,7 +22,7 @@ export function text(
 
 export function email(fields: Record<string, string>, name: string, label = "your email address", required = true): string {
   const v = text(fields, name, label, { required, max: 254 }).toLowerCase();
-  if (v && !EMAIL_RE.test(v)) throw new HttpError(400, `Please check ${label} — it doesn’t look like a valid email.`, name);
+  if (v && !EMAIL_RE.test(v)) throw new HttpError(400, `Please check ${label}. It doesn’t look like a valid email.`, name);
   return v;
 }
 
@@ -33,7 +33,7 @@ export function phone(fields: Record<string, string>, name: string, label: strin
   if (!v) return v;
   const digits = v.replace(/\D/g, "").length;
   if (!/^[0-9+().\-\s]+$/.test(v) || digits < 7 || digits > 20) {
-    throw new HttpError(400, `Please check ${label} — use 7 to 20 digits.`, name);
+    throw new HttpError(400, `Please check ${label} and use 7 to 20 digits.`, name);
   }
   return v;
 }

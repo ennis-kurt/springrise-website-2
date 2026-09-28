@@ -96,7 +96,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
         const got: Record<string, File> = {};
         for (const d of docs) { const f = await store.get(`${season.slug}:${d.key}`).catch(() => undefined); if (f) got[d.key] = f; }
         if (Object.keys(got).length) { setFiles(got); setRestored(true); }
-      } catch { /* storage unavailable — continue without drafts */ }
+      } catch { /* storage unavailable; continue without drafts */ }
       if (!key.current) key.current = crypto.randomUUID();
       setReady(true);
     })();
@@ -149,7 +149,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
     }
     if (s === 3) {
       for (const d of needed) if (!files[d.key]) e[`file-${d.key}`] = `Add your ${d.label.toLowerCase()}.`;
-      if (total > totalLimit) e["file-total"] = `These add up to ${size(total)} — please keep the total under ${size(totalLimit)}.`;
+      if (total > totalLimit) e["file-total"] = `These add up to ${size(total)}. Please keep the total under ${size(totalLimit)}.`;
     }
     if (s === 4 && a.consent !== "yes") e.consent = "Please confirm the declaration.";
     return e;
@@ -186,7 +186,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
   async function addFile(k: string, f?: File | null) {
     if (!f) return;
     const bad = (m: string) => setErrs((x) => ({ ...x, [`file-${k}`]: m }));
-    if (!(f.type === "application/pdf" || /\.pdf$/i.test(f.name))) return bad("That isn't a PDF — please export or scan it as a PDF.");
+    if (!(f.type === "application/pdf" || /\.pdf$/i.test(f.name))) return bad("That isn't a PDF. Please export or scan it as a PDF.");
     if (f.size > fileLimit) return bad(`That file is ${size(f.size)}; the limit is ${size(fileLimit)}. Try compressing it.`);
     const sig = new Uint8Array(await f.slice(0, 5).arrayBuffer());
     if (String.fromCharCode(...sig) !== "%PDF-") return bad("That file doesn't look like a valid PDF.");
@@ -209,7 +209,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
   }
 
   function submit() {
-    if (preview) { setBanner("Preview mode — this season isn't accepting applications, so nothing will be sent."); return; }
+    if (preview) { setBanner("Preview mode: this season isn't accepting applications, so nothing will be sent."); return; }
     const fd = new FormData();
     fd.append("season", season.slug);
     for (const [k, v] of Object.entries(a)) fd.append(k, (v ?? "").trim());
@@ -231,7 +231,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
         requestAnimationFrame(() => document.getElementById("application")?.scrollIntoView({ behavior: "smooth" }));
         return;
       }
-      const msg = body.error || (x.status === 413 ? "Those files are too large to send — please compress them." : "We couldn't send your application. Your draft is safe; please try again.");
+      const msg = body.error || (x.status === 413 ? "Those files are too large to send. Please compress them." : "We couldn't send your application. Your draft is safe; please try again.");
       setBanner(msg);
       if (body.field) {
         const isDoc = docs.some((d) => d.key === body.field);
@@ -242,7 +242,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
         focusFirst({ [fk]: msg });
       }
     };
-    x.onerror = () => { setSending(false); setBanner("Connection lost — your draft is safe. Check your internet and send again."); };
+    x.onerror = () => { setSending(false); setBanner("Connection lost, but your draft is safe. Check your internet and send again."); };
     x.send(fd);
   }
 
@@ -250,7 +250,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
     if (!done) return;
     const when = new Date(done.submittedAt).toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "long", timeStyle: "short" });
     const text = [
-      "SPRINGRISE FOUNDATION — APPLICATION RECEIPT", "",
+      "SPRINGRISE FOUNDATION · APPLICATION RECEIPT", "",
       `Season      ${season.title}`, `Reference   ${done.code}`, `Applicant   ${a.firstName} ${a.lastName}`,
       `Email       ${done.email}`, `Submitted   ${when} ET`, "",
       "Keep this reference for any follow-up. Submitting is not an award decision.",
@@ -285,7 +285,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
         <div class="ap-done__body">
           <p class="kicker">Application received</p>
           <h2 class="t-1">Welcome to the field, <span class="hl">{a.firstName}.</span></h2>
-          <p class="lead">Your application for the {season.title} is in. Keep this reference — it's how we'll find you quickly.</p>
+          <p class="lead">Your application for the {season.title} is in. Keep this reference. It's how we'll find you quickly.</p>
           <div class="ap-ticket">
             <div><span class="mono">Reference</span><strong class="mono">{done.code}</strong></div>
             <div><span class="mono">Applicant</span><strong>{a.firstName} {a.lastName}</strong><em>{done.email}</em></div>
@@ -293,12 +293,12 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
           </div>
           <div class="ap-done__actions">
             <button type="button" class="btn btn--shoot btn--lg" onClick={receipt}>Download receipt</button>
-            <button type="button" class="btn btn--line-night btn--lg" onClick={() => print()}>Print</button>
+            <button type="button" class="btn btn--line btn--lg" onClick={() => print()}>Print</button>
             <a class="link" href="/scholarships/status">Check your status anytime →</a>
           </div>
           <ol class="ap-next" role="list">
             <li><b>Review</b><span>After the deadline, the Board reviews every application as a whole.</span></li>
-            <li><b>We may write</b><span>If anything's missing we'll email you — reply with your reference.</span></li>
+            <li><b>We may write</b><span>If anything's missing we'll email you. Just reply with your reference.</span></li>
             <li><b>Decision</b><span>Awards go straight to your school. Submitting isn't a guarantee of an award.</span></li>
           </ol>
         </div>
@@ -330,15 +330,15 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
           })}
         </ol>
         <div class="ap-rail__note">
-          <p><b>Autosaved.</b> Your answers and PDFs stay on this device until you send — close the tab and come back anytime.</p>
+          <p><b>Autosaved.</b> Your answers and PDFs stay on this device until you send, so you can close the tab and come back anytime.</p>
           <p>Stuck? <a href="mailto:scholarship@springrise.org">scholarship@springrise.org</a></p>
           {restored && <button type="button" class="ap-reset" onClick={restart}>Start over</button>}
         </div>
       </aside>
 
       <form class="ap-form" onSubmit={next} noValidate method="post" action="#">
-        {preview && <div class="note note--warn"><span><b>Preview.</b> Explore every step freely — nothing is sent while this season isn't open.</span></div>}
-        {restored && step === 0 && <div class="note"><span>Welcome back — we restored your draft.</span></div>}
+        {preview && <div class="note note--warn"><span><b>Preview.</b> Explore every step freely. Nothing is sent while this season isn't open.</span></div>}
+        {restored && step === 0 && <div class="note"><span>Welcome back! We restored your draft.</span></div>}
 
         <header class="ap-head">
           <p class="mono ap-head__n">Chapter {step + 1} of 5</p>
@@ -399,7 +399,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
 
             <div class="ap-calc">
               <p class="mono ap-calc__k">Tuition calculator</p>
-              <p class="muted small">Ask only for what you still owe after other scholarships and grants — tuition only, no housing, insurance or fees.</p>
+              <p class="muted small">Ask only for what you still owe after other scholarships and grants. Tuition only, no housing, insurance or fees.</p>
               <div class="ap-calc__row">
                 <label>Tuition owed<span class="usd"><input class="input" inputMode="decimal" placeholder="0" value={calc.owed} onInput={(e) => setCalc((c) => ({ ...c, owed: e.currentTarget.value }))} /></span></label>
                 <span class="ap-calc__op" aria-hidden="true">−</span>
@@ -431,7 +431,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
 
         {step === 2 && (
           <div class="ap-body">
-            <p class="ap-intro">Pick two people who can speak to your character, achievements and potential — a professor, teacher, counselor, employer or community leader. <b>Not relatives.</b> Let them know we may be in touch.</p>
+            <p class="ap-intro">Pick two people who can speak to your character, achievements and potential: a professor, teacher, counselor, employer or community leader. <b>Not relatives.</b> Let them know we may be in touch.</p>
             {[1, 2].map((n) => (
               <fieldset class="ap-set ap-ref">
                 <legend><span class="mono">0{n}</span> Reference {n}</legend>
@@ -491,7 +491,7 @@ export default function Apply({ season, docs, levels, preview, fileLimit, totalL
               ["Address", [a.address1, a.address2, [a.city, a.state, a.postalCode].filter(Boolean).join(", "), a.country].filter(Boolean).join(" · ")],
             ]} />
             <Review title="Your studies" edit={() => go(1)} rows={[
-              ["School", a.school], ["Level", a.level], ["Major", a.major || "—"], ["Requesting", a.tuitionAmount ? usd(a.tuitionAmount) : ""], ["Due", a.tuitionDueDate],
+              ["School", a.school], ["Level", a.level], ["Major", a.major || "Not given"], ["Requesting", a.tuitionAmount ? usd(a.tuitionAmount) : ""], ["Due", a.tuitionDueDate],
             ]} />
             <Review title="Your people" edit={() => go(2)} rows={[1, 2].map((n) => [`Reference ${n}`, [a[`ref${n}Name`], a[`ref${n}Relation`], a[`ref${n}Email`], a[`ref${n}Phone`]].filter(Boolean).join(" · ")])} />
             <Review title="Documents" edit={() => go(3)} rows={docs.map((d) => [d.label, files[d.key] ? `${files[d.key].name} · ${size(files[d.key].size)}` : d.required ? "Missing" : "Not included"])} />
@@ -532,7 +532,7 @@ function Review({ title, rows, edit }: { title: string; rows: (string | undefine
   return (
     <section class="ap-review">
       <header><h3>{title}</h3><button type="button" onClick={edit}>Edit</button></header>
-      <dl>{rows.map(([k, v]) => <div class={v === "Missing" ? "is-missing" : ""}><dt>{k}</dt><dd>{v || "—"}</dd></div>)}</dl>
+      <dl>{rows.map(([k, v]) => <div class={v === "Missing" ? "is-missing" : ""}><dt>{k}</dt><dd>{v || "Not given"}</dd></div>)}</dl>
     </section>
   );
 }

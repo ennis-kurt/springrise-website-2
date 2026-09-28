@@ -6,7 +6,7 @@ import InquiryForm from "../components/InquiryForm.astro";
 import { COMMUNITY, FINANCE, ORG, PILLARS } from "../lib/facts";
 
 const principles = [
-  { t: "Paid to schools, not students", b: "Every scholarship goes directly to an accredited college or university as tuition — so support lands exactly where it's needed." },
+  { t: "Paid to schools, not students", b: "Every scholarship goes directly to an accredited college or university as tuition, so support lands exactly where it's needed." },
   { t: "The whole person, reviewed", b: "Grades matter, and so do need, resilience, leadership and service. The Board reads each application as a story, not a score." },
   { t: `Lean by design`, b: `In FY 2025, ${(FINANCE.directAid * 100).toFixed(1)}% of spending went directly to students. Operations and legal costs were the rest.` },
   { t: "Trustees who aren't paid", b: "Our by-laws require that trustees and officers serve without compensation. Nothing of the foundation benefits any insider." },
@@ -21,11 +21,11 @@ const principles = [
       <blockquote class="purpose__q rv">
         <p>“Empowering students of Turkish descent to become <span class="hl">self-confident,</span> socially conscious, <span class="hl">life-long learners.</span>”</p>
       </blockquote>
-      <p class="purpose__src muted rv">Our institutional purpose, set out in <a href="/governance#article-i">Article I of our by-laws</a>: to support students in higher education in their pursuit of academic success, and to help them pursue impactful careers of their own choosing — through mentorship, academic support, scholarships and other resources.</p>
+      <p class="purpose__src muted rv">Our institutional purpose, set out in <a href="/governance#article-i">Article I of our by-laws</a>: to support students in higher education in their pursuit of academic success, and to help them pursue impactful careers of their own choosing, through mentorship, academic support, scholarships and other resources.</p>
     </div>
   </section>
 
-  <section class="section night grid-bg" aria-labelledby="who-h">
+  <section class="section bone-2" aria-labelledby="who-h">
     <div class="wrap who">
       <div>
         <p class="kicker rv">Who we serve</p>
@@ -83,7 +83,7 @@ const principles = [
       </div>
       <div class="gov__form rv" style="--d:.1s">
         <h2 class="t-3">Say hello</h2>
-        <p class="muted">Questions, ideas, introductions — we read everything.</p>
+        <p class="muted">Questions, ideas, introductions: we read everything.</p>
         <InquiryForm id="about" />
       </div>
     </div>
@@ -92,13 +92,13 @@ const principles = [
 
 <style>
   .purpose { display: grid; gap: 1.8rem; }
-  .purpose__q p { font-family: var(--font-display); font-weight: 650; font-size: clamp(2rem, 1rem + 3.8vw, 4.8rem); line-height: 1.02; letter-spacing: -0.045em; max-width: 20ch; }
+  .purpose__q p { font-family: var(--font-display); font-weight: 560; font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.6rem); line-height: 1.02; letter-spacing: -0.015em; max-width: 20ch; }
   .purpose__src { max-width: 44rem; }
   .purpose__src a { color: var(--lilac-deep); }
   .who { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: end; }
-  .who__list li { display: grid; gap: 0.5rem; padding: 1.6rem 0; border-top: 1px solid var(--night-line-strong); }
-  .who__list .mono { font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--shoot); }
-  .who__list p { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.9rem); letter-spacing: -0.025em; line-height: 1.2; }
+  .who__list li { display: grid; gap: 0.5rem; padding: 1.4rem 0; border-top: 1px solid var(--line-strong); }
+  .who__list .mono { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--shoot-ink); }
+  .who__list p { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem); letter-spacing: -0.025em; line-height: 1.2; }
   @media (max-width: 900px) { .who { grid-template-columns: 1fr; } }
 
   .pl { border-top: 1.5px solid var(--night); }

@@ -31,7 +31,7 @@ const tabs = [
 ];
 const reply = (i: InquiryRow) =>
   `mailto:${i.email}?subject=${encodeURIComponent("Re: your message to Springrise Foundation")}&body=${encodeURIComponent(
-    `\n\n—\nOn ${formatEt(i.created_at)}, ${i.name} wrote:\n> ${i.message.split("\n").join("\n> ")}`.slice(0, 1500),
+    `\n\n--\nOn ${formatEt(i.created_at)}, ${i.name} wrote:\n> ${i.message.split("\n").join("\n> ")}`.slice(0, 1500),
   )}`;
 ---
 <StaffLayout title="Inquiries" active="inquiries">

@@ -1,5 +1,5 @@
 ---
-// Animated line glyphs for the three pillars. They draw themselves in when the card is hovered or focused.
+// Line glyphs for the three pillars. They warm up gently when the card is hovered or focused.
 interface Props { kind: "scholarships" | "internships" | "mentorship" }
 const { kind } = Astro.props;
 ---
@@ -38,12 +38,10 @@ const { kind } = Astro.props;
   .glyph path, .glyph circle { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
   .g-base { opacity: 0.22; }
   .g-soft { opacity: 0.45; stroke-dasharray: 0.02 0.04; }
-  .g-l { stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 1.1s var(--ease) var(--o, 0s), stroke 0.4s; }
-  .g-dot { fill: currentColor !important; stroke: none !important; transition: transform 0.9s var(--ease), fill 0.4s; transform-box: fill-box; transform-origin: center; }
-  :global(.pillar:hover) .g-l, :global(.pillar:focus-visible) .g-l { animation: draw 1.2s var(--ease) var(--o, 0s) both; }
-  :global(.pillar:hover) .g-hi, :global(.pillar:focus-visible) .g-hi { stroke: var(--shoot); }
-  :global(.pillar:hover) .g-dot, :global(.pillar:focus-visible) .g-dot { fill: var(--shoot) !important; transform: translateY(-6px) scale(1.2); }
+  .g-l { stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 1.1s var(--ease) var(--o, 0s), stroke 0.9s var(--ease); }
+  .g-dot { fill: currentColor !important; stroke: none !important; transition: transform 1.1s var(--ease), fill 0.9s var(--ease); transform-box: fill-box; transform-origin: center; }
+  :global(.pillar:hover) .g-hi, :global(.pillar:focus-visible) .g-hi { stroke: var(--shoot-deep); }
+  :global(.pillar:hover) .g-dot, :global(.pillar:focus-visible) .g-dot { fill: var(--shoot) !important; transform: translateY(-4px) scale(1.15); }
   :global(.pillar:hover) .g-dot--2 { fill: var(--dawn) !important; }
   :global(.pillar:hover) .g-door { transform: none; }
-  @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 </style>

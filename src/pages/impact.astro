@@ -27,8 +27,8 @@ const flows = F.years.map((y, i) => {
 });
 const [y24, y25] = REACH.students;
 ---
-<Site title="Impact & financials" description="How Springrise Foundation's support has grown — students reached, scholarships paid and how every dollar is used, FY 2024 to FY 2025.">
-  <PageHead kicker="Impact & financials" title="Every dollar," accent="accounted for." lead="We're small, lean and growing — and we think donors and students deserve to see exactly how. Here is what FY 2024 and FY 2025 looked like." />
+<Site title="Impact & financials" description="How Springrise Foundation's support has grown: students reached, scholarships paid and how every dollar is used, FY 2024 to FY 2025.">
+  <PageHead kicker="Impact & financials" title="Every dollar," accent="accounted for." lead="We're small, lean and growing, and we think donors and students deserve to see exactly how. Here is what FY 2024 and FY 2025 looked like." />
 
   <section class="section section--s">
     <div class="wrap kpis">
@@ -107,7 +107,7 @@ const [y24, y25] = REACH.students;
     </div>
   </section>
 
-  <section class="section night grid-bg" aria-labelledby="eff-h">
+  <section class="section night" aria-labelledby="eff-h">
     <div class="wrap eff">
       <div class="eff__text">
         <p class="kicker rv">Mission efficiency</p>
@@ -127,7 +127,7 @@ const [y24, y25] = REACH.students;
       <div>
         <p class="kicker rv">Reach</p>
         <h2 class="t-1 rv" id="reach-h">From {y24.count} to <span class="hl">{y25.count}</span> scholars.</h2>
-        <p class="lead rv">A {(REACH.growth * 100).toFixed(1)}% increase in students supported in a single year — and scholarship dollars grew even faster, up {pct(F.scholarships[0], F.scholarships[1]).toFixed(1)}%.</p>
+        <p class="lead rv">A {(REACH.growth * 100).toFixed(1)}% increase in students supported in a single year, and scholarship dollars grew even faster, up {pct(F.scholarships[0], F.scholarships[1]).toFixed(1)}%.</p>
       </div>
       <div class="reach-card night rv">
         <ReachDots />
@@ -158,7 +158,7 @@ const [y24, y25] = REACH.students;
 <style>
   .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.8rem; }
   .kpi { display: grid; gap: 0.5rem; align-content: start; padding: clamp(1.4rem, 2.5vw, 2rem); border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); }
-  .kpi__n { font-family: var(--font-display); font-weight: 750; font-size: clamp(2.2rem, 1.4rem + 2.4vw, 3.6rem); letter-spacing: -0.05em; line-height: 1; }
+  .kpi__n { font-family: var(--font-display); font-weight: 560; font-size: clamp(1.8rem, 1.4rem + 1.2vw, 2.5rem); letter-spacing: -0.015em; line-height: 1; }
   .kpi__cap { color: var(--text-muted); }
   .kpi__ch { justify-self: start; font-size: 0.74rem; padding: 0.3rem 0.6rem; border-radius: var(--r-pill); background: var(--night); color: var(--shoot); }
   @media (max-width: 1000px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

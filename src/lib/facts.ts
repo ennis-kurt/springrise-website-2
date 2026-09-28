@@ -1,6 +1,6 @@
 // Every fact on the site lives here. Sources:
 //  - springrise.org (mission, programs, eligibility, contact, giving methods)
-//  - "Springrise Foundation — General Organization Presentation" (financials, reach, pillars, gift tiers, IRS status)
+//  - "Springrise Foundation, General Organization Presentation" (financials, reach, pillars, gift tiers, IRS status)
 //  - By-Laws of Springrise Foundation, Inc.
 
 export const ORG = {
@@ -9,7 +9,7 @@ export const ORG = {
   purpose:
     "Empowering students of Turkish descent to become self-confident, socially conscious, life-long learners.",
   summary:
-    "Springrise supports academic success and career impact for students of Turkish descent in U.S. higher education — through scholarships, internships and mentorship.",
+    "Springrise supports academic success and career impact for students of Turkish descent in U.S. higher education through scholarships, internships and mentorship.",
   state: "New Jersey",
   ein: "93-2396404",
   exemptSince: "June 29, 2023",
@@ -45,7 +45,7 @@ export const PILLARS = [
     key: "scholarships",
     title: "Scholarships",
     line: "Direct bursaries that lift the weight of tuition so students can focus on learning.",
-    detail: "Seasonal, need-based awards each Spring and Fall — paid straight to the student's college or university.",
+    detail: "Seasonal, need-based awards each Spring and Fall, paid straight to the student's college or university.",
   },
   {
     key: "internships",
@@ -75,7 +75,7 @@ export const GIFTS = [
 
 export const ELIGIBILITY = [
   "Of Turkish descent, pursuing higher education in the United States and facing socioeconomic challenges.",
-  "Enrolled — or accepted for enrollment — at an accredited U.S. college or university.",
+  "Enrolled, or accepted for enrollment, at an accredited U.S. college or university.",
   "Cumulative GPA of at least 3.0. A lower GPA may be considered only in extremely limited circumstances, explained in your personal statement, and only once per applicant.",
   "Incoming first-year students: high-school GPA of at least 3.5 (4.0 scale) and an SAT score of at least 1350.",
   "First-semester ESL students: satisfactory (S) grades.",
@@ -83,7 +83,7 @@ export const ELIGIBILITY = [
 ];
 
 export const TERMS = [
-  "Request only the tuition you still owe after other scholarships and grants — not housing, insurance or other fees.",
+  "Request only the tuition you still owe after other scholarships and grants. Not housing, insurance or other fees.",
   "Awards are paid directly to your institution as tuition, never to the student.",
   "Each application covers one semester; apply again each season you need support.",
   "Recipients keep making steady progress toward their degree. A failed course can't be funded twice.",
@@ -93,7 +93,7 @@ export const TERMS = [
 
 export const DOCUMENTS = [
   { key: "resume", label: "Resume", help: "Education, work, service and leadership.", required: true },
-  { key: "transcript", label: "Latest transcript", help: "From your most recent semester — unofficial is fine.", required: true },
+  { key: "transcript", label: "Latest transcript", help: "From your most recent semester. Unofficial is fine.", required: true },
   { key: "enrollment", label: "Proof of enrollment", help: "Enrollment verification or your acceptance letter.", required: true },
   { key: "statement", label: "Personal statement", help: "300+ words: your goals, achievements, financial need and challenges.", required: true },
   { key: "tuitionBill", label: "Tuition bill", help: "Your school statement showing the balance you owe.", required: true },

@@ -65,7 +65,7 @@ const filtered = !!(f.season || f.stage || f.q);
               <td>{a.school}<span class="sub">{a.level}</span></td>
               <td><StageBadge stage={a.stage} /></td>
               <td class="r mono num">{money(a.tuition_cents)}</td>
-              <td class="r mono num">{a.award_cents != null ? money(a.award_cents) : <span class="faint">—</span>}</td>
+              <td class="r mono num">{a.award_cents != null ? money(a.award_cents) : <span class="faint">–</span>}</td>
               <td class="muted">{formatEt(a.created_at, false)}</td>
             </tr>
           ))}
