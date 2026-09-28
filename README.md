@@ -12,7 +12,10 @@ internships and mentorship.
   foundation has supported: 25 clay stems for 2025 and 19 leaf-green stems for 2024. The stems grow in, sway gently
   and lean toward the cursor like plants turning to light. All pointer motion is eased every frame, so nothing snaps.
   Quieter versions of the field open every interior page.
-- **The mark** is a growth curve that turns into a leaf, reading as both a chart line and a new shoot.
+- **The mark** is an open book whose pages cradle a rising tulip bud, and the gap down the book's spine is the tulip's
+  stem. The book stands for education, the tulip for spring and for Turkish heritage, and the bud's upward point for
+  rising. It works in color, on dark and in one color, and still reads at favicon size. Logo files live in
+  `public/brand/` (SVG marks, PNG lockups) and the logo board is at `docs/brand/logo-board.png`.
 - **Palette:** warm and hand-made rather than corporate. Paper `#fffcf6` and bone `#f7f1e7` grounds, espresso
   `#2b2320` for dark sections, with clay `#b4502d`, marigold `#f0b44c` and leaf `#7f9f5c` accents.
 - **Type:** Fraunces (a soft, warm serif) for headings and Inter for text, on a calm, moderate scale. All fonts are

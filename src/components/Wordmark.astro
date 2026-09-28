@@ -1,33 +1,40 @@
 ---
-// The Springrise mark: a growth curve that becomes a leaf: rising data and a new shoot in one line.
-interface Props { size?: number; tone?: "night" | "bone"; withName?: boolean; class?: string }
-const { size = 30, tone = "night", withName = true, class: cls = "" } = Astro.props;
+// The Springrise mark: an open book whose pages cradle a rising tulip bud. The gap down the spine is the stem.
+// Book for education, tulip for spring and heritage, the bud's upward point for rising.
+interface Props { size?: number; tone?: "night" | "bone"; withName?: boolean; sub?: boolean; class?: string }
+const { size = 34, tone = "night", withName = true, sub = true, class: cls = "" } = Astro.props;
 ---
 <span class:list={["wm", `wm--${tone}`, cls]}>
-  <svg class="wm__mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-    <rect class="wm__tile" width="32" height="32" rx="9" />
-    <path class="wm__stem" d="M7 25.5c6.2 0 10.4-4.8 12.6-13" />
-    <path class="wm__leaf" d="M19.3 12.8c-.3-4.4 2.7-7.3 6.9-7.4.3 4.3-2.6 7.3-6.9 7.4Z" />
-    <circle class="wm__seed" cx="7" cy="25.5" r="1.9" />
+  <svg class="wm__mark" width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+    <g class="wm__pages">
+      <path d="M30.6 57.6C23 56.8 14 53.4 6 48.2L7.6 21.4C15.5 21.1 21 23.3 24.3 27.8C23.7 37.2 26.7 45.3 30.6 50.8Z" />
+      <path d="M33.4 57.6C41 56.8 50 53.4 58 48.2L56.4 21.4C48.5 21.1 43 23.3 39.7 27.8C40.3 37.2 37.3 45.3 33.4 50.8Z" />
+    </g>
+    <g class="wm__bud">
+      <path class="wm__bud-l" d="M32 49C24.6 39.6 24.4 21 32 5Z" />
+      <path class="wm__bud-r" d="M32 49C39.4 39.6 39.6 21 32 5Z" />
+    </g>
   </svg>
-  {withName && <span class="wm__name">springrise</span>}
+  {withName && <span class="wm__txt"><span class="wm__name">Springrise</span>{sub && <span class="wm__sub">Foundation</span>}</span>}
 </span>
 
 <style>
-  .wm { display: inline-flex; align-items: center; gap: 0.55rem; line-height: 1; }
-  .wm__tile { fill: var(--shoot-deep); }
-  .wm__stem { fill: none; stroke: #fffcf6; stroke-width: 2.7; stroke-linecap: round; }
-  .wm__leaf { fill: #fffcf6; }
-  .wm__seed { fill: var(--shoot); }
-  .wm--bone .wm__tile { fill: var(--shoot); }
-  .wm--bone .wm__stem { stroke: var(--night); }
-  .wm--bone .wm__seed { fill: var(--paper); }
-  .wm--bone .wm__leaf { fill: var(--night); }
+  .wm { display: inline-flex; align-items: center; gap: 0.6rem; line-height: 1; }
+  .wm__mark { flex: none; overflow: visible; }
+  .wm__pages { fill: var(--shoot-deep); stroke: var(--shoot-deep); stroke-width: 1.4; stroke-linejoin: round; }
+  .wm__bud-l { fill: var(--shoot); }
+  .wm__bud-r { fill: #dc8f2c; }
+  .wm--bone .wm__pages { fill: var(--bone); stroke: var(--bone); }
+  .wm__txt { display: grid; gap: 0.28rem; }
   .wm__name {
-    font-family: var(--font-display); font-weight: 600; font-size: 1.45rem; letter-spacing: -0.01em;
-    font-variation-settings: "SOFT" 80;
+    font-family: var(--font-display); font-weight: 560; font-size: 1.42rem; letter-spacing: -0.01em;
+    font-variation-settings: "SOFT" 70;
   }
+  .wm__sub { font-size: 0.56rem; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: var(--text-muted); }
   .wm--bone .wm__name { color: var(--bone); }
-  .wm__mark { transition: transform 0.6s var(--ease); flex: none; }
-  :global(a:hover) > .wm .wm__mark { transform: rotate(-8deg) scale(1.04); }
+  .wm--bone .wm__sub { color: var(--night-muted); }
+  /* On hover the bud rises a little out of the book. */
+  .wm__bud { transition: transform 0.9s var(--ease); }
+  :global(a:hover) > .wm .wm__bud { transform: translateY(-2.5px); }
+  @media (prefers-reduced-motion: reduce) { .wm__bud { transition: none; } }
 </style>

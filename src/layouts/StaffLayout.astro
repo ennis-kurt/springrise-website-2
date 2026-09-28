@@ -4,6 +4,7 @@ import "@fontsource-variable/fraunces/wght-italic.css";
 import "@fontsource-variable/inter";
 import "../styles/tokens.css";
 import "../styles/staff.css";
+import Wordmark from "../components/Wordmark.astro";
 
 interface Props {
   title: string;
@@ -39,7 +40,7 @@ const nav = [
         <div class="shell">
           <aside class="side" aria-label="Staff navigation">
             <a class="brand" href="/staff">
-              <span class="wordmark">springrise</span>
+              <Wordmark tone="bone" size={30} sub={false} />
               <span class="brand-tag">Staff</span>
             </a>
             <nav class="nav">

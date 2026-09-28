@@ -1,5 +1,6 @@
 ---
 import StaffLayout from "../../layouts/StaffLayout.astro";
+import Wordmark from "../../components/Wordmark.astro";
 import { passwordConfigured, safeNext, setSessionCookie, signIn } from "../../lib/server/auth";
 import { clientIp } from "../../lib/server/http";
 
@@ -26,7 +27,7 @@ const configured = passwordConfigured();
 <StaffLayout title="Sign in" bare>
   <div class="signin">
     <div class="brand" style="padding:0">
-      <span class="wordmark">springrise</span>
+      <Wordmark size={34} sub={false} />
       <span class="brand-tag">Staff</span>
     </div>
     <h1>Sign in</h1>
